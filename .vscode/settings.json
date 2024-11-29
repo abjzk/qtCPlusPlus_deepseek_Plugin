@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.py": "python",
+        "qlineedit": "cpp",
+        "qvalidator": "cpp",
+        "qapplication": "cpp"
+    }
+}
