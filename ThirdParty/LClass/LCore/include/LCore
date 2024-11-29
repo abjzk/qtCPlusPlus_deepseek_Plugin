@@ -1,0 +1,11 @@
+#include "func.h"
+#include "LConfig.h"
+#include "LInIConfig.h"
+#include "LJsonConfig.h"
+#include "LXmlConfig.h"
+#include "LSingleApplication.h"
+#include "LSqlExecutor.h"
+#include "LLog.h"
+//#include "LInstanceMap.h"
+
+using namespace ljz;

@@ -1,6 +1,7 @@
 #include "mainwindow.h"
-#include "qhotkey.h"
+#include <QHotkey>
 #include "QMessageBox"
+#include <LWidget>
 
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent)
@@ -11,6 +12,8 @@ MainWindow::MainWindow(QWidget *parent)
     {
         QMessageBox::information(this, "Hotkey Press", "Control + 1 pressed!");
     });
+    LTextEdit *edit = new LTextEdit();
+    edit->show();
 }
 
 MainWindow::~MainWindow()
