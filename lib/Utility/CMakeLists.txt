@@ -16,6 +16,7 @@ include_directories(${PROJECT_SOURCE_DIR}/include
     ${Lib_DIR}/QHotkey/QHotkey
     ${Lib_DIR}/LClass/LCore/include
     ${Lib_DIR}/LClass/LWidget/include
+    ${Lib_DIR}/spdlog/include/spdlog
 )
 set(CMAKE_AUTOUIC_SEARCH_PATHS ${PROJECT_SOURCE_DIR}/ui)
 FILE(GLOB_RECURSE RC_FILES ${PROJECT_SOURCE_DIR}/res/*.rc) 
@@ -38,6 +39,7 @@ add_library(Utility SHARED
 target_link_libraries(Utility PRIVATE Qt${QT_VERSION_MAJOR}::Core
   LWidget
   LCore
+  spdlog
   Qt${QT_VERSION_MAJOR}::Network
   Qt${QT_VERSION_MAJOR}::Sql
   Qt${QT_VERSION_MAJOR}::Xml

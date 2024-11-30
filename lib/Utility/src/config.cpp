@@ -1,5 +1,7 @@
 #include "config.h"
 #include <QApplication>
+#include "spdlog/spdlog.h"
+#include "spdlog/sinks/rotating_file_sink.h"
 
 Config::Config(const QString& name)
 :_name(name)
