@@ -4,7 +4,7 @@
 #include "center.h"
 #include "../include/QAbstractPlugin.h"
 // #include "LSqlExecutor.h"
-#include "../include/config.h"
+#include "config.h"
 // #include "LCore"
 using namespace ljz;
 int main(int argc, char *argv[]) {

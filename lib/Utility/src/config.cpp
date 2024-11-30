@@ -1,4 +1,5 @@
-#include "../../include/config.h"
+#include "config.h"
+#include <QApplication>
 
 Config::Config(const QString& name)
 :_name(name)

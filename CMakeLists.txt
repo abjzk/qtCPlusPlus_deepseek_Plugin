@@ -10,4 +10,4 @@ link_directories(
     $<$<CONFIG:RelWithDebInfo>:${OUTPUT_PATH}/RelWithDebInfo>
 )
 add_subdirectory(Tools)
-add_subdirectory(ThirdParty)
+add_subdirectory(lib)
