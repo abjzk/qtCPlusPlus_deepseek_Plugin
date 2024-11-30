@@ -20,19 +20,7 @@ namespace ljz
 		//    db = QSqlDatabase::addDatabase("QODBC");
 		//    db.setDatabaseName(connectionString);
 		//}
-		explicit LSqlExecutor(const QString& sqlLitepath, QObject* parent = nullptr, QString name = "")
-			:QObject(parent)
-		{
-			if (name == "")
-				name = sqlLitepath;
-			if (QSqlDatabase::contains(name)) {
-				db = QSqlDatabase::database(name);
-			}
-			else {
-				db = QSqlDatabase::addDatabase("QSQLITE", name);
-				db.setDatabaseName(sqlLitepath);
-			}
-		}
+		explicit LSqlExecutor(const QString& sqlLitepath, QObject* parent = nullptr, QString name = "");
 		~LSqlExecutor() override
 		{
 		}

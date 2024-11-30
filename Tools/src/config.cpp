@@ -3,7 +3,7 @@
 Config::Config(const QString& name)
 :_name(name)
 {
-    excuteSql = new LSqlExecutor(QApplication::applicationFilePath() + "/config.db");
+    excuteSql = new LSqlExecutor(QApplication::applicationDirPath() + "/config.db");
     checkTable();
 }
 Config::~Config()

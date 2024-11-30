@@ -8,6 +8,8 @@
         "qdebug": "cpp",
         "qtimer": "cpp",
         "qobject": "cpp",
-        "qkeysequence": "cpp"
+        "qkeysequence": "cpp",
+        "lcore": "cpp",
+        "qvariantmap": "cpp"
     }
 }
