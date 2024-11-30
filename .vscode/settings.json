@@ -3,6 +3,11 @@
         "*.py": "python",
         "qlineedit": "cpp",
         "qvalidator": "cpp",
-        "qapplication": "cpp"
+        "qapplication": "cpp",
+        "qwidget": "cpp",
+        "qdebug": "cpp",
+        "qtimer": "cpp",
+        "qobject": "cpp",
+        "qkeysequence": "cpp"
     }
 }

@@ -2,6 +2,7 @@
 #include <LTextEdit.h>
 #include "mainwindow.h"
 #include "center.h"
+#include "../include/QAbstractPlugin.h"
 using namespace ljz;
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
