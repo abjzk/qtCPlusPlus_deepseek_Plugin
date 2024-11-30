@@ -11,3 +11,4 @@ link_directories(
 )
 add_subdirectory(Tools)
 add_subdirectory(lib)
+add_subdirectory(Test)
