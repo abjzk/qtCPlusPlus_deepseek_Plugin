@@ -27,11 +27,11 @@ MainWindow::MainWindow(QWidget *mainWidget, QWidget *parent)
     :LWidget(new LTitleBar(), mainWidget, parent)
 {
     auto info = LWidget::info();
-    info.edgeSize = 5;
+    info.edgeSize = 8;
     info.splitLineColor = Qt::GlobalColor::transparent;
     LWidget::setInfo(info);
     LTitleBar *titleBar = qobject_cast<LTitleBar*>(this->getTitleBar());
-    titleBar->setTitleIcon(QPixmap());
+    titleBar->setTitleIcon(QIcon(":res/Tools.ico"));
     titleBar->setTitleText("");
     this->systemSettingsChangedSlot();
     connect(this,&MainWindow::systemSettingsChanged,[=]()

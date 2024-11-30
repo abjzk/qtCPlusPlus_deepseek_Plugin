@@ -177,8 +177,9 @@ QIcon LTitleBar::setCloseButtonIcon(const QString& iconPath)
 void LTitleBar::paintEvent(QPaintEvent* event)
 {
 	QPainter painter(this);
+	painter.setRenderHint(QPainter::Antialiasing); //反锯齿
 	//绘制icon,大小为30，30
-	painter.drawPixmap(2, 2, 20, 20, this->icon.pixmap(15, 15));
+	painter.drawPixmap(2, 2, 17, 17, this->icon.pixmap(17, 17));
 	// 字体大小
 	QFont font;
 	font.setPointSize(12);

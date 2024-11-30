@@ -4,5 +4,6 @@
         <file>icon/maximize.png</file>
         <file>icon/minimize.png</file>
         <file>icon/restore.png</file>
+        <file>Tools.ico</file>
     </qresource>
 </RCC>
