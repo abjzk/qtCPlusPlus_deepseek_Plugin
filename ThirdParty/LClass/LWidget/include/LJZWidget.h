@@ -52,7 +52,8 @@ namespace ljz
 		//设置标题栏文本
 		void setTitleText(const QString& text);
 		//获取标准按钮图标
-		QMap<ButtonIcon, QIcon> getStandardIconMap();
+		QMap<ButtonIcon, QIcon> getStandardIconMap() const;
+		void setStandardIconMap(const QMap<ButtonIcon, QIcon>& iconMap);
 		//设置最小化按钮图标
 		QIcon setMinButtonIcon(const QIcon& icon);
 		QIcon setMinButtonIcon(const QString& iconPath);

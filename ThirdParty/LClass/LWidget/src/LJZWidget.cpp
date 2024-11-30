@@ -103,18 +103,27 @@ void LTitleBar::focusOutEvent(QFocusEvent* event)
 	LBaseTitleBar::focusOutEvent(event);
 }
 
-QMap<LTitleBar::ButtonIcon, QIcon> LTitleBar::getStandardIconMap()
+QMap<LTitleBar::ButtonIcon, QIcon> LTitleBar::getStandardIconMap() const
 {
 	return this->standardIconMap;
+}
+
+void ljz::LTitleBar::setStandardIconMap(const QMap<ButtonIcon, QIcon> &iconMap)
+{
+	this->setMinButtonIcon(iconMap.value(ButtonIcon::MinButtonIcon));
+	this->setMaxButtonIcon(iconMap.value(ButtonIcon::MaxButtonIcon));
+	this->setRestoreButtonIcon(iconMap.value(ButtonIcon::RestoreButtonIcon));
+	this->setCloseButtonIcon(iconMap.value(ButtonIcon::CloseButtonIcon));
 }
 
 QIcon LTitleBar::setMinButtonIcon(const QIcon& icon)
 {
 	// 更新最小化按钮图标
-	this->standardIconMap.insert(ButtonIcon::MaxButtonIcon, icon);
+	this->standardIconMap.insert(ButtonIcon::MinButtonIcon, icon);
 	this->minButton->setIcon(icon);
 	return icon;
 }
+
 
 QIcon LTitleBar::setMinButtonIcon(const QString& iconPath)
 {
@@ -140,7 +149,8 @@ QIcon LTitleBar::setRestoreButtonIcon(const QIcon& icon)
 {
 	// 更新还原按钮图标
 	this->standardIconMap.insert(ButtonIcon::RestoreButtonIcon, icon);
-	this->maxButton->setIcon(icon);
+	if(this->parentWidget()->windowState() == Qt::WindowMaximized)
+		this->maxButton->setIcon(icon);
 	return icon;
 }
 
@@ -206,7 +216,7 @@ LWidget::LWidget(LBaseTitleBar* titleBar, QWidget* mainWidget, QWidget* parent)
 	::SetWindowLong(hwnd, GWL_STYLE, style | WS_MAXIMIZEBOX | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU);
 #endif
 	//安装事件过滤器识别拖动
-	//this->installEventFilter(this);
+	this->installEventFilter(this);
 	this->setTitleBar(titleBar);
 	this->setMainWidget(mainWidget);
 	setFocusPolicy(Qt::FocusPolicy::StrongFocus);
@@ -252,7 +262,7 @@ void LWidget::setTitleBar(LBaseTitleBar* titleBar)
 {
 	this->_titleBar = titleBar;
 	this->_titleBar->setMouseTracking(true); //设置鼠标跟踪
-	this->_titleBar->setFixedHeight(20); //设置标题栏高度
+	this->_titleBar->setFixedHeight(25); //设置标题栏高度
 	this->_titleBar->installEventFilter(this); //安装事件过滤器识别拖动
 	connect(this->_titleBar, &LBaseTitleBar::closeButtonClicked, this, &LWidget::close);
 	connect(this->_titleBar, &LBaseTitleBar::minButtonClicked, this, &LWidget::showMinimized);
@@ -303,8 +313,11 @@ void LWidget::paintEvent(QPaintEvent* event)
 	painter.setBrush(LFunc::getSystemAccentColor()); //边框颜色
 #endif
 	painter.drawRoundedRect(this->rect(), _info.radius, _info.radius); //绘制边框
+
 	// 再绘制一层背景颜色的圆角矩形，大小为窗口大小减去边框大小
-	painter.setBrush(_info.backgroundColor); //背景颜色
+	// 获取当前的系统主题色
+	QColor color = this->palette().color(QPalette::Window);
+	painter.setBrush(color); //背景颜色
 	painter.drawRoundedRect(this->rect().adjusted(_info.borderSize, _info.borderSize,
 		-_info.borderSize, -_info.borderSize), _info.radius, _info.radius); //绘制背景
 	if (_info.backgroundPixmap.isNull() == false)
@@ -325,6 +338,9 @@ void LWidget::paintEvent(QPaintEvent* event)
 		painter.setPen(QPen(_info.splitLineColor, 1));
 		painter.drawLine(x, y, x + w, y + h);
 	}
+	painter.setBrush(LFunc::getSystemAccentColor());
+	QRect rect(0,0, this->width(), this->_titleBar->geometry().bottom());
+	painter.drawRoundedRect(rect, 0, 0);
 	painter.end();
 }
 #if (QT_VERSION >= QT_VERSION_CHECK(6,0,0))//Qt6
@@ -490,13 +506,12 @@ bool LWidget::nativeEvent(const QByteArray& eventType, void* message, long* resu
 
 bool LWidget::eventFilter(QObject* obj, QEvent* event)
 {
-	if (obj == this)
+	// qDebug() << event->type();
+	if (event->type() == QEvent::WindowStateChange)
 	{
-		if (event->type() == QEvent::WindowStateChange)
-		{
-			emit windowStateChanged();
-		}
+		emit windowStateChanged();
 	}
+
 	return QWidget::eventFilter(obj, event);
 }
 
