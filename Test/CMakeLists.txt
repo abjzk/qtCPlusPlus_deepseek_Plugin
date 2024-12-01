@@ -52,7 +52,7 @@ else()
 # Define properties for Android with Qt 5 after find_package() calls as:
 #    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
     else()
-        add_executable(Test
+        add_executable(Test LINK_FLAGS "/SUBSYSTEM:CONSOLE"
             ${PROJECT_SOURCES}
         )
     endif()
@@ -79,7 +79,6 @@ set_target_properties(Test PROPERTIES
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
     MACOSX_BUNDLE TRUE
-    WIN32_EXECUTABLE TRUE
 )
 
 include(GNUInstallDirs)

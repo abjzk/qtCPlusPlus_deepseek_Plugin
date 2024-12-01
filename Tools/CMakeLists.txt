@@ -18,6 +18,7 @@ include_directories(${PROJECT_SOURCE_DIR}/include
     ${Lib_DIR}/LClass/LWidget/include
     ${Lib_DIR}/Utility/include
 )
+
 set(CMAKE_AUTOUIC_SEARCH_PATHS ${PROJECT_SOURCE_DIR}/ui)
 FILE(GLOB_RECURSE RC_FILES ${PROJECT_SOURCE_DIR}/res/*.rc) 
 FILE(GLOB_RECURSE QRC_FILES ${PROJECT_SOURCE_DIR}/res/*.qrc)
@@ -25,7 +26,6 @@ FILE(GLOB_RECURSE UI_FILES ${PROJECT_SOURCE_DIR}/ui/*.ui)
 FILE(GLOB_RECURSE HEADER_FILES ${PROJECT_SOURCE_DIR}/include/*.h)
 
 aux_source_directory(${PROJECT_SOURCE_DIR}/src SOURCE_FILES)
-
 
 set(PROJECT_SOURCES
         main.cpp
@@ -35,6 +35,7 @@ set(PROJECT_SOURCES
         ${RC_FILES}
         ${QRC_FILES}
 )
+
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(Tools
         MANUAL_FINALIZATION
