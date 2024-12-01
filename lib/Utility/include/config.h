@@ -31,6 +31,7 @@ public:
     bool read(const QString &key, QVariant &value);
     QVariant read(const QString &key);
     bool read(QMap<QString, QVariant> &map);
+    QMap<QString, QVariant> readAll();
     bool write(const QString &key, QVariant &value);
     bool write(QMap<QString, QVariant> &map);
     void registerConfig(const QString &key, const QString &description, const Type &type, const QVariant &defaultValue, bool isShow = true);

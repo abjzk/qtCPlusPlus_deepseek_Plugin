@@ -14,10 +14,11 @@ TConfig::~TConfig()
 
 bool TConfig::read(const QString &key, QVariant &value)
 {
-    QString sql = QString("SELECT value FROM Config WHERE key = '%1' and name = '%2'").arg(key).arg(_name);
-    value = excuteSql->executeScalar(sql, QVariant());
-    if (value.isValid())
+    QString sql = QString("SELECT value,type FROM Config WHERE key = '%1' and name = '%2'").arg(key).arg(_name);
+    auto row = excuteSql->executeFirstRow(sql);
+    if (row.size() > 0)
     {
+        value = TConfig::stringToValue(row["value"].toString(), row["type"].toString());
         return true;
     }
     return false;
@@ -32,7 +33,21 @@ QVariant TConfig::read(const QString &key)
 
 bool TConfig::read(QMap<QString, QVariant> &map)
 {
-    return false;
+    QString sql = QString("SELECT key,value,type FROM Config WHERE name = '%1'").arg(_name);
+    auto rows = excuteSql->executeQuery(sql);
+    if (rows.size() == 0) return false;
+    for (auto row : rows)
+    {
+        map[row["key"].toString()] = TConfig::stringToValue(row["value"].toString(), row["type"].toString());
+    }
+    return true;
+}
+
+QMap<QString, QVariant> TConfig::readAll()
+{
+    QMap<QString, QVariant> map;
+    read(map);
+    return map;
 }
 
 bool TConfig::write(const QString &key, QVariant &value)
@@ -184,13 +199,13 @@ QVariant TConfig::stringToValue(const QString &value, const QString &type)
     case Type::String:
         return value;
     case Type::Bool:
-        return value.toUpper() == "TRUE";
+        return value.toUpper() == "1";
     case Type::Float:
         return value.toFloat();
     case Type::Double:
         return value.toDouble();
     case Type::DateTime:
-        return QDate::fromString(value, "yyyy-MM-dd hh:mm:ss");
+        return QDateTime::fromString(value, "yyyy-MM-dd hh:mm:ss");
     case Type::Date:
         return QDate::fromString(value, "yyyy-MM-dd");
     case Type::Time:

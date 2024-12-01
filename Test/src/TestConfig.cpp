@@ -1,6 +1,6 @@
 #include "TestConfig.h"
 
-void TestConfig::test()
+void TestConfig::registerConfig()
 {
     TConfig *config = new TConfig("config.ini");
     config->registerConfig("DateTime", "名称", TConfig::Type::DateTime, QDateTime::fromString("2020-01-01 00:00:00", "yyyy-MM-dd hh:mm:ss"));
@@ -16,8 +16,8 @@ void TestConfig::test()
     config->registerConfig("Time", "名称", TConfig::Type::Time, QTime::fromString("00:00:00", "hh:mm:ss"));
 
     // 判断读取后是否和预期一致
-    QCOMPARE(config->read("DateTime").toString(), "2020-01-01 00:00:00");
-    QCOMPARE(config->read("Color").value<QColor>().name(), "#ff0000");
+    QCOMPARE(config->read("DateTime").toDateTime(), QDateTime::fromString("2020-01-01 00:00:00", "yyyy-MM-dd hh:mm:ss"));
+    QCOMPARE(config->read("Color").value<QColor>(), QColor(255, 0, 0));
     QCOMPARE(config->read("File").toString(), "D:\\test.txt");
     QCOMPARE(config->read("String").toString(), "test");
     QCOMPARE(config->read("Int").toInt(), 1);
@@ -25,6 +25,6 @@ void TestConfig::test()
     QCOMPARE(config->read("Float").toFloat(), 1.1f);
     QCOMPARE(config->read("Double").toDouble(), 1.1);
     QCOMPARE(config->read("Directory").toString(), "D:\\test");
-    QCOMPARE(config->read("Date").toDate().toString("yyyy-MM-dd"), "2020-01-01");
-    QCOMPARE(config->read("Time").toTime().toString("hh:mm:ss"), "00:00:00");
+    QCOMPARE(config->read("Date").toDate(), QDate::fromString("2020-01-01", "yyyy-MM-dd"));
+    QCOMPARE(config->read("Time").toTime(), QTime::fromString("00:00:00", "hh:mm:ss"));
 }
