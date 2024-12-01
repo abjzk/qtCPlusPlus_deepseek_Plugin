@@ -1,0 +1,28 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Qt Application with Visual Studio Debugger",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${command:cmake.launchTargetPath}",
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "visualizerFile": "${command:qt-cpp.natvis}",
+            "windows": {
+                "environment": [
+                    {
+                        "name": "PATH",
+                        "value": "${env:PATH};${command:qt-cpp.kitDirectory}${/}bin"
+                    }
+                ]
+            },
+            "args": ["registerConfig"]
+        }
+
+
+    ]
+}
