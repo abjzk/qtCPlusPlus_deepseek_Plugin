@@ -61,18 +61,11 @@ bool TConfig::write(QMap<QString, QVariant> &map)
 }
 void TConfig::registerConfig(const QString &key, const QString &description, const Type &type, const QVariant &defaultValue, bool isShow)
 {
-    // 检查是否存在这个key,存在就更新,不存在就插入
+    // 检查是否存在这个key,不存在就插入
     int count = excuteSql->executeScalar(QString("SELECT COUNT(*) FROM Config WHERE key = '%1' and name = '%2'").arg(key).arg(_name), 0);
     if (count > 0)
     {
-        QString sql = QString("UPDATE Config SET description = '%1', type = '%2', value = '%3', isShow = %4 WHERE key = '%5' and name = '%6'")
-                          .arg(description)
-                          .arg(getTypeToString(type))
-                          .arg(valueToString(defaultValue, getTypeToString(type)))
-                          .arg(isShow)
-                          .arg(key)
-                          .arg(_name);
-        excuteSql->executeNonQuery(sql);
+        return;
     }
     else
     {

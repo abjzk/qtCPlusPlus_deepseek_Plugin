@@ -8,7 +8,7 @@ class QAbstractPlugin : public QWidget
 public:
     explicit QAbstractPlugin(TConfig *config,QWidget *parent = nullptr);
     virtual ~QAbstractPlugin() = default;
-    virtual QString name() { return ""; };
+    virtual QString name() = 0;
     virtual QString version() = 0;
     virtual QString author() = 0;
     virtual QString description() = 0;
