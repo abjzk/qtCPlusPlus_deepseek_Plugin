@@ -3,8 +3,8 @@
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/rotating_file_sink.h"
 
-Config::Config(const QString& name)
-:_name(name)
+Config::Config(const QString& name,QObject *parent)
+:_name(name),QObject(parent)
 {
     excuteSql = new LSqlExecutor(QApplication::applicationDirPath() + "/config.db");
     checkTable();
@@ -33,7 +33,6 @@ bool Config::write(QMap<QString, QVariant> &map)
 {
     return false;
 }
-
 void Config::checkTable()
 {
     QString sql= R"(-- 检查表是否存在，如果不存在则创建表

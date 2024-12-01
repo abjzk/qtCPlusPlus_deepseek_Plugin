@@ -1,11 +1,12 @@
 #include "QWidget"
 #include <QKeySequence>
 #include "utility.h"
+#include "config.h"
 class QAbstractPlugin : public QWidget
 {
     Q_OBJECT
 public:
-    explicit QAbstractPlugin(QWidget *parent = nullptr);
+    explicit QAbstractPlugin(Config *config,QWidget *parent = nullptr);
     virtual ~QAbstractPlugin() = default;
     virtual QString name() = 0;
     virtual QString version() = 0;
@@ -20,16 +21,12 @@ signals:
     void logSignal(const QString &log, LogLevel level);
 public slots:
     virtual void registerShortcutSlot(bool isRegister) = 0;
+protected:
+    Config *_config;
 };
 
-inline QAbstractPlugin::QAbstractPlugin(QWidget *parent)
-    : QWidget(parent)
-{
-}
-inline bool QAbstractPlugin::saveLog(const QString &log, LogLevel level)
-{
-    return false;
-}
+
+
 inline bool QAbstractPlugin::registerShortcut(const QString &name,QKeySequence keySequence)
 {
     emit registerShortcutSignal(keySequence);
