@@ -1,7 +1,7 @@
 #include "QAbstractPlugin.h"
 
-QAbstractPlugin::QAbstractPlugin(Config *config,QWidget *parent)
+QAbstractPlugin::QAbstractPlugin(TConfig *config,QWidget *parent)
     : QWidget(parent)
 {
-    this->_config = new Config(this->name(),this);
+    this->_config = new TConfig(this->name(),this);
 }

@@ -1,8 +1,6 @@
-#include "qcoreapplication.h"
-#include "config.h"
-int main(int argc, char *argv[])
-{
-    QCoreApplication a(argc, argv);
-    Config *config = new Config("config.ini");
-    return 0;
-}
+#include "TestConfig.h"
+
+#include <QApplication>
+
+QTEST_MAIN(TestConfig)
+// #include "TestConfig.moc"

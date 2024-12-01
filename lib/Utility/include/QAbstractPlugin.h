@@ -6,9 +6,9 @@ class QAbstractPlugin : public QWidget
 {
     Q_OBJECT
 public:
-    explicit QAbstractPlugin(Config *config,QWidget *parent = nullptr);
+    explicit QAbstractPlugin(TConfig *config,QWidget *parent = nullptr);
     virtual ~QAbstractPlugin() = default;
-    virtual QString name() = 0;
+    virtual QString name() { return ""; };
     virtual QString version() = 0;
     virtual QString author() = 0;
     virtual QString description() = 0;
@@ -22,7 +22,7 @@ signals:
 public slots:
     virtual void registerShortcutSlot(bool isRegister) = 0;
 protected:
-    Config *_config;
+    TConfig *_config;
 };
 
 

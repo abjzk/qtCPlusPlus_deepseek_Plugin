@@ -9,7 +9,7 @@
 using namespace ljz;
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
-    Config *config = new Config("config.ini");
+    TConfig *config = new TConfig("config.ini");
     LJsonConfig configs("config.ini");
     Center *center = new Center();
     MainWindow w(center);
