@@ -2,6 +2,8 @@
 #include "Widget.h"
 #include "config.h"
 #include <QAbstractPlugin.h>
+#include <QCloseEvent>
+#include "configDialog.h"
 using namespace ljz;
 
 class TitleBar : public LBaseTitleBar
@@ -29,6 +31,10 @@ public:
     virtual void systemSettingsChangedSlot() override;
     void initUi();
     void initConnect();
+    void showConfigDialog();
+    virtual void closeEvent(QCloseEvent *event) override;
 private:
     QPushButton * _setButton = new QPushButton(this);
+    ConfigDialog * dialog = nullptr;
+    void reSet();
 };

@@ -25,6 +25,8 @@
         "xstring": "cpp",
         "qpluginloader": "cpp",
         "qpoint": "cpp",
-        "qdialog": "cpp"
+        "qdialog": "cpp",
+        "qspinbox": "cpp",
+        "qstyle": "cpp"
     }
 }

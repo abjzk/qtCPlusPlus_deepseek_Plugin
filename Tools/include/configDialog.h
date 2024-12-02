@@ -1,3 +1,4 @@
+#pragma once
 #include <Widget.h>
 #include <QDialog>
 #include <QVBoxLayout>
@@ -5,6 +6,9 @@
 #include <LWidget>
 #include <QDialog>
 #include <config.h>
+#include <QFormLayout>
+#include <QDialogButtonBox>
+#include <QCloseEvent>
 
 class ConfigDialog : public Widget
 {
@@ -15,14 +19,19 @@ public:
     ~ConfigDialog() override;
     void initUi();
     void initConnect();
+    QWidget* createValueWidget(QString type, QString value);
+    virtual void closeEvent(QCloseEvent *event) override;
 Q_SIGNALS:
     void accepted();
     void rejected();
+    void closed();
 public slots:
     void accept();
     void reject();
     void exec();
-    void saved(bool init = false);
+    void saved();
 private:
     TConfig * _config;
+    QDialogButtonBox *buttonBox;
+    QFormLayout *layout;
 };

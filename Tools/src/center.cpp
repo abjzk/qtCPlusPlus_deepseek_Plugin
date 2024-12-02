@@ -12,6 +12,12 @@
 #include <QPluginLoader>
 #include <qexception.h>
 #include <qtreewidget.h>
+#include "configDialog.h"
+#ifdef WIN32
+#include <Windows.h>
+#pragma comment (lib,"user32.lib")
+#endif // WIN32
+#include <windowsx.h>
 
 Center::Center(QWidget *parent)
     : QWidget(parent), ui(new Ui::Center)
@@ -24,9 +30,8 @@ Center::Center(QWidget *parent)
     // 获取第一个插件
     QTreeWidgetItem *groupItem = ui->pluginTree->topLevelItem(0);
     QTreeWidgetItem *pluginItem = groupItem->child(0);
-    qDebug() << pluginItem->data(0, Qt::UserRole).toString();
-    QAbstractPlugin *plugin = this->findPlugin(pluginItem->data(0, Qt::UserRole).toString());
-    ui->scrollArea->setWidget(plugin->start(new TConfig(plugin->name(), plugin)));
+    currentPlugin = this->findPlugin(pluginItem->data(0, Qt::UserRole).toString());
+    ui->scrollArea->setWidget(currentPlugin->start(new TConfig(currentPlugin->name(), currentPlugin)));
 }
 
 Center::~Center()
@@ -51,6 +56,7 @@ void Center::initUi()
 void Center::initConnect()
 {
     connect(ui->pluginTree, &QTreeWidget::customContextMenuRequested, this, &Center::showPluginTreeMenu);
+    connect(ui->pushButton, &QPushButton::clicked, this, &Center::showConfigDialog);
 }
 
 void Center::showPluginTreeMenu(QPoint pos)
@@ -58,6 +64,25 @@ void Center::showPluginTreeMenu(QPoint pos)
     QPoint globalPos = QCursor::pos();
     QMenu menu(this);
     menu.exec(globalPos);
+}
+void Center::showConfigDialog()
+{
+    if (dialog) return;
+    dialog = new ConfigDialog(currentPlugin->name());
+    connect(dialog, &ConfigDialog::closed, this, &Center::reSet);
+    this->setEnabled(false);
+    dialog->setWindowIcon(currentPlugin->icon());
+    dialog->getTitleBar()->setTitleIcon(currentPlugin->icon());
+    dialog->exec();
+}
+void Center::reSet()
+{
+    this->setEnabled(true);
+    if (dialog)
+    {
+        dialog->deleteLater();
+        dialog = nullptr;
+    }
 }
 void Center::loadPluginTree()
 {

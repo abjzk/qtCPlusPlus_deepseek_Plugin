@@ -2,6 +2,7 @@
 #include <QPoint>
 #include <config.h>
 #include <QAbstractPlugin.h>
+#include "configDialog.h"
 class Center : public QWidget
 {
     Q_OBJECT
@@ -12,11 +13,14 @@ public:
     void initConnect();
 private:
     void loadPluginTree();
+    QAbstractPlugin * currentPlugin = nullptr;
     QAbstractPlugin *findPlugin(QString name);
     void addPlugin(QString &filename, int &retFlag);
     void showPluginTreeMenu(QPoint pos);
     TConfig * _config = new TConfig("SYSTEM", this);
     QMap<QString, QAbstractPlugin *> _plugins;
-    
+    void showConfigDialog();
+    ConfigDialog *dialog = nullptr;
     Ui::Center *ui;
+    void reSet();
 };
