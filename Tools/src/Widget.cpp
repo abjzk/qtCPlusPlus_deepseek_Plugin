@@ -1,5 +1,8 @@
 #include "Widget.h"
 #include <QTimer>
+#include <QTreeWidgetItem>
+#include <QTreeWidget>
+#include <QLineEdit>
 
 Widget::Widget(QWidget *mainWidget, QWidget *parent)
     :LWidget(new LTitleBar(), mainWidget, parent)
@@ -28,7 +31,41 @@ void Widget::systemSettingsChangedSlot()
     };
     LTitleBar *titleBar = qobject_cast<LTitleBar*>(this->getTitleBar());
     titleBar->setStandardIconMap(iconMap);
-
+    QList<QPushButton*> list = this->findChildren<QPushButton*>();
+    for (QPushButton *button : list)
+    {
+      button->setIcon(setIconColor(button->icon(),oppositeColor(this->palette().window().color())));
+    }
+    QList<QTreeWidget*> list2 = this->findChildren<QTreeWidget*>();
+    for (QTreeWidget *item : list2)
+    {
+        for (int i = 0; i < item->topLevelItemCount(); i++)
+        {
+            QTreeWidgetItem *topItem = item->topLevelItem(i);
+            topItem->setIcon(0, setIconColor(topItem->icon(0),oppositeColor(this->palette().window().color())));
+            for (int j = 0; j < topItem->childCount(); j++)
+            {
+                QTreeWidgetItem *childItem = topItem->child(j);
+                childItem->setIcon(0, setIconColor(childItem->icon(0),oppositeColor(this->palette().window().color())));
+            }
+        }
+    }
+    QList<QAction*> list3 = this->findChildren<QAction*>();
+    for (QAction *action : list3)
+    {
+        action->setIcon(setIconColor(action->icon(),oppositeColor(this->palette().window().color())));
+    }
+    QList<QLineEdit*> list4 = this->findChildren<QLineEdit*>();
+    for (QLineEdit *edit : list4)
+    {
+        // 获取所有的QAction对象
+        QList<QAction*> actions = edit->actions();
+        // 遍历所有的QAction对象
+        for (QAction* action : actions) {
+            // 设置图标
+            action->setIcon(setIconColor(action->icon(),oppositeColor(this->palette().window().color())));
+        }
+    }
 }
 
 QIcon Widget::setIconColor(const QIcon &icon, const QColor &color)

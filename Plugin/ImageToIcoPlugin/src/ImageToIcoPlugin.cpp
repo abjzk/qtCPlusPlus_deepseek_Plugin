@@ -1,4 +1,15 @@
 #include "ImageToIcoPlugin.h"
+#include "ImageToIcoWidget.h"
+#include <QStandardPaths>
+
+ImageToIcoPlugin::ImageToIcoPlugin(QObject *parent)
+    : QAbstractPlugin(parent)
+{
+}
+
+ImageToIcoPlugin::~ImageToIcoPlugin()
+{
+}
 
 QString ImageToIcoPlugin::group()
 {
@@ -27,5 +38,18 @@ QString ImageToIcoPlugin::description()
 
 QIcon ImageToIcoPlugin::icon()
 {
-    return QIcon();
+    return QIcon(":res/icon/ImageToIco.png");
+}
+
+QWidget *ImageToIcoPlugin::start(TConfig *config)
+{
+    QAbstractPlugin::start(config);
+    config->registerConfig("currentInputPath", "默认输入路径", TConfig::Type::Directory, QStandardPaths::writableLocation(QStandardPaths::DesktopLocation), true);
+    config->registerConfig("currentOutputPath", "默认输出路径", TConfig::Type::Directory,QStandardPaths::writableLocation(QStandardPaths::DownloadLocation)+"/ImageToIco" , true);
+    return new ImageToIcoWidget(config);
+}
+
+void ImageToIcoPlugin::stop()
+{
+    QAbstractPlugin::stop();
 }

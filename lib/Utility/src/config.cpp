@@ -57,7 +57,11 @@ bool TConfig::write(QString key, QVariant &value)
 
 bool TConfig::write(QMap<QString, QVariant> &map)
 {
-    return false;
+    for (auto it = map.begin(); it != map.end(); it++)
+    {
+        write(it.key(), it.value());
+    }
+    return true;
 }
 void TConfig::registerConfig(const QString &key, const QString &description, const Type &type, const QVariant &defaultValue, bool isShow)
 {
@@ -78,6 +82,12 @@ void TConfig::registerConfig(const QString &key, const QString &description, con
                           .arg(isShow);
         excuteSql->executeNonQuery(sql);
     }
+}
+QList<QVariantMap> TConfig::readAllAndDescription()
+{
+    QList<QVariantMap> map;
+    QString sql = QString("SELECT key, description, type, value FROM Config WHERE name = '%1' and isShow = 1").arg(_name);
+    return excuteSql->executeQuery(sql);
 }
 void TConfig::checkTable()
 {

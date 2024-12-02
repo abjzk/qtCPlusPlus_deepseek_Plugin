@@ -35,7 +35,7 @@ public:
     bool write(QString key, QVariant &value);
     bool write(QMap<QString, QVariant> &map);
     void registerConfig(const QString &key, const QString &description, const Type &type, const QVariant &defaultValue, bool isShow = true);
-
+    QList<QVariantMap> readAllAndDescription();
 private:
     void checkTable();
 

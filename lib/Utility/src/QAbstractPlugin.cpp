@@ -1,16 +1,18 @@
 #include "QAbstractPlugin.h"
 
-QAbstractPlugin::QAbstractPlugin(QWidget *parent)
-    : QWidget(parent)
+QAbstractPlugin::QAbstractPlugin(QObject *parent)
+    : QObject(parent)
 {
 }
 
-void QAbstractPlugin::start(TConfig *config)
+QWidget *QAbstractPlugin::start(TConfig *config)
 {
     _config = config;
+    return nullptr;
 }
 
 void QAbstractPlugin::stop()
 {
     delete _config;
+    _config = nullptr;
 }

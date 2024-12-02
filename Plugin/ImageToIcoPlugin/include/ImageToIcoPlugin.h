@@ -4,19 +4,20 @@
 #include "ImageToIcoPlugin_global.h"
 #include "QAbstractPlugin.h"
 
-
 class ImageToIcoPlugin_EXPORT ImageToIcoPlugin : public QAbstractPlugin
 {
     Q_OBJECT
 public:
-    ImageToIcoPlugin(QWidget *parent = nullptr) : QAbstractPlugin(parent) {}
-    ~ImageToIcoPlugin() override = default;
+    ImageToIcoPlugin(QObject *parent = nullptr);
+    ~ImageToIcoPlugin() override;
     virtual QString group() override;
     virtual QString name() override;
     virtual QString version() override;
     virtual QString author() override;
     virtual QString description() override;
     virtual QIcon icon() override;
+    virtual QWidget *start(TConfig *config) override;
+    virtual void stop() override;
 };
 
 

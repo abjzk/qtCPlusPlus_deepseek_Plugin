@@ -24,8 +24,9 @@ Center::Center(QWidget *parent)
     // 获取第一个插件
     QTreeWidgetItem *groupItem = ui->pluginTree->topLevelItem(0);
     QTreeWidgetItem *pluginItem = groupItem->child(0);
-    QAbstractPlugin *plugin = qobject_cast<QAbstractPlugin *>(pluginItem->data(0, Qt::UserRole).value<QObject *>());
-    plugin->start(new TConfig(plugin->name(), plugin));
+    qDebug() << pluginItem->data(0, Qt::UserRole).toString();
+    QAbstractPlugin *plugin = this->findPlugin(pluginItem->data(0, Qt::UserRole).toString());
+    ui->scrollArea->setWidget(plugin->start(new TConfig(plugin->name(), plugin)));
 }
 
 Center::~Center()
@@ -41,13 +42,15 @@ Center::~Center()
 void Center::initUi()
 {
     // 给treeWidget设置右键菜单
-    // ui->pluginTree->setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
-    // ui->pluginTree->setItemsExpandable(true);
+    // 初始化分割器的尺寸
+    ui->splitter->setSizes(QList<int>() << 200 << 600);
+    ui->pluginTree->setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
+    ui->pluginTree->setItemsExpandable(true);
 }
 
 void Center::initConnect()
 {
-    // connect(ui->pluginTree, &QTreeWidget::customContextMenuRequested, this, &Center::showPluginTreeMenu);
+    connect(ui->pluginTree, &QTreeWidget::customContextMenuRequested, this, &Center::showPluginTreeMenu);
 }
 
 void Center::showPluginTreeMenu(QPoint pos)
@@ -97,7 +100,7 @@ void Center::loadPluginTree()
     this->_config->write(QString("Plugins"), value);
 }
 
-QAbstractPlugin *Center::findPlugin(QString &name)
+QAbstractPlugin *Center::findPlugin(QString name)
 {
     QPluginLoader loader(QApplication::applicationDirPath() + "/" + name + ".dll");
     PluginFactory *factory = qobject_cast<PluginFactory *>(loader.instance());
@@ -129,7 +132,7 @@ void Center::addPlugin(QString &filename, int &retFlag)
     QTreeWidgetItem *pluginItem = new QTreeWidgetItem(groupItem);
     pluginItem->setText(0, plugin->name());
     pluginItem->setIcon(0, plugin->icon());
-    pluginItem->setData(0, Qt::UserRole, plugin->objectName());
+    pluginItem->setData(0, Qt::UserRole, filename);
     pluginItem->setToolTip(0, plugin->description());
     // 添加到组中
     groupItem->addChild(pluginItem);

@@ -1,14 +1,15 @@
 #pragma once
-#include "QWidget"
+#include "QObject"
 #include <QKeySequence>
 #include "utility.h"
 #include "config.h"
 #include "Utility_global.h"
-class UTILITY_EXPORT QAbstractPlugin : public QWidget
+#include <QWidget>
+class UTILITY_EXPORT QAbstractPlugin : public QObject
 {
     Q_OBJECT
 public:
-    explicit QAbstractPlugin(QWidget *parent = nullptr);
+    explicit QAbstractPlugin(QObject *parent = nullptr);
     virtual ~QAbstractPlugin() = default;
     virtual QString group() = 0;
     virtual QString name() = 0;
@@ -16,7 +17,7 @@ public:
     virtual QString author() = 0;
     virtual QString description() = 0;
     virtual QIcon icon() = 0;
-    virtual void start(TConfig *config);
+    virtual QWidget * start(TConfig *config);
     virtual void stop();
 protected:
     TConfig *_config;

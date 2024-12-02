@@ -23,6 +23,8 @@
         "system_error": "cpp",
         "xlocbuf": "cpp",
         "xstring": "cpp",
-        "qpluginloader": "cpp"
+        "qpluginloader": "cpp",
+        "qpoint": "cpp",
+        "qdialog": "cpp"
     }
 }
