@@ -73,6 +73,7 @@ namespace ljz
 		void paintEvent(QPaintEvent* event) override;
 		void closeButtonClick() override;
 		void minButtonClick() override;
+		void addWidget(QWidget* widget);
 
 	protected:
 		void mouseDoubleClickEvent(QMouseEvent* event) override;

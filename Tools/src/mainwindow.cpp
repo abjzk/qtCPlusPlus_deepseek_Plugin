@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include <QHBoxLayout>
 #include <QTimer>
+
 TitleBar::TitleBar(QWidget *parent)
     :LBaseTitleBar(parent)
 {
@@ -24,46 +25,32 @@ void TitleBar::minButtonClick()
 }
 
 MainWindow::MainWindow(QWidget *mainWidget, QWidget *parent)
-    :LWidget(new LTitleBar(), mainWidget, parent)
+    :Widget(mainWidget, parent)
 {
-    auto info = LWidget::info();
-    info.edgeSize = 8;
-    info.splitLineColor = Qt::GlobalColor::transparent;
-    LWidget::setInfo(info);
-    LTitleBar *titleBar = qobject_cast<LTitleBar*>(this->getTitleBar());
-    titleBar->setTitleIcon(QIcon(":res/Tools.ico"));
-    titleBar->setTitleText("");
+    this->initUi();
+    this->initConnect();
     this->systemSettingsChangedSlot();
-    connect(this,&MainWindow::systemSettingsChanged,[=]()
-    {
-        QTimer::singleShot(100, this, [=]() {this->systemSettingsChangedSlot();});
-    });
+}
+
+MainWindow::~MainWindow()
+{
+
 }
 
 void MainWindow::systemSettingsChangedSlot()
 {
-    QMap<LTitleBar::ButtonIcon, QIcon> iconMap{
-        {LTitleBar::ButtonIcon::CloseButtonIcon, setIconColor(QIcon(":/res/icon/close.png"),oppositeColor(this->palette().window().color()))},
-        {LTitleBar::ButtonIcon::MinButtonIcon, setIconColor(QIcon(":/res/icon/minimize.png"),oppositeColor(this->palette().window().color()))},
-        {LTitleBar::ButtonIcon::MaxButtonIcon, setIconColor(QIcon(":/res/icon/maximize.png"),oppositeColor(this->palette().window().color()))},
-        {LTitleBar::ButtonIcon::RestoreButtonIcon, setIconColor(QIcon(":/res/icon/restore.png"),oppositeColor(this->palette().window().color()))},
-    };
-    LTitleBar *titleBar = qobject_cast<LTitleBar*>(this->getTitleBar());
-    titleBar->setStandardIconMap(iconMap);
-
+    Widget::systemSettingsChangedSlot();
+    this->_setButton->setIcon(setIconColor(QIcon(":/res/icon/set.png"),oppositeColor(this->palette().window().color())));
 }
 
-QIcon MainWindow::setIconColor(const QIcon &icon, const QColor &color)
+void MainWindow::initUi()
 {
-    QPixmap pixmap = icon.pixmap(QSize(64,64));
-    QPainter painter(&pixmap);
-    painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
-    painter.fillRect(pixmap.rect(), color);
-    QIcon colorIcon = QIcon(pixmap);
-    return colorIcon;
+    _setButton->setIcon(QIcon(":res/Tools.ico"));
+    _setButton->setFixedSize(25, 25);
+    this->getTitleBar()->addWidget(_setButton);
 }
 
-QColor MainWindow::oppositeColor(const QColor &color)
+void MainWindow::initConnect()
 {
-    return QColor(255 - color.red(), 255 - color.green(), 255 - color.blue());
 }
+

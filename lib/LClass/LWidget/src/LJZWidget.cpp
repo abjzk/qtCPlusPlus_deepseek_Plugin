@@ -203,6 +203,12 @@ void LTitleBar::minButtonClick()
 	emit LTitleBar::minButtonClicked();
 }
 
+void LTitleBar::addWidget(QWidget* widget)
+{
+	// 在最小化左边添加widget也就是索引为0的widget
+	widget->setFixedHeight(25);
+	this->layout->insertWidget(2, widget);
+}
 LWidget::LWidget(LBaseTitleBar* titleBar, QWidget* mainWidget, QWidget* parent)
 	:QWidget(parent)
 {

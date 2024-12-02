@@ -1,38 +1,29 @@
+#pragma once
 #include "QWidget"
 #include <QKeySequence>
 #include "utility.h"
 #include "config.h"
-class QAbstractPlugin : public QWidget
+#include "Utility_global.h"
+class UTILITY_EXPORT QAbstractPlugin : public QWidget
 {
     Q_OBJECT
 public:
-    explicit QAbstractPlugin(TConfig *config,QWidget *parent = nullptr);
+    explicit QAbstractPlugin(QWidget *parent = nullptr);
     virtual ~QAbstractPlugin() = default;
+    virtual QString group() = 0;
     virtual QString name() = 0;
     virtual QString version() = 0;
     virtual QString author() = 0;
     virtual QString description() = 0;
     virtual QIcon icon() = 0;
-    bool saveLog(const QString &log, LogLevel level);
-    bool registerShortcut(const QString &name,QKeySequence keySequence);
-
-signals:
-    void registerShortcutSignal(QKeySequence keySequence);
-    void logSignal(const QString &log, LogLevel level);
-public slots:
-    virtual void registerShortcutSlot(bool isRegister) = 0;
+    virtual void start(TConfig *config);
+    virtual void stop();
 protected:
     TConfig *_config;
 };
 
-
-
-inline bool QAbstractPlugin::registerShortcut(const QString &name,QKeySequence keySequence)
-{
-    emit registerShortcutSignal(keySequence);
-}
 // 插件工厂
-class PluginFactory
+class UTILITY_EXPORT PluginFactory
 {
 public:
     /**
@@ -43,6 +34,6 @@ public:
     virtual ~PluginFactory() = default;
 };
 
-#define BasePlugin_IID "org.Tools.QAbstractPlugin"
+#define QAbstractPlugin_IID "org.Tools.QAbstractPlugin"
 
-Q_DECLARE_INTERFACE(PluginFactory, BasePlugin_IID)
+Q_DECLARE_INTERFACE(PluginFactory, QAbstractPlugin_IID)

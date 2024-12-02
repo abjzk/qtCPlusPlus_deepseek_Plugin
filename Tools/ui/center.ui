@@ -19,14 +19,28 @@
      <property name="orientation">
       <enum>Qt::Orientation::Horizontal</enum>
      </property>
-     <widget class="QTreeWidget" name="treeWidget">
+     <widget class="QTreeWidget" name="pluginTree">
       <column>
        <property name="text">
-        <string notr="true">1</string>
+        <string notr="true">插件</string>
        </property>
       </column>
      </widget>
-     <widget class="QWidget" name="widget" native="true"/>
+     <widget class="QScrollArea" name="scrollArea">
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="scrollAreaWidgetContents">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>54</width>
+         <height>548</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
     </widget>
    </item>
   </layout>

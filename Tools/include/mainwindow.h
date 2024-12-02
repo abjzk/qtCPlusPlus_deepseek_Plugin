@@ -1,4 +1,7 @@
 #include <LJZWidget.h>
+#include "Widget.h"
+#include "config.h"
+#include <QAbstractPlugin.h>
 using namespace ljz;
 
 class TitleBar : public LBaseTitleBar
@@ -17,14 +20,15 @@ public slots:
 };
 
 
-class MainWindow : public LWidget
+class MainWindow : public Widget
 {
     Q_OBJECT
 public:
     MainWindow(QWidget* mainWidget, QWidget* parent = nullptr);
-    ~MainWindow() override = default;
+    ~MainWindow() override;
+    virtual void systemSettingsChangedSlot() override;
+    void initUi();
+    void initConnect();
 private:
-    void systemSettingsChangedSlot();
-    static QIcon setIconColor(const QIcon& icon, const QColor& color);
-    static QColor oppositeColor(const QColor& color);
+    QPushButton * _setButton = new QPushButton(this);
 };

@@ -50,7 +50,7 @@ QMap<QString, QVariant> TConfig::readAll()
     return map;
 }
 
-bool TConfig::write(const QString &key, QVariant &value)
+bool TConfig::write(QString key, QVariant &value)
 {
     return false;
 }
