@@ -50,10 +50,45 @@ QMap<QString, QVariant> TConfig::readAll()
     return map;
 }
 
+
+
 bool TConfig::write(QString key, QVariant &value)
 {
-    return false;
+    // 查询key是否存在
+    QString checkSql = QString("SELECT COUNT(*) FROM Config WHERE key = '%1' AND name = '%2'").arg(key).arg(_name);
+    int count = excuteSql->executeScalar(checkSql, 0);
+
+    if (count > 0)
+    {
+        // key存在，进行类型验证和更新操作
+        QString typeSql = QString("SELECT type FROM Config WHERE key = '%1' AND name = '%2'").arg(key).arg(_name);
+        QString type = excuteSql->executeScalar(typeSql).toString();
+
+        // 验证类型是否合法
+        QString valueStr = valueToString(value, type);
+        if (valueStr.isEmpty())
+        {
+            // 类型不合法，返回false
+            return false;
+        }
+
+        // 更新SQL语句
+        QString updateSql = QString("UPDATE Config SET value = '%1' WHERE key = '%2' AND name = '%3'")
+                                .arg(valueStr)
+                                .arg(key)
+                                .arg(_name);
+
+        // 执行更新
+        return excuteSql->executeNonQuery(updateSql);
+    }
+    else
+    {
+        // key不存在，无法更新，返回false
+        return false;
+    }
 }
+
+
 
 bool TConfig::write(QMap<QString, QVariant> &map)
 {

@@ -6,4 +6,5 @@ class TestConfig : public QObject
     Q_OBJECT
 private slots:
     void registerConfig();
+    void writeConfig();
 };
