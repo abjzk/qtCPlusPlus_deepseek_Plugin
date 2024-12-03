@@ -167,4 +167,37 @@ void ConfigDialog::exec()
 
 void ConfigDialog::saved()
 {
+    QMap<QString, QVariant> map;
+    // 读取所有的行
+    for (int i = 0; i < layout->rowCount(); i++)
+    {
+        QLayoutItem * item = layout->itemAt(i,QFormLayout::FieldRole);
+        QLabel* label = qobject_cast<QLabel*>(layout->itemAt(i, QFormLayout::LabelRole)->widget());
+        QWidget* widget = item->widget();
+        if (!widget) continue;
+        QString className = widget->metaObject()->className();
+        QString key = label->text();
+        QVariant value;
+        if (className.contains("QLineEdit"))
+            value =  qobject_cast<QLineEdit*>(widget)->text();
+        else if (className.contains("QSpinBox"))
+            value = qobject_cast<QSpinBox*>(widget)->value();
+        else if (className.contains("QDoubleSpinBox"))
+			value = qobject_cast<QDoubleSpinBox*>(widget)->value();
+        else if (className.contains("QDateTimeEdit"))
+			value = qobject_cast<QDateTimeEdit*>(widget)->dateTime();
+        else if (className.contains("QDateEdit"))
+			value = qobject_cast<QDateEdit*>(widget)->date();
+		else if (className.contains("QTimeEdit"))
+			value = qobject_cast<QTimeEdit*>(widget)->time();
+		else if (className.contains("LSwitchButton"))
+			value = qobject_cast<LSwitchButton*>(widget)->isChecked();
+		else if (className.contains("LFileLineEdit"))
+			value = qobject_cast<LFileLineEdit*>(widget)->text();
+		else
+			continue;      
+        map.insert(key, value);
+    }
+    if (map.isEmpty()) return;
+    _config->write(map);
 }
