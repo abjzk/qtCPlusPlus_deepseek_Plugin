@@ -40,7 +40,7 @@ void ImageToIcoWidget::initConnect()
     connect(ui->startButton, &QPushButton::clicked, this, &ImageToIcoWidget::startConvert);
     connect(ui->comboBox, &QComboBox::currentTextChanged, [=]()
     {
-        this->loadTable(ui->inLineEdit->text().split(","), ui->comboBox->currentText());
+        this->loadTable(ui->inLineEdit->text().split(";"), ui->comboBox->currentText());
     });
     connect(ui->openOutputButton, &QPushButton::clicked, [=]()
     {
