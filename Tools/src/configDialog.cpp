@@ -12,12 +12,13 @@
 #pragma comment (lib,"user32.lib")
 #endif // WIN32
 #include <windowsx.h>
+#include <LWidget>
 
 ConfigDialog::ConfigDialog(QString name, QWidget *parent)
     : Widget(new QWidget(), parent)
 {
     this->setWindowFlags(Qt::FramelessWindowHint| Qt::Dialog | Qt::WindowStaysOnTopHint);
-    this->setFixedWidth(400);
+    // this->setFixedWidth(200);
 #ifdef Q_OS_WIN
 	HWND hwnd = reinterpret_cast<HWND>(this->winId());
 	DWORD style = ::GetWindowLong(hwnd, GWL_STYLE);
@@ -39,16 +40,17 @@ ConfigDialog::~ConfigDialog()
 void ConfigDialog::initUi()
 {
     QVBoxLayout *hlayout = new QVBoxLayout(this);
-    layout = new QFormLayout(this);
+    layout = new QVBoxLayout(this);
+    // 整体右对齐
     layout->setContentsMargins(0, 0, 0, 0);
     QList<QVariantMap> maps = this->_config->readAllAndDescription();
     int count = maps.count();
     this->setFixedHeight(count * 30 + 100);
     for (const auto &map : maps)
     {
-        QLabel *label = new QLabel(map["description"].toString(), this);
         QWidget * valueWidget = this->createValueWidget(map["type"].toString(), map["value"].toString());
-        layout->addRow(label, valueWidget);
+        LLabelWidgetFrame *labelWidget = new LLabelWidgetFrame(map["description"].toString(), valueWidget, this);
+        layout->addWidget(labelWidget);
     }
     hlayout->addLayout(layout);
     hlayout->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
@@ -86,6 +88,7 @@ QWidget* ConfigDialog::createValueWidget(QString type, QString value)
     {
         LSwitchButton *switchButton = new LSwitchButton(this);
         switchButton->setChecked(TConfig::stringToValue(value, type).toBool());
+        switchButton->setFixedWidth(60);
         return switchButton;
     }
     case TConfig::Type::Float:
@@ -169,14 +172,15 @@ void ConfigDialog::saved()
 {
     QMap<QString, QVariant> map;
     // 读取所有的行
-    for (int i = 0; i < layout->rowCount(); i++)
+    for (int i = 0; i < layout->count(); i++)
     {
-        QLayoutItem * item = layout->itemAt(i,QFormLayout::FieldRole);
-        QLabel* label = qobject_cast<QLabel*>(layout->itemAt(i, QFormLayout::LabelRole)->widget());
-        QWidget* widget = item->widget();
+        QLayoutItem * item = layout->itemAt(i);
+        LLabelWidgetFrame * labelWidget = qobject_cast<LLabelWidgetFrame*>(item->widget());
+        if (!labelWidget) continue;
+        QWidget * widget = labelWidget->valueWidget();
         if (!widget) continue;
         QString className = widget->metaObject()->className();
-        QString key = label->text();
+        QString key = labelWidget->labelName();
         QVariant value;
         if (className.contains("QLineEdit"))
             value =  qobject_cast<QLineEdit*>(widget)->text();

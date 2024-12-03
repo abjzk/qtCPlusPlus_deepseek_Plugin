@@ -47,6 +47,7 @@ void Center::initUi()
     font.setPointSize(15);
     font.setBold(true);
     ui->pluginTree->setFont(font);
+    ui->pluginTree->setIconSize(QSize(25, 25));
 }
 
 void Center::initConnect()

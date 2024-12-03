@@ -527,3 +527,28 @@ void LWidget::focusOutEvent(QFocusEvent* event)
 {
 	QWidget::focusOutEvent(event);
 }
+
+LLabelWidgetFrame::LLabelWidgetFrame(QString labelName, QWidget *valueWidget, QWidget *parent)
+	: QFrame(parent), _valueWidget(valueWidget)
+{
+	this->_label->setText(labelName);
+	this->_layout->setContentsMargins(0, 0, 0, 0);
+	this->_layout->addWidget(this->_label);
+	QSpacerItem *spacer = new QSpacerItem(20, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+	this->_layout->addItem(spacer);
+	this->_layout->addWidget(this->_valueWidget);
+	this->setLayout(this->_layout);
+}
+
+void LLabelWidgetFrame::setLabelName(QString labelName)
+{
+	this->_label->setText(labelName);
+}
+
+void LLabelWidgetFrame::setValueWidget(QWidget *valueWidget)
+{
+	this->_layout->takeAt(2);
+	delete this->_valueWidget;
+	this->_valueWidget = valueWidget;
+	this->_layout->addWidget(this->_valueWidget);
+}
