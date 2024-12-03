@@ -2,6 +2,9 @@
 #include <QString>
 #include <QSettings>
 #include "lcore_global.h"
+#include <QIcon>
+#include <QColor>
+#include <QPainter>
 namespace ljz
 {
 	class LCORE_EXPORT LFunc
@@ -50,6 +53,13 @@ namespace ljz
 				0, (void(result = result.arg(std::forward<Args>(args))), 0)...
 			};
 			return result;
+		}
+		static QIcon setIconColor(const QIcon& icon, const QColor& color);
+
+		static QColor oppositeColor(const QColor& color);
+		static QIcon getoppositeColorIcon(const QIcon& icon, const QColor& color)
+		{
+			return setIconColor(icon, oppositeColor(color));
 		}
 	};
 }

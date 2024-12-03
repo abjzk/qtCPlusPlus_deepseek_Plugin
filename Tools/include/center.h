@@ -11,16 +11,20 @@ public:
     ~Center();
     void initUi();
     void initConnect();
+
 private:
     void loadPluginTree();
-    QAbstractPlugin * currentPlugin = nullptr;
+    QAbstractPlugin *currentPlugin = nullptr;
     QAbstractPlugin *findPlugin(QString name);
-    void addPlugin(QString &filename, int &retFlag);
-    void showPluginTreeMenu(QPoint pos);
-    TConfig * _config = new TConfig("SYSTEM", this);
+    QTreeWidgetItem *addPlugin(QString &filename);
+    TConfig *_config = new TConfig("SYSTEM", this);
     QMap<QString, QAbstractPlugin *> _plugins;
-    void showConfigDialog();
     ConfigDialog *dialog = nullptr;
     Ui::Center *ui;
+    void showPluginTreeMenu(QPoint pos);
+
+    void showConfigDialog();
+
     void reSet();
+    void pluginItemClicked(QTreeWidgetItem *item, int column);
 };

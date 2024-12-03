@@ -13,8 +13,4 @@ public:
     LTitleBar *getTitleBar();
 public slots:
     virtual void systemSettingsChangedSlot();
-public:
-    static QIcon setIconColor(const QIcon& icon, const QColor& color);
-    static QColor oppositeColor(const QColor& color);
-
 };
