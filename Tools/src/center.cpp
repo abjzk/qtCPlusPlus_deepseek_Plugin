@@ -13,11 +13,8 @@
 #include <qexception.h>
 #include <qtreewidget.h>
 #include "configDialog.h"
-#ifdef WIN32
-#include <Windows.h>
-#pragma comment (lib,"user32.lib")
-#endif // WIN32
-#include <windowsx.h>
+#include <LCore>
+#include "MainWindow.h"
 
 Center::Center(QWidget *parent)
     : QWidget(parent), ui(new Ui::Center)
@@ -27,11 +24,6 @@ Center::Center(QWidget *parent)
     this->initUi();
     this->initConnect();
     this->loadPluginTree();
-    // 获取第一个插件
-    QTreeWidgetItem *groupItem = ui->pluginTree->topLevelItem(0);
-    QTreeWidgetItem *pluginItem = groupItem->child(0);
-    currentPlugin = this->findPlugin(pluginItem->data(0, Qt::UserRole).toString());
-    ui->scrollArea->setWidget(currentPlugin->start(new TConfig(currentPlugin->name(), currentPlugin)));
 }
 
 Center::~Center()
@@ -51,11 +43,17 @@ void Center::initUi()
     ui->splitter->setSizes(QList<int>() << 200 << 600);
     ui->pluginTree->setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
     ui->pluginTree->setItemsExpandable(true);
+    QFont font = ui->pluginTree->font();
+    font.setPointSize(15);
+    font.setBold(true);
+    ui->pluginTree->setFont(font);
+    ui->pluginTree->setIconSize(QSize(25, 25));
 }
 
 void Center::initConnect()
 {
     connect(ui->pluginTree, &QTreeWidget::customContextMenuRequested, this, &Center::showPluginTreeMenu);
+    connect(ui->pluginTree, &QTreeWidget::itemClicked, this, &Center::pluginItemClicked);
     connect(ui->pushButton, &QPushButton::clicked, this, &Center::showConfigDialog);
 }
 
@@ -63,11 +61,14 @@ void Center::showPluginTreeMenu(QPoint pos)
 {
     QPoint globalPos = QCursor::pos();
     QMenu menu(this);
+    QAction *action = menu.addAction(LFunc::getoppositeColorIcon(QIcon(":/res/icon/refresh.png"), this->palette().window().color()), "刷新");
+    connect(action, &QAction::triggered, this, &Center::loadPluginTree);
     menu.exec(globalPos);
 }
 void Center::showConfigDialog()
 {
-    if (dialog) return;
+    if (dialog)
+        return;
     dialog = new ConfigDialog(currentPlugin->name());
     connect(dialog, &ConfigDialog::closed, this, &Center::reSet);
     this->setEnabled(false);
@@ -84,8 +85,29 @@ void Center::reSet()
         dialog = nullptr;
     }
 }
+void Center::pluginItemClicked(QTreeWidgetItem *item, int column)
+{
+    if(item->childCount() > 0) return;
+    if(currentPlugin && item->text(0) == currentPlugin->name()) return;
+    delete ui->scrollArea->widget();
+    if (currentPlugin)
+        currentPlugin->stop();
+    delete currentPlugin;
+    currentPlugin = this->findPlugin(item->data(0, Qt::UserRole).toString());
+    ui->nameLabel->setText(currentPlugin->name());
+    ui->versionlabel->setText(currentPlugin->version());
+    ui->authorlabel->setText(currentPlugin->author());
+    ui->scrollArea->setWidget(currentPlugin->start(new TConfig(currentPlugin->name(), currentPlugin)));
+    QWidget *parent = this->parentWidget();
+    if (parent)
+    {
+        MainWindow *mainWindow = qobject_cast<MainWindow *>(parent);
+        mainWindow->systemSettingsChangedSlot();
+    }
+}
 void Center::loadPluginTree()
 {
+    ui->pluginTree->clear();
     QString str = this->_config->read("Plugins").toString();
     QJsonDocument doc = QJsonDocument::fromJson(str.toUtf8());
     QJsonObject obj = doc.object();
@@ -95,27 +117,9 @@ void Center::loadPluginTree()
     for (int i = 0; i < list.size(); i++)
     {
         QString filename = list.at(i).split(".")[0];
-        if (obj.contains(filename))
+        auto treeItem = addPlugin(filename);
+        if (!obj.contains(filename))
         {
-            QJsonObject item = obj.value(filename).toObject();
-            if (item.contains("enable"))
-            {
-                bool enable = item.value("enable").toBool();
-                if (enable)
-                {
-                    int retFlag;
-                    addPlugin(filename, retFlag);
-                    if (retFlag == 3)
-                        continue;
-                }
-            }
-        }
-        else
-        {
-            int retFlag;
-            addPlugin(filename, retFlag);
-            if (retFlag == 3)
-                continue;
             QJsonObject newObj = {{"enable", true}};
             obj.insert(filename, newObj);
         }
@@ -123,6 +127,11 @@ void Center::loadPluginTree()
     doc.setObject(obj);
     QVariant value = QString::fromUtf8(doc.toJson());
     this->_config->write(QString("Plugins"), value);
+    // 获取第一个插件
+    QTreeWidgetItem *groupItem = ui->pluginTree->topLevelItem(0);
+    QTreeWidgetItem *pluginItem = groupItem->child(0);
+    this->pluginItemClicked(pluginItem, 0);
+
 }
 
 QAbstractPlugin *Center::findPlugin(QString name)
@@ -132,7 +141,7 @@ QAbstractPlugin *Center::findPlugin(QString name)
     return factory->create();
 }
 
-void Center::addPlugin(QString &filename, int &retFlag)
+QTreeWidgetItem *Center::addPlugin(QString &filename)
 {
     QAbstractPlugin *plugin = findPlugin(filename);
     // plugin->start(new TConfig(plugin->name(), plugin));
@@ -161,7 +170,6 @@ void Center::addPlugin(QString &filename, int &retFlag)
     pluginItem->setToolTip(0, plugin->description());
     // 添加到组中
     groupItem->addChild(pluginItem);
-    qDebug()<<groupItem->childCount();
-    qDebug() << "插件" << plugin->name() << "加载成功";
     delete plugin;
+    return pluginItem;
 }

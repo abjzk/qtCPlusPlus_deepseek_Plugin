@@ -12,12 +12,13 @@
 #pragma comment (lib,"user32.lib")
 #endif // WIN32
 #include <windowsx.h>
+#include <LWidget>
 
 ConfigDialog::ConfigDialog(QString name, QWidget *parent)
     : Widget(new QWidget(), parent)
 {
     this->setWindowFlags(Qt::FramelessWindowHint| Qt::Dialog | Qt::WindowStaysOnTopHint);
-    this->setFixedWidth(400);
+    // this->setFixedWidth(200);
 #ifdef Q_OS_WIN
 	HWND hwnd = reinterpret_cast<HWND>(this->winId());
 	DWORD style = ::GetWindowLong(hwnd, GWL_STYLE);
@@ -39,16 +40,17 @@ ConfigDialog::~ConfigDialog()
 void ConfigDialog::initUi()
 {
     QVBoxLayout *hlayout = new QVBoxLayout(this);
-    layout = new QFormLayout(this);
+    layout = new QVBoxLayout(this);
+    // 整体右对齐
     layout->setContentsMargins(0, 0, 0, 0);
     QList<QVariantMap> maps = this->_config->readAllAndDescription();
     int count = maps.count();
     this->setFixedHeight(count * 30 + 100);
     for (const auto &map : maps)
     {
-        QLabel *label = new QLabel(map["description"].toString(), this);
         QWidget * valueWidget = this->createValueWidget(map["type"].toString(), map["value"].toString());
-        layout->addRow(label, valueWidget);
+        LLabelWidgetFrame *labelWidget = new LLabelWidgetFrame(map["description"].toString(), valueWidget, this);
+        layout->addWidget(labelWidget);
     }
     hlayout->addLayout(layout);
     hlayout->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
@@ -86,6 +88,7 @@ QWidget* ConfigDialog::createValueWidget(QString type, QString value)
     {
         LSwitchButton *switchButton = new LSwitchButton(this);
         switchButton->setChecked(TConfig::stringToValue(value, type).toBool());
+        switchButton->setFixedWidth(60);
         return switchButton;
     }
     case TConfig::Type::Float:
@@ -167,4 +170,38 @@ void ConfigDialog::exec()
 
 void ConfigDialog::saved()
 {
+    QMap<QString, QVariant> map;
+    // 读取所有的行
+    for (int i = 0; i < layout->count(); i++)
+    {
+        QLayoutItem * item = layout->itemAt(i);
+        LLabelWidgetFrame * labelWidget = qobject_cast<LLabelWidgetFrame*>(item->widget());
+        if (!labelWidget) continue;
+        QWidget * widget = labelWidget->valueWidget();
+        if (!widget) continue;
+        QString className = widget->metaObject()->className();
+        QString key = labelWidget->labelName();
+        QVariant value;
+        if (className.contains("QLineEdit"))
+            value =  qobject_cast<QLineEdit*>(widget)->text();
+        else if (className.contains("QSpinBox"))
+            value = qobject_cast<QSpinBox*>(widget)->value();
+        else if (className.contains("QDoubleSpinBox"))
+			value = qobject_cast<QDoubleSpinBox*>(widget)->value();
+        else if (className.contains("QDateTimeEdit"))
+			value = qobject_cast<QDateTimeEdit*>(widget)->dateTime();
+        else if (className.contains("QDateEdit"))
+			value = qobject_cast<QDateEdit*>(widget)->date();
+		else if (className.contains("QTimeEdit"))
+			value = qobject_cast<QTimeEdit*>(widget)->time();
+		else if (className.contains("LSwitchButton"))
+			value = qobject_cast<LSwitchButton*>(widget)->isChecked();
+		else if (className.contains("LFileLineEdit"))
+			value = qobject_cast<LFileLineEdit*>(widget)->text();
+		else
+			continue;      
+        map.insert(key, value);
+    }
+    if (map.isEmpty()) return;
+    _config->write(map);
 }

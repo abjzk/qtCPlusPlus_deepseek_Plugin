@@ -46,6 +46,8 @@ QWidget *ImageToIcoPlugin::start(TConfig *config)
     QAbstractPlugin::start(config);
     config->registerConfig("currentInputPath", "默认输入路径", TConfig::Type::Directory, QStandardPaths::writableLocation(QStandardPaths::DesktopLocation), true);
     config->registerConfig("currentOutputPath", "默认输出路径", TConfig::Type::Directory,QStandardPaths::writableLocation(QStandardPaths::DownloadLocation)+"/ImageToIco" , true);
+    config->registerConfig("overOpenOutputPath", "转换后打开文件夹", TConfig::Type::Bool, false, true);
+    config->registerConfig("addSuffix", "文件名添加像素大小", TConfig::Type::Bool, false, true);
     return new ImageToIcoWidget(config);
 }
 

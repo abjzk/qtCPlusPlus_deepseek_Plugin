@@ -10,6 +10,8 @@ public:
 private:
     void initUi();
     void initConnect();
+    void loadTable(const QStringList &files,const QString filter);
+    void startConvert();
     Ui::ImageToIcoPlugin * ui;
     TConfig * _config;
 };

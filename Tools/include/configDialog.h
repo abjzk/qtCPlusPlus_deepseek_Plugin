@@ -9,6 +9,7 @@
 #include <QFormLayout>
 #include <QDialogButtonBox>
 #include <QCloseEvent>
+#include <QVBoxLayout>
 
 class ConfigDialog : public Widget
 {
@@ -33,5 +34,5 @@ public slots:
 private:
     TConfig * _config;
     QDialogButtonBox *buttonBox;
-    QFormLayout *layout;
+    QVBoxLayout *layout;
 };

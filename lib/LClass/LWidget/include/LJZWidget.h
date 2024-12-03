@@ -10,7 +10,9 @@
 #include <QStyle>
 #include <QWidget>
 #include <QEvent>
+#include <QLabel>
 #include <QSpacerItem>
+#include <QFrame>
 
 
 namespace ljz
@@ -146,5 +148,21 @@ namespace ljz
 		QWidget* _statusBar = nullptr; //状态栏
 		QVBoxLayout* _layout = new QVBoxLayout(this);
 		Info _info;
+	};
+	class LWIDGET_EXPORT LLabelWidgetFrame : public QFrame
+	{
+		Q_OBJECT
+	public:
+		LLabelWidgetFrame(QString labelName,QWidget* valueWidget,QWidget* parent = nullptr);
+		~LLabelWidgetFrame() override = default;
+		void setLabelName(QString labelName);
+		void setValueWidget(QWidget* valueWidget);
+		QString labelName() const { return this->_label->text(); }
+		QWidget* valueWidget(){ return this->_valueWidget; }
+		QLabel *label(){ return this->_label; }
+	private:
+		QLabel* _label = new QLabel(this);
+		QWidget* _valueWidget = nullptr;
+		QHBoxLayout* _layout = new QHBoxLayout(this);
 	};
 }

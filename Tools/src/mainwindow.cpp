@@ -49,6 +49,7 @@ void MainWindow::initUi()
 {
     _setButton->setIcon(QIcon(":res/icon/set.png"));
     _setButton->setFixedSize(25, 25);
+    _setButton->setToolTip("系统设置");
     this->getTitleBar()->addWidget(_setButton);
 }
 

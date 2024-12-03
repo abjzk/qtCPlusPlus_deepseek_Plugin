@@ -9,11 +9,9 @@
 using namespace ljz;
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
-    TConfig *config = new TConfig("config.ini");
-    LJsonConfig configs("config.ini");
+    QApplication::setFont(QFont("Microsoft YaHei UI"));
     Center *center = new Center();
     MainWindow w(center);
     w.show();
-
     return a.exec();
 }

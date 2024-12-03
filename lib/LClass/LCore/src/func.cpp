@@ -140,3 +140,18 @@ QString LFunc::truncateString(const QString& str, int length)
 		QString truncatedStr = str.left(static_cast<qsizetype>(length) - 3) + "..."; // 留出三个位置给 "..."
 	return truncatedStr;
 }
+
+inline QIcon ljz::LFunc::setIconColor(const QIcon& icon, const QColor& color)
+{
+	QPixmap pixmap = icon.pixmap(QSize(64, 64));
+	QPainter painter(&pixmap);
+	painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+	painter.fillRect(pixmap.rect(), color);
+	QIcon colorIcon = QIcon(pixmap);
+	return colorIcon;
+}
+
+inline QColor ljz::LFunc::oppositeColor(const QColor& color)
+{
+	return QColor(255 - color.red(), 255 - color.green(), 255 - color.blue());
+}
