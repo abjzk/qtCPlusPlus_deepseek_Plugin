@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
+project(Tools)
 # 定义输出路径
 set(OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 

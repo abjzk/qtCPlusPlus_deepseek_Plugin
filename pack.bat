@@ -34,6 +34,11 @@ copy /y bin\%BUILD_TYPE%\*.dll "%pack_dir%"
 copy /y bin\%BUILD_TYPE%\Tools.exe "%pack_dir%"
 copy /y Tools\res\Tools.ico "%pack_dir%"
 
+:: 删除TemplatePlugin.dll
+echo Delete TemplatePlugin.dll
+del "%pack_dir%\TemplatePlugin.dll"
+
+
 :: 查找Tools.exe的依赖使用qt的windeployqt工具
 echo Using windeployqt tool to find Qt's dependencies
 cd "%pack_dir%"
