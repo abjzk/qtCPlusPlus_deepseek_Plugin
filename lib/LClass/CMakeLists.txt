@@ -4,3 +4,9 @@ project("LClass")
 
 add_subdirectory(LCore)
 add_subdirectory(LWidget)
+set_target_properties(
+    LCore
+    LWidget
+    PROPERTIES
+    FOLDER "LClass"
+)

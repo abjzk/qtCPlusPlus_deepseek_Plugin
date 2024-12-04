@@ -4,7 +4,7 @@
 #include <QIcon>
 #include <qdesktopservices.h>
 
-ImageToIcoWidget::ImageToIcoWidget(TConfig *config,QWidget *parent)
+ImageToIcoWidget::ImageToIcoWidget(TConfig *config, QWidget *parent)
     : QWidget(parent), ui(new Ui::ImageToIcoPlugin()), _config(config)
 {
     ui->setupUi(this);
@@ -39,14 +39,11 @@ void ImageToIcoWidget::initConnect()
     connect(ui->inLineEdit, &LFileLineEdit::fileSelected, this, &ImageToIcoWidget::loadTable);
     connect(ui->startButton, &QPushButton::clicked, this, &ImageToIcoWidget::startConvert);
     connect(ui->comboBox, &QComboBox::currentTextChanged, [=]()
-    {
-        this->loadTable(ui->inLineEdit->text().split(";"), ui->comboBox->currentText());
-    });
+            { this->loadTable(ui->inLineEdit->text().split(";"), ui->comboBox->currentText()); });
     connect(ui->openOutputButton, &QPushButton::clicked, [=]()
-    {
+            {
         QString path = ui->outLineEdit->text();
-        QDesktopServices::openUrl(QUrl::fromLocalFile(path));
-    });
+        QDesktopServices::openUrl(QUrl::fromLocalFile(path)); });
 }
 
 void ImageToIcoWidget::loadTable(const QStringList &files, const QString filter)
@@ -97,11 +94,11 @@ void ImageToIcoWidget::startConvert()
             QMessageBox::warning(this, "警告", QString("%1不存在").arg(input));
             continue;
         }
-        //开始将图片转为ico
+        // 开始将图片转为ico
         QImage image(input);
         QIcon icon(QPixmap::fromImage(image));
-        QPixmap pixmap = icon.pixmap(size,size);
-        bool ret = pixmap.save(output,"ICO");
+        QPixmap pixmap = icon.pixmap(size, size);
+        bool ret = pixmap.save(output, "ICO");
         if (!ret)
         {
             QMessageBox::warning(this, "警告", QString("%1保存失败").arg(output));
@@ -115,6 +112,6 @@ void ImageToIcoWidget::startConvert()
     ui->inLineEdit->setEnabled(true);
     ui->outLineEdit->setEnabled(true);
     ui->startButton->setEnabled(true);
-    if(_config->read("overOpenOutputPath").toBool())
+    if (_config->read("overOpenOutputPath").toBool())
         QDesktopServices::openUrl(QUrl::fromLocalFile(outdir));
 }
