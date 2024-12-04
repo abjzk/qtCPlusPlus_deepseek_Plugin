@@ -27,6 +27,22 @@
         "qpoint": "cpp",
         "qdialog": "cpp",
         "qspinbox": "cpp",
-        "qstyle": "cpp"
+        "qstyle": "cpp",
+        "array": "cpp",
+        "compare": "cpp",
+        "format": "cpp",
+        "functional": "cpp",
+        "future": "cpp",
+        "ratio": "cpp",
+        "tuple": "cpp",
+        "type_traits": "cpp",
+        "utility": "cpp",
+        "variant": "cpp",
+        "xmemory": "cpp",
+        "xtr1common": "cpp",
+        "xutility": "cpp",
+        "xhash": "cpp",
+        "xtree": "cpp",
+        "numeric": "cpp"
     }
 }

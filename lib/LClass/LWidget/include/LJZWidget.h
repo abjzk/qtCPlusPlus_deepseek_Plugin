@@ -160,9 +160,12 @@ namespace ljz
 		QString labelName() const { return this->_label->text(); }
 		QWidget* valueWidget(){ return this->_valueWidget; }
 		QLabel *label(){ return this->_label; }
+		QVariant data() const { return this->_data; }
+		void setData(const QVariant& data){ this->_data = data; }
 	private:
 		QLabel* _label = new QLabel(this);
 		QWidget* _valueWidget = nullptr;
 		QHBoxLayout* _layout = new QHBoxLayout(this);
+		QVariant _data;
 	};
 }

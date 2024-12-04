@@ -2,9 +2,10 @@
 #include "ImageToIcoWidget.h"
 #include <QStandardPaths>
 
-ImageToIcoPlugin::ImageToIcoPlugin(QObject *parent)
-    : QAbstractPlugin(parent)
+ImageToIcoPlugin::ImageToIcoPlugin(TConfig *config,QObject *parent)
+    : QAbstractPlugin(config,parent)
 {
+    this->registerConfig();
 }
 
 ImageToIcoPlugin::~ImageToIcoPlugin()
@@ -41,17 +42,42 @@ QIcon ImageToIcoPlugin::icon()
     return QIcon(":res/icon/ImageToIco.png");
 }
 
-QWidget *ImageToIcoPlugin::start(TConfig *config)
+QWidget *ImageToIcoPlugin::start()
 {
-    QAbstractPlugin::start(config);
-    config->registerConfig("currentInputPath", "默认输入路径", TConfig::Type::Directory, QStandardPaths::writableLocation(QStandardPaths::DesktopLocation), true);
-    config->registerConfig("currentOutputPath", "默认输出路径", TConfig::Type::Directory,QStandardPaths::writableLocation(QStandardPaths::DownloadLocation)+"/ImageToIco" , true);
-    config->registerConfig("overOpenOutputPath", "转换后打开文件夹", TConfig::Type::Bool, false, true);
-    config->registerConfig("addSuffix", "文件名添加像素大小", TConfig::Type::Bool, false, true);
-    return new ImageToIcoWidget(config);
+    QAbstractPlugin::start();
+    return new ImageToIcoWidget(_config);
 }
+
 
 void ImageToIcoPlugin::stop()
 {
     QAbstractPlugin::stop();
+}
+
+void ImageToIcoPlugin::writeConfigBeforeEvent(WriteConfigEvent &event)
+{
+    QAbstractPlugin::writeConfigBeforeEvent(event);
+    if(event.key == "currentOutputPath" || event.key == "currentInputPath")
+    {
+        QVariant path = event.newValue.toString();
+        if (path.toString().isEmpty())
+        {
+            event.isValid = false;
+            event.message = "路径不能为空";
+        }
+    }
+}
+
+void ImageToIcoPlugin::writeConfigAfterEvent(WriteConfigEvent &event)
+{
+    QAbstractPlugin::writeConfigAfterEvent(event);
+}
+
+void ImageToIcoPlugin::registerConfig()
+{
+    QAbstractPlugin::registerConfig();
+    Directory_CONFIG_REGISTER("currentInputPath", "默认输入路径", QStandardPaths::writableLocation(QStandardPaths::DesktopLocation), true);
+    Directory_CONFIG_REGISTER("currentOutputPath", "默认输出路径", QStandardPaths::writableLocation(QStandardPaths::DownloadLocation)+"/ImageToIco" , true);
+    Bool_CONFIG_REGISTER("overOpenOutputPath", "转换后打开文件夹", false, true);
+    Bool_CONFIG_REGISTER("addSuffix", "文件名添加像素大小", false, true);
 }

@@ -13,8 +13,9 @@
 #endif // WIN32
 #include <windowsx.h>
 #include <LWidget>
+#include <qmessagebox.h>
 
-ConfigDialog::ConfigDialog(QString name, QWidget *parent)
+ConfigDialog::ConfigDialog(TConfig* config, QWidget *parent)
     : Widget(new QWidget(), parent)
 {
     this->setWindowFlags(Qt::FramelessWindowHint| Qt::Dialog | Qt::WindowStaysOnTopHint);
@@ -27,7 +28,7 @@ ConfigDialog::ConfigDialog(QString name, QWidget *parent)
     
     this->getTitleBar()->getMinButton()->setVisible(false);
     this->getTitleBar()->getMaxButton()->setVisible(false);
-    this->_config = new TConfig(name, this);
+    this->_config = config;
     this->initUi();
     this->initConnect();
     systemSettingsChangedSlot();
@@ -43,15 +44,7 @@ void ConfigDialog::initUi()
     layout = new QVBoxLayout(this);
     // 整体右对齐
     layout->setContentsMargins(0, 0, 0, 0);
-    QList<QVariantMap> maps = this->_config->readAllAndDescription();
-    int count = maps.count();
-    this->setFixedHeight(count * 30 + 100);
-    for (const auto &map : maps)
-    {
-        QWidget * valueWidget = this->createValueWidget(map["type"].toString(), map["value"].toString());
-        LLabelWidgetFrame *labelWidget = new LLabelWidgetFrame(map["description"].toString(), valueWidget, this);
-        layout->addWidget(labelWidget);
-    }
+    loadConfig();
     hlayout->addLayout(layout);
     hlayout->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
     hlayout->setContentsMargins(0, 10, 0, 0);
@@ -61,13 +54,29 @@ void ConfigDialog::initUi()
     this->_mainWidget->setLayout(hlayout);
 }
 
+void ConfigDialog::loadConfig()
+{
+    QList<QVariantMap> maps = this->_config->readAllAndDescription();
+    int count = maps.count();
+    this->setFixedHeight(count * 30 + 100);
+    for (const auto &map : maps)
+    {
+        LLabelWidgetFrame *labelWidget = new LLabelWidgetFrame(map["description"].toString(), new QWidget(), this);
+        labelWidget->setObjectName(map["key"].toString());
+        QWidget *valueWidget = this->createValueWidget(labelWidget, map["type"].toString(), map["value"].toString());
+        labelWidget->setData(map);
+        labelWidget->setValueWidget(valueWidget);
+        layout->addWidget(labelWidget);
+    }
+}
+
 void ConfigDialog::initConnect()
 {
     connect(buttonBox, &QDialogButtonBox::accepted, this, &ConfigDialog::accept);
     connect(buttonBox, &QDialogButtonBox::rejected, this, &ConfigDialog::reject);
 }
 
-QWidget* ConfigDialog::createValueWidget(QString type, QString value)
+QWidget* ConfigDialog::createValueWidget(LLabelWidgetFrame* frame,QString type, QString value)
 {
     TConfig::Type typeEnum = TConfig::getTypeFromString(type);
     switch (typeEnum)
@@ -76,12 +85,18 @@ QWidget* ConfigDialog::createValueWidget(QString type, QString value)
     {
         QSpinBox *spinBox = new QSpinBox(this);
         spinBox->setValue(TConfig::stringToValue(value, type).toInt());
+        connect(spinBox, &QSpinBox::valueChanged, [=](int value){
+            this->valueChanged(frame->data().value<QVariantMap>().value("key").toString(), value);
+        });
         return spinBox;
     }
     case TConfig::Type::String:
     {
         QLineEdit *lineEdit = new QLineEdit(this);
         lineEdit->setText(TConfig::stringToValue(value, type).toString());
+        connect(lineEdit, &QLineEdit::textChanged, [=](const QString &value){
+            this->valueChanged(frame->data().value<QVariantMap>().value("key").toString(), value);
+        });
         return lineEdit;
     }
     case TConfig::Type::Bool:
@@ -89,42 +104,64 @@ QWidget* ConfigDialog::createValueWidget(QString type, QString value)
         LSwitchButton *switchButton = new LSwitchButton(this);
         switchButton->setChecked(TConfig::stringToValue(value, type).toBool());
         switchButton->setFixedWidth(60);
+        connect(switchButton, &LSwitchButton::clicked, [=](bool state){
+            this->valueChanged(frame->data().value<QVariantMap>().value("key").toString(), state);
+        });
         return switchButton;
     }
     case TConfig::Type::Float:
     {
-        QLineEdit *lineEdit = new QLineEdit(this);
-        lineEdit->setText(TConfig::stringToValue(value, type).toString());
-        return lineEdit;
+        QDoubleSpinBox *spinBox = new QDoubleSpinBox(this);
+        spinBox->setValue(TConfig::stringToValue(value, type).toFloat());
+        connect(spinBox, &QDoubleSpinBox::valueChanged, [=](double value){
+            this->valueChanged(frame->data().value<QVariantMap>().value("key").toString(), value);
+        });
+        return spinBox;
     }
     case TConfig::Type::Double:
     {
-        QLineEdit *lineEdit = new QLineEdit(this);
-        lineEdit->setText(TConfig::stringToValue(value, type).toString());
-        return lineEdit;
+        QDoubleSpinBox *spinBox = new QDoubleSpinBox(this);
+        spinBox->setValue(TConfig::stringToValue(value, type).toDouble());
+        connect(spinBox, &QDoubleSpinBox::valueChanged, [=](double value){
+            this->valueChanged(frame->data().value<QVariantMap>().value("key").toString(), value);
+        });
+        return spinBox;
     }
     case TConfig::Type::DateTime:
     {
         QDateTimeEdit *dateTimeEdit = new QDateTimeEdit(this);
         dateTimeEdit->setDateTime(TConfig::stringToValue(value, type).toDateTime());
+        dateTimeEdit->setCalendarPopup(true);
+        connect(dateTimeEdit, &QDateTimeEdit::dateTimeChanged, [=](QDateTime dateTime){
+            this->valueChanged(frame->data().value<QVariantMap>().value("key").toString(), dateTime);
+        });
         return dateTimeEdit;
     }
     case TConfig::Type::Date:
     {
         QDateEdit *dateEdit = new QDateEdit(this);
         dateEdit->setDate(TConfig::stringToValue(value, type).toDate());
+        connect(dateEdit, &QDateEdit::dateChanged, [=](QDate date){
+            this->valueChanged(frame->data().value<QVariantMap>().value("key").toString(), date);
+        });
         return dateEdit;
     }
     case TConfig::Type::Time:
     {
         QTimeEdit *timeEdit = new QTimeEdit(this);
         timeEdit->setTime(TConfig::stringToValue(value, type).toTime());
+        connect(timeEdit, &QTimeEdit::timeChanged, [=](QTime time){
+            this->valueChanged(frame->data().value<QVariantMap>().value("key").toString(), time);
+        });
         return timeEdit;
     }
     case TConfig::Type::File:
     {
         LFileLineEdit *fileLineEdit = new LFileLineEdit(this);
         fileLineEdit->setText(TConfig::stringToValue(value, type).toString());
+        connect(fileLineEdit, &LFileLineEdit::textChanged, [=](const QString &text){
+            this->valueChanged(frame->data().value<QVariantMap>().value("key").toString(), text);
+        });
         return fileLineEdit;
     }
     case TConfig::Type::Directory:
@@ -134,6 +171,9 @@ QWidget* ConfigDialog::createValueWidget(QString type, QString value)
         info.mode = QFileDialog::Directory;
         directoryLineEdit->setInfo(info);
         directoryLineEdit->setText(TConfig::stringToValue(value, type).toString());
+        connect(directoryLineEdit, &LFileLineEdit::textChanged, [=](const QString &text){
+            this->valueChanged(frame->data().value<QVariantMap>().value("key").toString(), text);
+        });
         return directoryLineEdit;
     }
     default:
@@ -150,7 +190,7 @@ void ConfigDialog::closeEvent(QCloseEvent *event)
 
 void ConfigDialog::accept()
 {
-    this->saved();
+    // this->saved();
     emit this->accepted();
     this->close();
 }
@@ -203,5 +243,41 @@ void ConfigDialog::saved()
         map.insert(key, value);
     }
     if (map.isEmpty()) return;
-    _config->write(map);
+    // _config->write(map);
+}
+
+void ConfigDialog::valueChanged(QString key, QVariant value)
+{
+    if (isRead) return;
+    QString message;
+    bool result = _config->write(key, value,message);
+    if (!result)
+    {
+        QMessageBox::warning(this, "警告", message);
+        auto widget  = this->findChild<LLabelWidgetFrame*>(key);
+        this->setValue(widget->valueWidget(), _config->read(key));
+    }
+}
+
+void ConfigDialog::setValue(QWidget* widget, QVariant value)
+{
+    isRead = true;
+    QString className = widget->metaObject()->className();
+    if (className.contains("QLineEdit"))
+        qobject_cast<QLineEdit*>(widget)->setText(value.toString());
+    else if (className.contains("QSpinBox"))
+        qobject_cast<QSpinBox*>(widget)->setValue(value.toInt());
+    else if (className.contains("QDoubleSpinBox"))
+        qobject_cast<QDoubleSpinBox*>(widget)->setValue(value.toDouble());
+    else if (className.contains("QDateTimeEdit"))
+        qobject_cast<QDateTimeEdit*>(widget)->setDateTime(value.toDateTime());
+    else if (className.contains("QDateEdit"))
+        qobject_cast<QDateEdit*>(widget)->setDate(value.toDate());
+    else if (className.contains("QTimeEdit"))
+        qobject_cast<QTimeEdit*>(widget)->setTime(value.toTime());
+    else if (className.contains("LSwitchButton"))
+        qobject_cast<LSwitchButton*>(widget)->setChecked(value.toBool());
+    else if (className.contains("LFileLineEdit"))
+        qobject_cast<LFileLineEdit*>(widget)->setText(value.toString());
+    isRead = false;
 }

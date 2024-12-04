@@ -16,11 +16,12 @@ class ConfigDialog : public Widget
     Q_OBJECT
 
 public:
-    ConfigDialog(QString name,QWidget* parent = nullptr);
+    ConfigDialog(TConfig *config,QWidget* parent = nullptr);
     ~ConfigDialog() override;
     void initUi();
+    void loadConfig();
     void initConnect();
-    QWidget* createValueWidget(QString type, QString value);
+    QWidget* createValueWidget(LLabelWidgetFrame* frame,QString type, QString value);
     virtual void closeEvent(QCloseEvent *event) override;
 Q_SIGNALS:
     void accepted();
@@ -31,8 +32,11 @@ public slots:
     void reject();
     void exec();
     void saved();
+    void valueChanged(QString key, QVariant value);
+    void setValue(QWidget* widget, QVariant value);
 private:
     TConfig * _config;
     QDialogButtonBox *buttonBox;
     QVBoxLayout *layout;
+    bool isRead = false;
 };

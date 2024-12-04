@@ -3,12 +3,14 @@
 
 #include "ImageToIcoPlugin_global.h"
 #include "QAbstractPlugin.h"
+#include "config.h"
+
 
 class ImageToIcoPlugin_EXPORT ImageToIcoPlugin : public QAbstractPlugin
 {
     Q_OBJECT
 public:
-    ImageToIcoPlugin(QObject *parent = nullptr);
+    ImageToIcoPlugin(TConfig *config,QObject *parent = nullptr);
     ~ImageToIcoPlugin() override;
     virtual QString group() override;
     virtual QString name() override;
@@ -16,8 +18,11 @@ public:
     virtual QString author() override;
     virtual QString description() override;
     virtual QIcon icon() override;
-    virtual QWidget *start(TConfig *config) override;
+    virtual QWidget *start() override;
     virtual void stop() override;
+    virtual void writeConfigBeforeEvent(WriteConfigEvent &event) override;
+    virtual void writeConfigAfterEvent(WriteConfigEvent &event) override;
+    virtual void registerConfig() override;
 };
 
 
@@ -27,7 +32,7 @@ class ImageToIcoPlugin_EXPORT ImageToIcoPluginFactory : public QObject, public P
 		Q_PLUGIN_METADATA(IID QAbstractPlugin_IID)
 		Q_INTERFACES(PluginFactory)
 public:
-	QAbstractPlugin* create() override { return new ImageToIcoPlugin(); };
+	QAbstractPlugin* create(TConfig *config) override { return new ImageToIcoPlugin(config); };
 	~ImageToIcoPluginFactory() override = default;
 } ;
 

@@ -34,7 +34,7 @@ QVariant TConfig::read(const QString &key)
 bool TConfig::read(QMap<QString, QVariant> &map)
 {
     QString sql = QString("SELECT key,value,type FROM Config WHERE name = '%1'").arg(_name);
-    auto rows = excuteSql->executeQuery(sql);
+    auto rows = excuteSql->executeQuery(sql);   
     if (rows.size() == 0) return false;
     for (auto row : rows)
     {
@@ -52,39 +52,39 @@ QMap<QString, QVariant> TConfig::readAll()
 
 
 
-bool TConfig::write(QString key, QVariant &value)
+bool TConfig::write(QString key, QVariant &value,QString& message)
 {
     // 查询key是否存在
     QString checkSql = QString("SELECT COUNT(*) FROM Config WHERE key = '%1' AND name = '%2'").arg(key).arg(_name);
     int count = excuteSql->executeScalar(checkSql, 0);
-
-    if (count > 0)
-    {
-        // key存在，进行类型验证和更新操作
-        QString typeSql = QString("SELECT type FROM Config WHERE key = '%1' AND name = '%2'").arg(key).arg(_name);
-        QString type = excuteSql->executeScalar(typeSql).toString();
-
-        // 验证类型是否合法
-        QString valueStr = valueToString(value, type);
-        if (valueStr.isEmpty())
-        {
-            // 类型不合法，返回false
-            return false;
-        }
-
-        // 更新SQL语句
-        QString updateSql = QString("UPDATE Config SET value = '%1' WHERE key = '%2' AND name = '%3'")
-                                .arg(valueStr)
-                                .arg(key)
-                                .arg(_name);
-
-        // 执行更新
-        return excuteSql->executeNonQuery(updateSql);
+    if (count == 0){
+        message = QString("key:%1不存在").arg(key);
+        return false;
     }
     else
     {
-        // key不存在，无法更新，返回false
-        return false;
+        // key存在，进行类型验证和更新操作
+        QString typeSql = QString("SELECT value,type FROM Config WHERE key = '%1' AND name = '%2'").arg(key).arg(_name);
+        QVariantMap row = excuteSql->executeFirstRow(typeSql);
+        QString type = row["type"].toString();
+        QString valueStr = row["value"].toString();
+        QVariant oldValue = TConfig::stringToValue(valueStr, type);
+        WriteConfigEvent event = {key, oldValue, value, type, true, ""};
+        if (this->writeConfigBeforeCallback != nullptr)
+            this->writeConfigBeforeCallback(event);
+        if (!event.isValid)
+        {
+            message = event.message;
+            return false;
+        }
+        QString updateSql = QString("UPDATE Config SET value = '%1' WHERE key = '%2' AND name = '%3'")
+                            .arg(valueToString(event.newValue, event.type))
+                            .arg(key)
+                            .arg(_name);
+        excuteSql->executeNonQuery(updateSql);
+        if (this->writeConfigAfterCallback != nullptr)
+            this->writeConfigAfterCallback(event);
+        return true;
     }
 }
 
@@ -94,7 +94,8 @@ bool TConfig::write(QMap<QString, QVariant> &map)
 {
     for (auto it = map.begin(); it != map.end(); it++)
     {
-        write(it.key(), it.value());
+        QString message;
+        write(it.key(), it.value(), message);
     }
     return true;
 }

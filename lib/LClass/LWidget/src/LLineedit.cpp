@@ -19,9 +19,9 @@ LFileLineEdit::LFileLineEdit(QWidget* parent)
 	this->addAction(this->_clearAction, QLineEdit::TrailingPosition);
 	connect(this->_clearAction, &QAction::triggered, [=]()
 		{
-			this->clear();
 			this->setToolTip("");
 			emit this->fileCleared();
+			this->clear();
 		});
 	reAction();
 }

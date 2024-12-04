@@ -61,7 +61,7 @@ void MainWindow::initConnect()
 void MainWindow::showConfigDialog()
 {
     if (dialog) return;
-    dialog = new ConfigDialog("SYSTEM");
+    dialog = new ConfigDialog(new TConfig("SYSTEM", this));
     connect(dialog, &ConfigDialog::closed, this, &MainWindow::reSet);
     this->setEnabled(false);
     dialog->exec();

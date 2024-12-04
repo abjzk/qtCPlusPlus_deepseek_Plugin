@@ -69,7 +69,7 @@ void Center::showConfigDialog()
 {
     if (dialog)
         return;
-    dialog = new ConfigDialog(currentPlugin->name());
+    dialog = new ConfigDialog(currentPlugin->config());
     connect(dialog, &ConfigDialog::closed, this, &Center::reSet);
     this->setEnabled(false);
     dialog->setWindowIcon(currentPlugin->icon());
@@ -97,7 +97,7 @@ void Center::pluginItemClicked(QTreeWidgetItem *item, int column)
     ui->nameLabel->setText(currentPlugin->name());
     ui->versionlabel->setText(currentPlugin->version());
     ui->authorlabel->setText(currentPlugin->author());
-    ui->scrollArea->setWidget(currentPlugin->start(new TConfig(currentPlugin->name(), currentPlugin)));
+    ui->scrollArea->setWidget(currentPlugin->start());
     QWidget *parent = this->parentWidget();
     if (parent)
     {
@@ -126,7 +126,8 @@ void Center::loadPluginTree()
     }
     doc.setObject(obj);
     QVariant value = QString::fromUtf8(doc.toJson());
-    this->_config->write(QString("Plugins"), value);
+    QString message;
+    this->_config->write(QString("Plugins"), value, message);
     // 获取第一个插件
     QTreeWidgetItem *groupItem = ui->pluginTree->topLevelItem(0);
     QTreeWidgetItem *pluginItem = groupItem->child(0);
@@ -138,7 +139,7 @@ QAbstractPlugin *Center::findPlugin(QString name)
 {
     QPluginLoader loader(QApplication::applicationDirPath() + "/" + name + ".dll");
     PluginFactory *factory = qobject_cast<PluginFactory *>(loader.instance());
-    return factory->create();
+    return factory->create(new TConfig(name));
 }
 
 QTreeWidgetItem *Center::addPlugin(QString &filename)
