@@ -56,15 +56,16 @@ void ConfigDialog::initUi()
 
 void ConfigDialog::loadConfig()
 {
-    QList<QVariantMap> maps = this->_config->readAllAndDescription();
-    int count = maps.count();
+    QList<ConfigItem> items;
+    this->_config->readAll(items);
+    int count = items.count();
     this->setFixedHeight(count * 30 + 100);
-    for (const auto &map : maps)
+    for (const auto &item : items)
     {
-        LLabelWidgetFrame *labelWidget = new LLabelWidgetFrame(map["description"].toString(), new QWidget(), this);
-        labelWidget->setObjectName(map["key"].toString());
-        QWidget *valueWidget = this->createValueWidget(labelWidget, map["type"].toString(), map["value"].toString());
-        labelWidget->setData(map);
+        LLabelWidgetFrame *labelWidget = new LLabelWidgetFrame(item.description, new QWidget(), this);
+        labelWidget->setObjectName(item.key);
+        QWidget *valueWidget = this->createValueWidget(labelWidget, item.type, item.valueString());
+        labelWidget->setData(item.data());
         labelWidget->setValueWidget(valueWidget);
         layout->addWidget(labelWidget);
     }
@@ -255,7 +256,7 @@ void ConfigDialog::valueChanged(QString key, QVariant value)
     {
         QMessageBox::warning(this, "警告", message);
         auto widget  = this->findChild<LLabelWidgetFrame*>(key);
-        this->setValue(widget->valueWidget(), _config->read(key));
+        this->setValue(widget->valueWidget(), _config->read(key).value);
     }
 }
 

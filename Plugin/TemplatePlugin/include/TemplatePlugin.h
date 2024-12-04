@@ -1,17 +1,17 @@
-#ifndef ImageToIcoPlugin_H
-#define ImageToIcoPlugin_H
+#ifndef TemplatePlugin_H
+#define TemplatePlugin_H
 
-#include "ImageToIcoPlugin_global.h"
+#include "TemplatePlugin_global.h"
 #include "QAbstractPlugin.h"
 #include "config.h"
 
 
-class ImageToIcoPlugin_EXPORT ImageToIcoPlugin : public QAbstractPlugin
+class TemplatePlugin_EXPORT TemplatePlugin : public QAbstractPlugin
 {
     Q_OBJECT
 public:
-    ImageToIcoPlugin(TConfig *config,QObject *parent = nullptr);
-    ~ImageToIcoPlugin() override;
+    TemplatePlugin(TConfig *config,QObject *parent = nullptr);
+    ~TemplatePlugin() override;
     virtual QString group() override;
     virtual QString name() override;
     virtual QString version() override;
@@ -28,15 +28,15 @@ public:
 };
 
 
-class ImageToIcoPlugin_EXPORT ImageToIcoPluginFactory : public QObject, public PluginFactory
+class TemplatePlugin_EXPORT TemplatePluginFactory : public QObject, public PluginFactory
 {
 	Q_OBJECT
 		Q_PLUGIN_METADATA(IID QAbstractPlugin_IID)
 		Q_INTERFACES(PluginFactory)
 public:
-	QAbstractPlugin* create(TConfig *config) override { return new ImageToIcoPlugin(config); };
-	~ImageToIcoPluginFactory() override = default;
+	QAbstractPlugin* create(TConfig *config) override { return new TemplatePlugin(config); };
+	~TemplatePluginFactory() override = default;
 } ;
 
 
-#endif // ImageToIcoPlugin_H
+#endif // TemplatePlugin_H

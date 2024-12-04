@@ -43,6 +43,7 @@
         "xutility": "cpp",
         "xhash": "cpp",
         "xtree": "cpp",
-        "numeric": "cpp"
+        "numeric": "cpp",
+        "qmessagebox": "cpp"
     }
 }

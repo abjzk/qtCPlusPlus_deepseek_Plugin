@@ -22,14 +22,14 @@ void ImageToIcoWidget::initUi()
     auto info = ui->inLineEdit->info();
     info.title = "选择输入图像文件夹";
     info.mode = QFileDialog::Directory;
-    info.path = _config->read("currentInputPath").toString();
+    info.path = _config->read("currentInputPath").value.toString();
     ui->inLineEdit->setInfo(info);
     info = ui->outLineEdit->info();
     info.title = "选择输出图标文件夹";
     info.mode = QFileDialog::Directory;
-    info.path = _config->read("currentOutputPath").toString();
+    info.path = _config->read("currentOutputPath").value.toString();
     ui->outLineEdit->setInfo(info);
-    ui->outLineEdit->setText(_config->read("currentOutputPath").toString());
+    ui->outLineEdit->setText(_config->read("currentOutputPath").value.toString());
     ui->progressBar->setValue(0);
     ui->progressBar->setMaximum(0);
 }
@@ -51,7 +51,7 @@ void ImageToIcoWidget::loadTable(const QStringList &files, const QString filter)
     if (files.isEmpty())
         return;
     QDir dir(files.at(0));
-    bool addSuffix = _config->read("addSuffix").toBool();
+    bool addSuffix = _config->read("addSuffix").value.toBool();
     // 后缀
     QString suffix = addSuffix ? "-" + ui->comboBox->currentText() : "";
     QStringList list = dir.entryList({"*.jpg", "*.jpeg", "*.png", "*.bmp"}, QDir::Files);
@@ -112,6 +112,6 @@ void ImageToIcoWidget::startConvert()
     ui->inLineEdit->setEnabled(true);
     ui->outLineEdit->setEnabled(true);
     ui->startButton->setEnabled(true);
-    if (_config->read("overOpenOutputPath").toBool())
+    if (_config->read("overOpenOutputPath").value.toBool())
         QDesktopServices::openUrl(QUrl::fromLocalFile(outdir));
 }

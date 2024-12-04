@@ -59,7 +59,7 @@ void ImageToIcoPlugin::writeConfigBeforeEvent(WriteConfigEvent &event)
     QAbstractPlugin::writeConfigBeforeEvent(event);
     if(event.key == "currentOutputPath" || event.key == "currentInputPath")
     {
-        QVariant path = event.newValue.toString();
+        QVariant path = event.newItem.value.toString();
         if (path.toString().isEmpty())
         {
             event.isValid = false;
@@ -71,6 +71,16 @@ void ImageToIcoPlugin::writeConfigBeforeEvent(WriteConfigEvent &event)
 void ImageToIcoPlugin::writeConfigAfterEvent(WriteConfigEvent &event)
 {
     QAbstractPlugin::writeConfigAfterEvent(event);
+}
+
+void ImageToIcoPlugin::readConfigBeforeEvent(ReadConfigEvent &event)
+{
+    QAbstractPlugin::readConfigBeforeEvent(event);
+}
+
+void ImageToIcoPlugin::readConfigAfterEvent(ReadConfigEvent &event)
+{
+    QAbstractPlugin::readConfigAfterEvent(event);
 }
 
 void ImageToIcoPlugin::registerConfig()

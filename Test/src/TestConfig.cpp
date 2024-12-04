@@ -16,17 +16,17 @@ void TestConfig::registerConfig()
     config->registerConfig("Time", "名称", TConfig::Type::Time, QTime::fromString("00:00:00", "hh:mm:ss"));
 
     // 判断读取后是否和预期一致
-    QCOMPARE(config->read("DateTime").toDateTime(), QDateTime::fromString("2020-01-01 00:00:00", "yyyy-MM-dd hh:mm:ss"));
-    QCOMPARE(config->read("Color").value<QColor>(), QColor(255, 0, 0));
-    QCOMPARE(config->read("File").toString(), "D:\\test.txt");
-    QCOMPARE(config->read("String").toString(), "test");
-    QCOMPARE(config->read("Int").toInt(), 1);
-    QCOMPARE(config->read("Bool").toBool(), true);
-    QCOMPARE(config->read("Float").toFloat(), 1.1f);
-    QCOMPARE(config->read("Double").toDouble(), 1.1);
-    QCOMPARE(config->read("Directory").toString(), "D:\\test");
-    QCOMPARE(config->read("Date").toDate(), QDate::fromString("2020-01-01", "yyyy-MM-dd"));
-    QCOMPARE(config->read("Time").toTime(), QTime::fromString("00:00:00", "hh:mm:ss"));
+    QCOMPARE(config->read("DateTime").value.toDateTime(), QDateTime::fromString("2020-01-01 00:00:00", "yyyy-MM-dd hh:mm:ss"));
+    QCOMPARE(config->read("Color").value.value<QColor>(), QColor(255, 0, 0));
+    QCOMPARE(config->read("File").value.toString(), "D:\\test.txt");
+    QCOMPARE(config->read("String").value.toString(), "test");
+    QCOMPARE(config->read("Int").value.toInt(), 1);
+    QCOMPARE(config->read("Bool").value.toBool(), true);
+    QCOMPARE(config->read("Float").value.toFloat(), 1.1f);
+    QCOMPARE(config->read("Double").value.toDouble(), 1.1);
+    QCOMPARE(config->read("Directory").value.toString(), "D:\\test");
+    QCOMPARE(config->read("Date").value.toDate(), QDate::fromString("2020-01-01", "yyyy-MM-dd"));
+    QCOMPARE(config->read("Time").value.toTime(), QTime::fromString("00:00:00", "hh:mm:ss"));
 }
 
 void TestConfig::writeConfig()
@@ -41,13 +41,13 @@ void TestConfig::writeConfig()
     QVariant newDateTime = QDateTime::fromString("2024-12-03 12:00:00", "yyyy-MM-dd hh:mm:ss");
     bool writeResult1 = config->write("DateTime", newDateTime,message);
     QCOMPARE(writeResult1, true); // 更新应该成功
-    QCOMPARE(config->read("DateTime").toDateTime(), newDateTime); // 验证值已更新
+    QCOMPARE(config->read("DateTime").value.toDateTime(), newDateTime); // 验证值已更新
 
     // 3. 测试 key 存在但类型不匹配
     QVariant invalidValue = QString("Invalid DateTime");
     bool writeResult2 = config->write("DateTime", invalidValue,message);
     QCOMPARE(writeResult2, false); // 更新失败，类型不合法
-    QCOMPARE(config->read("DateTime").toDateTime(), newDateTime); // 值应保持不变
+    QCOMPARE(config->read("DateTime").value.toDateTime(), newDateTime); // 值应保持不变
 
     // 4. 测试 key 不存在
     QVariant newValue = 42;
@@ -58,14 +58,14 @@ void TestConfig::writeConfig()
     QVariant newInt = 99;
     bool writeResult4 = config->write("Int", newInt,message);
     QCOMPARE(writeResult4, true); // 更新成功
-    QCOMPARE(config->read("Int").toInt(), newInt); // 验证值已更新
+    QCOMPARE(config->read("Int").value.toInt(), newInt); // 验证值已更新
 
     // 6. 测试边界情况：空字符串值
     QVariant emptyString = QString("");
     config->registerConfig("String", "名称", TConfig::Type::String, "test");
     bool writeResult5 = config->write("String", emptyString,message);
     QCOMPARE(writeResult5, true); // 应该允许空字符串更新
-    QCOMPARE(config->read("String").toString(), emptyString.toString()); // 验证值更新为空字符串
+    QCOMPARE(config->read("String").value.toString(), emptyString.toString()); // 验证值更新为空字符串
 
     // 7. 测试边界情况：null 值
     QVariant nullValue = QVariant();

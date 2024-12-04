@@ -10,6 +10,12 @@ QAbstractPlugin::QAbstractPlugin(TConfig *config,QObject *parent)
     _config->registerWriteConfigAfterCallback([this](WriteConfigEvent &event)->void { 
         this->writeConfigAfterEvent(event);
     });
+    _config->registerReadConfigBeforeCallback([this](ReadConfigEvent &event)->void {
+        this->readConfigBeforeEvent(event);
+    });
+    _config->registerReadConfigAfterCallback([this](ReadConfigEvent &event)->void {
+        this->readConfigAfterEvent(event);
+    });
     this->registerConfig();
 }
 
@@ -33,5 +39,13 @@ void QAbstractPlugin::writeConfigBeforeEvent(WriteConfigEvent &event)
 }
 
 void QAbstractPlugin::writeConfigAfterEvent(WriteConfigEvent &event)
+{
+}
+
+void QAbstractPlugin::readConfigBeforeEvent(ReadConfigEvent &event)
+{
+}
+
+void QAbstractPlugin::readConfigAfterEvent(ReadConfigEvent &event)
 {
 }

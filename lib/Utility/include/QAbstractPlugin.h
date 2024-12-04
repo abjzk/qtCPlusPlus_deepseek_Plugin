@@ -80,13 +80,23 @@ public:
      * @brief 写入配置文件前,在这里可以做一些校验操作,或者因为某些原因不允许修改。
      * @param WriteEvent
      */
-    virtual void writeConfigBeforeEvent(WriteConfigEvent &event) = 0;
+    virtual void writeConfigBeforeEvent(WriteConfigEvent &event);
     /**
      * @brief 写入配置文件后，在这里可以做一些因为配置文件修改导致的操作
      * 如果event.isValid为false，那么不会触发该函数，界面也会回滚到原来的值
      * @param WriteEvent
      */
     virtual void writeConfigAfterEvent(WriteConfigEvent &event);
+    /**
+     * @brief 读取配置文件前,比如说你可以修改要读取的key
+     * @param ReadEvent
+     */
+    virtual void readConfigBeforeEvent(ReadConfigEvent &event);
+    /**
+     * @brief 读取配置文件后，比如说你可以修改要展示的值
+     * @param ReadEvent
+     */
+    virtual void readConfigAfterEvent(ReadConfigEvent &event);
 protected:
     TConfig *_config;
 };

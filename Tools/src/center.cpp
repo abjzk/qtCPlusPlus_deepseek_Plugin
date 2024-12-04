@@ -108,7 +108,7 @@ void Center::pluginItemClicked(QTreeWidgetItem *item, int column)
 void Center::loadPluginTree()
 {
     ui->pluginTree->clear();
-    QString str = this->_config->read("Plugins").toString();
+    QString str = this->_config->read("Plugins").value.toString();
     QJsonDocument doc = QJsonDocument::fromJson(str.toUtf8());
     QJsonObject obj = doc.object();
     QDir dir(QApplication::applicationDirPath());
