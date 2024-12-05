@@ -16,7 +16,6 @@ QAbstractPlugin::QAbstractPlugin(TConfig *config,QObject *parent)
     _config->registerReadConfigAfterCallback([this](ReadConfigEvent &event)->void {
         this->readConfigAfterEvent(event);
     });
-    this->registerConfig();
 }
 
 QWidget *QAbstractPlugin::start()

@@ -44,6 +44,12 @@
         "xhash": "cpp",
         "xtree": "cpp",
         "numeric": "cpp",
-        "qmessagebox": "cpp"
+        "qmessagebox": "cpp",
+        "qthread": "cpp",
+        "lwidget": "cpp",
+        "qregularexpression": "cpp",
+        "qstringconverter": "cpp",
+        "qstringbuilder": "cpp",
+        "optional": "cpp"
     }
 }

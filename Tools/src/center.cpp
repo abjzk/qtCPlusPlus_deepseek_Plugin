@@ -145,6 +145,7 @@ QAbstractPlugin *Center::findPlugin(QString name)
 QTreeWidgetItem *Center::addPlugin(QString &filename)
 {
     QAbstractPlugin *plugin = findPlugin(filename);
+    plugin->registerConfig();
     // plugin->start(new TConfig(plugin->name(), plugin));
     QString group = plugin->group().isEmpty() ? "未分组" : plugin->group();
     // 查找是否存在当前分组的节点
