@@ -62,6 +62,7 @@ void ConfigDialog::loadConfig()
     this->setFixedHeight(count * 30 + 100);
     for (const auto &item : items)
     {
+        if(!item.isShow) continue;
         LLabelWidgetFrame *labelWidget = new LLabelWidgetFrame(item.description, new QWidget(), this);
         labelWidget->setObjectName(item.key);
         QWidget *valueWidget = this->createValueWidget(labelWidget, item.type, item.valueString());

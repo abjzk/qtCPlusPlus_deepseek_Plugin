@@ -2,6 +2,9 @@ param (
     [string]$BuildType  # 用户传入的构建类型（0为Release，1为Debug）
 )
 
+
+
+
 # 判断传入参数，如果没有传入则默认为 Release；如果传入的是 0 或 1，则分别设置为 Release 或 Debug
 if (-not $BuildType) {
     $BuildType = "Release"
@@ -13,7 +16,6 @@ if (-not $BuildType) {
     Write-Host "无效的构建类型，默认为 Release."
     $BuildType = "Release"
 }
-
 # 输出当前构建类型
 Write-Host "开始打包 $BuildType"
 
