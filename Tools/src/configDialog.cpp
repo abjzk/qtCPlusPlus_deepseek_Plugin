@@ -178,6 +178,17 @@ QWidget* ConfigDialog::createValueWidget(LLabelWidgetFrame* frame,QString type, 
         });
         return directoryLineEdit;
     }
+    case TConfig::Type::Combox:
+    {
+        QComboBox *comboBox = new QComboBox(this);
+        ComboxData data = TConfig::stringToValue(value, type).value<ComboxData>();
+        comboBox->addItems(data.items);
+        comboBox->setCurrentIndex(data.index);
+        connect(comboBox, &QComboBox::currentIndexChanged, [=](int index){
+            this->valueChanged(frame->data().value<QVariantMap>().value("key").toString(),QVariant::fromValue(ComboxData(index, data.items)));
+        });
+        return comboBox;
+    }
     default:
         return new QWidget();
     }
@@ -281,5 +292,10 @@ void ConfigDialog::setValue(QWidget* widget, QVariant value)
         qobject_cast<LSwitchButton*>(widget)->setChecked(value.toBool());
     else if (className.contains("LFileLineEdit"))
         qobject_cast<LFileLineEdit*>(widget)->setText(value.toString());
+    else if (className.contains("QComboBox"))
+    {
+        QComboBox *comboBox = qobject_cast<QComboBox*>(widget);
+        comboBox->setCurrentIndex(value.value<ComboxData>().index);
+    }
     isRead = false;
 }

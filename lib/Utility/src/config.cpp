@@ -179,6 +179,8 @@ TConfig::Type TConfig::getTypeFromString(const QString &type)
         return Type::Directory;
     else if (type == "color")
         return Type::Color;
+    else if (type == "combox")
+        return Type::Combox;
     else
         return Type::String;
 }
@@ -208,6 +210,8 @@ QString TConfig::getTypeToString(const TConfig::Type &type)
         return "directory";
     case Type::Color:
         return "color";
+    case Type::Combox:
+        return "combox";
     default:
         return "string";
     }
@@ -239,6 +243,8 @@ QString TConfig::valueToString(const QVariant &value, const QString &type)
         return value.toString();
     case Type::Color:
         return value.value<QColor>().name();
+    case Type::Combox:
+        return value.value<ComboxData>().toString();
     default:
         return value.toString();
     }
@@ -270,6 +276,8 @@ QVariant TConfig::stringToValue(const QString &value, const QString &type)
         return value;
     case Type::Color:
         return QColor(value);
+    case Type::Combox:
+        return QVariant::fromValue(ComboxData(value));
     default:
         return value;
     }

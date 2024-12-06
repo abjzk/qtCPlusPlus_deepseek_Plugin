@@ -2,8 +2,8 @@
 #include "ReplaceTemplatePluginWidget.h"
 #include <QStandardPaths>
 
-ReplaceTemplatePlugin::ReplaceTemplatePlugin(TConfig *config,QObject *parent)
-    : QAbstractPlugin(config,parent)
+ReplaceTemplatePlugin::ReplaceTemplatePlugin(Logger * logger,TConfig *config,QObject *parent)
+    : QAbstractPlugin(logger,config,parent)
 {
 }
 
@@ -72,7 +72,7 @@ QIcon ReplaceTemplatePlugin::icon()
 QWidget *ReplaceTemplatePlugin::start()
 {
     QAbstractPlugin::start();
-    return new ReplaceTemplateWidget(_config);
+    return new ReplaceTemplateWidget(_logger,_config);
 }
 
 

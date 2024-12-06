@@ -139,7 +139,7 @@ QAbstractPlugin *Center::findPlugin(QString name)
 {
     QPluginLoader loader(QApplication::applicationDirPath() + "/" + name + ".dll");
     PluginFactory *factory = qobject_cast<PluginFactory *>(loader.instance());
-    return factory->create(new TConfig(name));
+    return factory->create(new Logger(name),new TConfig(name));
 }
 
 QTreeWidgetItem *Center::addPlugin(QString &filename)

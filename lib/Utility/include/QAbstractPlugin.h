@@ -5,6 +5,7 @@
 #include "config.h"
 #include "Utility_global.h"
 #include <QWidget>
+#include "Logger.h"
 /**
  * @brief 注册配置
  * @param key 键
@@ -36,14 +37,15 @@
 #define Directory_CONFIG_REGISTER(key, description, defaultValue, isShow) CONFIG_REGISTER(key, description, Directory, defaultValue, isShow)
 // 注册Color类型的配置, key, description, defaultValue, isShow
 #define Color_CONFIG_REGISTER(key, description, defaultValue, isShow) CONFIG_REGISTER(key, description, Color, defaultValue, isShow)
-
+// 注册ComBox类型的配置, key, description, defaultValue, isShow
+#define ComBox_CONFIG_REGISTER(key, description, defaultValue, isShow) CONFIG_REGISTER(key, description, Combox, defaultValue, isShow)
 
 
 class UTILITY_EXPORT QAbstractPlugin : public QObject
 {
     Q_OBJECT
 public:
-    explicit QAbstractPlugin(TConfig *config,QObject *parent = nullptr);
+    explicit QAbstractPlugin(Logger* logger,TConfig *config,QObject *parent = nullptr);
     virtual ~QAbstractPlugin() = default;
     // 插件组名称
     virtual QString group() = 0;
@@ -99,6 +101,7 @@ public:
     virtual void readConfigAfterEvent(ReadConfigEvent &event);
 protected:
     TConfig *_config;
+    Logger* _logger;
 };
 
 // 插件工厂
@@ -109,7 +112,7 @@ public:
      * @brief 创建插件
      * @return
      */
-    virtual QAbstractPlugin *create(TConfig *config) = 0;
+    virtual QAbstractPlugin *create(Logger *logger,TConfig *config) = 0;
     virtual ~PluginFactory() = default;
 };
 

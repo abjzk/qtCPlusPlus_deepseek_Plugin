@@ -4,8 +4,8 @@
 #include <QIcon>
 #include <qdesktopservices.h>
 
-ReplaceTemplateWidget::ReplaceTemplateWidget(TConfig *config, QWidget *parent)
-    : QWidget(parent), ui(new Ui::ReplaceTemplatePluginWidget()), _config(config)
+ReplaceTemplateWidget::ReplaceTemplateWidget(Logger * logger,TConfig *config, QWidget *parent)
+    : QWidget(parent), ui(new Ui::ReplaceTemplatePluginWidget()), _config(config),_logger(logger)
 {
     ui->setupUi(this);
     thread = new ReplaceTemplateThread(this);
@@ -45,7 +45,13 @@ void ReplaceTemplateWidget::initConnect()
     connect(thread, &QThread::started, this, &ReplaceTemplateWidget::setWidgetEnabled);
     connect(thread, &QThread::finished, this, &ReplaceTemplateWidget::setWidgetEnabled);
     connect(ui->templateEdit, &LFileLineEdit::fileSelected, this, &ReplaceTemplateWidget::loadFileTree);
-    connect(thread, &ReplaceTemplateThread::message, ui->textEdit,&QTextEdit::append);
+    connect(thread, &ReplaceTemplateThread::message, _logger,&Logger::write);
+    connect(_logger, &Logger::sendLogger, this,&ReplaceTemplateWidget::addRow,Qt::QueuedConnection);
+}
+
+void ReplaceTemplateWidget::addRow(QMap<QString,QString> map)
+{
+    ui->textEdit->append(map["time"]+ "    " + map["level"] + "    " + map["message"]);
 }
 
 void ReplaceTemplateWidget::setWidgetEnabled()
@@ -64,14 +70,14 @@ void ReplaceTemplateWidget::startThread()
     QString outPath = ui->outputEdit->text();
     if(templatePath.isEmpty() || outPath.isEmpty())
     {
-        QMessageBox::warning(this, "警告", "文件路径不能为空");
+        _logger->warn("模板路径或输出路径为空");
         return;
     }
     QString templateName = ui->tempNameEdit->text();
     QString outName = ui->outputNameEdit->text();
     if(templateName.isEmpty() || outName.isEmpty())
     {
-        QMessageBox::warning(this, "警告", "文本不能为空");
+        _logger->warn("文本不能为空");
         return;
     }
     ui->textEdit->clear();

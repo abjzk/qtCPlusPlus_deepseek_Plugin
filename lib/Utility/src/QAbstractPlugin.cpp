@@ -1,9 +1,10 @@
 #include "QAbstractPlugin.h"
-
-QAbstractPlugin::QAbstractPlugin(TConfig *config,QObject *parent)
-    : QObject(parent), _config(config)
+#include "Logger.h"
+QAbstractPlugin::QAbstractPlugin(Logger* logger,TConfig *config,QObject *parent)
+    : QObject(parent), _config(config),_logger(logger)
 {
     _config->setParent(this);
+    _logger->setParent(this);
      _config->registerWriteConfigBeforeCallback([this](WriteConfigEvent &event)->void { 
         this->writeConfigBeforeEvent(event);
     });
@@ -31,6 +32,7 @@ void QAbstractPlugin::stop()
 
 void QAbstractPlugin::registerConfig()
 {
+    ComBox_CONFIG_REGISTER("LogLevel", "日志等级", QVariant::fromValue(ComboxData(2,Logger::levels())), true);   
 }
 
 void QAbstractPlugin::writeConfigBeforeEvent(WriteConfigEvent &event)

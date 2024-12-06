@@ -2,8 +2,8 @@
 #include "ImageToIcoWidget.h"
 #include <QStandardPaths>
 
-ImageToIcoPlugin::ImageToIcoPlugin(TConfig *config,QObject *parent)
-    : QAbstractPlugin(config,parent)
+ImageToIcoPlugin::ImageToIcoPlugin(Logger* logger,TConfig *config,QObject *parent)
+    : QAbstractPlugin(logger,config,parent)
 {
     this->registerConfig();
 }

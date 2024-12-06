@@ -1,6 +1,7 @@
 #pragma once
 #include "LSqlExecutor.h"
 #include <Utility_global.h>
+#include "utility.h"
 class UTILITY_EXPORT ConfigItem
 {
 public:
@@ -65,7 +66,8 @@ public:
         Time = 7,
         File = 8,
         Directory = 9,
-        Color = 10
+        Color = 10,
+        Combox = 11
     };
     TConfig(const QString &name, QObject *parent = nullptr);
     ~TConfig();

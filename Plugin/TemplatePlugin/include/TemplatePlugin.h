@@ -10,7 +10,7 @@ class TemplatePlugin_EXPORT TemplatePlugin : public QAbstractPlugin
 {
     Q_OBJECT
 public:
-    TemplatePlugin(TConfig *config,QObject *parent = nullptr);
+    TemplatePlugin(Logger * logger,TConfig *config,QObject *parent = nullptr);
     ~TemplatePlugin() override;
     virtual QString group() override;
     virtual QString name() override;
@@ -34,7 +34,7 @@ class TemplatePlugin_EXPORT TemplatePluginFactory : public QObject, public Plugi
 		Q_PLUGIN_METADATA(IID QAbstractPlugin_IID)
 		Q_INTERFACES(PluginFactory)
 public:
-	QAbstractPlugin* create(TConfig *config) override { return new TemplatePlugin(config); };
+	QAbstractPlugin* create(Logger *logger,TConfig *config) override { return new TemplatePlugin(logger,config); };
 	~TemplatePluginFactory() override = default;
 } ;
 

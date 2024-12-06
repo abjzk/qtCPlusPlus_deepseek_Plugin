@@ -2,8 +2,8 @@
 #include "TemplatePluginWidget.h"
 #include <QStandardPaths>
 
-TemplatePlugin::TemplatePlugin(TConfig *config,QObject *parent)
-    : QAbstractPlugin(config,parent)
+TemplatePlugin::TemplatePlugin(Logger * logger,TConfig *config,QObject *parent)
+    : QAbstractPlugin(logger,config,parent)
 {
 }
 

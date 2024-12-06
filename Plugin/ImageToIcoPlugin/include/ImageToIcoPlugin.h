@@ -10,7 +10,7 @@ class ImageToIcoPlugin_EXPORT ImageToIcoPlugin : public QAbstractPlugin
 {
     Q_OBJECT
 public:
-    ImageToIcoPlugin(TConfig *config,QObject *parent = nullptr);
+    ImageToIcoPlugin(Logger* logger,TConfig *config,QObject *parent = nullptr);
     ~ImageToIcoPlugin() override;
     virtual QString group() override;
     virtual QString name() override;
@@ -34,7 +34,7 @@ class ImageToIcoPlugin_EXPORT ImageToIcoPluginFactory : public QObject, public P
 		Q_PLUGIN_METADATA(IID QAbstractPlugin_IID)
 		Q_INTERFACES(PluginFactory)
 public:
-	QAbstractPlugin* create(TConfig *config) override { return new ImageToIcoPlugin(config); };
+	QAbstractPlugin* create(Logger *logger,TConfig *config) override { return new ImageToIcoPlugin(logger,config); };
 	~ImageToIcoPluginFactory() override = default;
 } ;
 

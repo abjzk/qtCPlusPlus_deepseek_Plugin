@@ -1,7 +1,7 @@
 #pragma once
 #include <QThread>
 #include "ReplaceTemplatePlugin_global.h"
-
+#include "spdlog/spdlog.h"
 class ReplaceTemplatePlugin_EXPORT ReplaceTemplateThread : public QThread
 {
     Q_OBJECT
@@ -17,9 +17,9 @@ public:
     bool isRecursive = true;
     bool isre = false;
     bool isGenerateTopFloder = true;
-    void addMessage(const QString& message,const QString& type="INFO");
+    void addMessage(spdlog::level::level_enum level,const QString& message);
 signals:
-    void message(const QString& message);
+    void message(spdlog::level::level_enum level,const QString& message);
 private:
     void convertFile(const QString& path,const QString& newPath);
     void copyFile(const QString& srcPath, const QString& destPath);
