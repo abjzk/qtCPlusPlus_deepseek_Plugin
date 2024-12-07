@@ -74,6 +74,7 @@ public:
      * @return TConfig *
      */
     TConfig *config() { return _config; }
+    Logger *logger() { return _logger; }
     /**
      * @brief 注册配置
      */

@@ -5,6 +5,7 @@ QAbstractPlugin::QAbstractPlugin(Logger* logger,TConfig *config,QObject *parent)
 {
     _config->setParent(this);
     _logger->setParent(this);
+    _logger->flush_on(_config->read("LogLevel").value.value<ComboxData>().currentText());
      _config->registerWriteConfigBeforeCallback([this](WriteConfigEvent &event)->void { 
         this->writeConfigBeforeEvent(event);
     });
@@ -41,6 +42,10 @@ void QAbstractPlugin::writeConfigBeforeEvent(WriteConfigEvent &event)
 
 void QAbstractPlugin::writeConfigAfterEvent(WriteConfigEvent &event)
 {
+    if (event.key.contains("LogLevel"))
+    {
+        _logger->flush_on(_config->read("LogLevel").value.value<ComboxData>().currentText());
+    }
 }
 
 void QAbstractPlugin::readConfigBeforeEvent(ReadConfigEvent &event)

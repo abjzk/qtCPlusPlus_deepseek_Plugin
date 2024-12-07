@@ -3,6 +3,7 @@
 #include <config.h>
 #include <QAbstractPlugin.h>
 #include "configDialog.h"
+#include "logDialog.h"
 class Center : public QWidget
 {
     Q_OBJECT
@@ -20,10 +21,12 @@ private:
     TConfig *_config = new TConfig("SYSTEM", this);
     QMap<QString, QAbstractPlugin *> _plugins;
     ConfigDialog *dialog = nullptr;
+    LogDialog *logDialog = nullptr;
     Ui::Center *ui;
     void showPluginTreeMenu(QPoint pos);
 
     void showConfigDialog();
+    void showLogDialog();
 
     void reSet();
     void pluginItemClicked(QTreeWidgetItem *item, int column);

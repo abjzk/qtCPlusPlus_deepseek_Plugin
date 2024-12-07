@@ -13,7 +13,7 @@ public:
 private:
     void initUi();
     void initConnect();
-    void addRow(QMap<QString,QString> map);
+    void addRow(const LoggerDetails& details);
     void setWidgetEnabled();
     void startThread();
     void loadFileTree(const QStringList &files, const QString &filter);

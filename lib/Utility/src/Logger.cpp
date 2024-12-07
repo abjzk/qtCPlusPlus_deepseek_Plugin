@@ -11,24 +11,7 @@ Logger::Logger(QString &name, QObject *parent)
 
     callback_sink = std::make_shared<spdlog::sinks::callback_sink_mt>([=](const spdlog::details::log_msg &msg) 
     {
-            // 将 time_point 转换为 time_t
-        std::time_t time = std::chrono::system_clock::to_time_t(msg.time);
-
-        // 将 time_t 转换为 tm 结构
-        std::tm tm = *std::localtime(&time);
-        auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(msg.time.time_since_epoch()) % 1000;
-        // 使用 stringstream 格式化日期时间字符串
-        std::ostringstream oss;
-        oss << std::put_time(&tm, "%Y-%m-%d %H:%M:%S ");
-        oss << '.' << std::setfill('0') << std::setw(3) << millis.count(); // 添加毫秒部分
-        QString timeStr = QString::fromStdString(oss.str());
-        QString type = Logger::levelToString(msg.level);
-        QString message = QString::fromLocal8Bit(msg.payload.data(), static_cast<int>(msg.payload.size()));
-        this->sendLogger({
-            {"time",timeStr},
-            {"level",type},
-            {"message",message}
-        });
+        this->sendLogger(LoggerDetails(msg));
     });
     _logger = std::make_shared<spdlog::async_logger>(_name.toStdString(), 
         spdlog::sinks_init_list({file_sink,callback_sink}),
@@ -135,9 +118,35 @@ spdlog::level::level_enum Logger::stringToLevel(const QString &level)
         return spdlog::level::n_levels;
 }
 
-void Logger::flush_on(QString &name)
+void Logger::flush_on(QString name)
 {
     auto level = stringToLevel(name);
     file_sink->set_level(level);
     callback_sink->set_level(level);
+}
+
+LoggerDetails::LoggerDetails(QDateTime date, QString level, QString message)
+    : date(date), level(level), message(message)
+{
+}
+
+LoggerDetails::LoggerDetails(const spdlog::details::log_msg &msg)
+{
+            // 将 time_point 转换为 time_t
+    std::time_t time = std::chrono::system_clock::to_time_t(msg.time);
+    // 提取毫秒部分
+    auto duration = msg.time.time_since_epoch();
+    auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration) % 1000;
+
+    // 将 std::time_t 转换为 QDateTime
+    QDateTime dateTime = QDateTime::fromSecsSinceEpoch(static_cast<qint64>(time), Qt::LocalTime);
+
+    // 添加毫秒部分
+    date = dateTime.addMSecs(millis.count());
+    level = Logger::levelToString(msg.level);
+    message = QString::fromLocal8Bit(msg.payload.data(), static_cast<int>(msg.payload.size()));
+}
+
+LoggerDetails::~LoggerDetails()
+{
 }

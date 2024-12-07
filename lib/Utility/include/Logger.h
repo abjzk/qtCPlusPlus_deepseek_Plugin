@@ -6,6 +6,19 @@
 #include <QMap>
 #include "Utility_global.h"
 #include "spdlog/sinks/callback_sink.h"
+#include <QDateTime>
+struct UTILITY_EXPORT LoggerDetails
+{
+    LoggerDetails(QDateTime date, QString level, QString message);
+    LoggerDetails(const spdlog::details::log_msg& msg);
+    ~LoggerDetails();
+    QDateTime date;
+    QString level;
+    QString message;
+};
+
+
+
 class UTILITY_EXPORT Logger : public QObject
 {
     Q_OBJECT
@@ -22,9 +35,9 @@ public:
     static QStringList levels();
     static QString levelToString(spdlog::level::level_enum level);
     static spdlog::level::level_enum stringToLevel(const QString& level);
-    void flush_on(QString& name);
+    void flush_on(QString name);
 signals:
-    void sendLogger(QMap<QString,QString> map);
+    void sendLogger(LoggerDetails details);
 private:
     std::shared_ptr<spdlog::logger> _logger;
     QString _name;

@@ -55,6 +55,7 @@ void Center::initConnect()
     connect(ui->pluginTree, &QTreeWidget::customContextMenuRequested, this, &Center::showPluginTreeMenu);
     connect(ui->pluginTree, &QTreeWidget::itemClicked, this, &Center::pluginItemClicked);
     connect(ui->pushButton, &QPushButton::clicked, this, &Center::showConfigDialog);
+    connect(ui->logButton,&QPushButton::clicked,this,&Center::showLogDialog);
 }
 
 void Center::showPluginTreeMenu(QPoint pos)
@@ -76,6 +77,17 @@ void Center::showConfigDialog()
     dialog->getTitleBar()->setTitleIcon(currentPlugin->icon());
     dialog->exec();
 }
+void Center::showLogDialog()
+{
+    if(logDialog) return;
+    logDialog = new LogDialog();
+    logDialog->setWindowIcon(currentPlugin->icon());
+    logDialog->getTitleBar()->setTitleIcon(currentPlugin->icon());
+    logDialog->resize(600,400);
+    logDialog->show();
+    connect(currentPlugin->logger(), &Logger::sendLogger, logDialog, &LogDialog::addLogItem);
+
+}
 void Center::reSet()
 {
     this->setEnabled(true);
@@ -93,6 +105,9 @@ void Center::pluginItemClicked(QTreeWidgetItem *item, int column)
     if (currentPlugin)
         currentPlugin->stop();
     delete currentPlugin;
+    if(logDialog)
+        logDialog->deleteLater();
+        logDialog = nullptr;
     currentPlugin = this->findPlugin(item->data(0, Qt::UserRole).toString());
     ui->nameLabel->setText(currentPlugin->name());
     ui->versionlabel->setText(currentPlugin->version());

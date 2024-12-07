@@ -7,5 +7,6 @@
         <file>Tools.ico</file>
         <file>icon/set.png</file>
         <file>icon/refresh.png</file>
+        <file>icon/log.png</file>
     </qresource>
 </RCC>

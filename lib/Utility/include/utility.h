@@ -13,6 +13,7 @@ struct UTILITY_EXPORT ComboxData
     int index = -1;
     QStringList items;
     QString toString();
+    QString currentText() { return items.size() > 0 ?  items[index] : "";  };
 };
 Q_DECLARE_METATYPE(ComboxData)
 class UTILITY_EXPORT Utility

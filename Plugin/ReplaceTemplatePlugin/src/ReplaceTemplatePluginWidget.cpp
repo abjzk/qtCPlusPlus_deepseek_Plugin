@@ -49,9 +49,9 @@ void ReplaceTemplateWidget::initConnect()
     connect(_logger, &Logger::sendLogger, this,&ReplaceTemplateWidget::addRow,Qt::QueuedConnection);
 }
 
-void ReplaceTemplateWidget::addRow(QMap<QString,QString> map)
+void ReplaceTemplateWidget::addRow(const LoggerDetails& details)
 {
-    ui->textEdit->append(map["time"]+ "    " + map["level"] + "    " + map["message"]);
+    ui->textEdit->append(details.date.toString("yyyy-MM-dd hh:mm:ss zzz")+ "    " + details.level + "    " + details.message);
 }
 
 void ReplaceTemplateWidget::setWidgetEnabled()
