@@ -51,6 +51,7 @@ void ConfigDialog::initUi()
     // 添加QDialog的按钮
     buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
     hlayout->addWidget(buttonBox);
+    buttonBox->hide();
     this->_mainWidget->setLayout(hlayout);
 }
 
@@ -58,8 +59,6 @@ void ConfigDialog::loadConfig()
 {
     QList<ConfigItem> items;
     this->_config->readAll(items);
-    int count = items.count();
-    this->setFixedHeight(count * 30 + 100);
     for (const auto &item : items)
     {
         if(!item.isShow) continue;
@@ -70,6 +69,7 @@ void ConfigDialog::loadConfig()
         labelWidget->setValueWidget(valueWidget);
         layout->addWidget(labelWidget);
     }
+    this->setFixedHeight(layout->count() * 30 + 100);
 }
 
 void ConfigDialog::initConnect()

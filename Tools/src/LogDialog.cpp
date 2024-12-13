@@ -2,6 +2,25 @@
 #include <QHeaderView>
 #include <QScrollBar>
 
+
+LogTableWidget::LogTableWidget(QWidget *parent)
+{
+}
+
+LogTableWidget::~LogTableWidget()
+{
+}
+
+void LogTableWidget::initUi()
+{
+}
+
+void LogTableWidget::initConnect()
+{
+}
+
+
+
 LogDialog::LogDialog( QWidget *parent)
     :Widget(new QTableWidget(), parent)
 {
@@ -49,3 +68,4 @@ void LogDialog::addLogItem(const LoggerDetails &details)
     // 滚动到最后一行
     table->scrollToBottom();
 }
+

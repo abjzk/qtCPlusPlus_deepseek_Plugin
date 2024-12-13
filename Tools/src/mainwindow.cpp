@@ -24,8 +24,8 @@ void TitleBar::minButtonClick()
 {
 }
 
-MainWindow::MainWindow(QWidget *mainWidget, QWidget *parent)
-    :Widget(mainWidget, parent)
+MainWindow::MainWindow(TConfig *config,QWidget *mainWidget, QWidget *parent)
+    :Widget(mainWidget, parent), _config(config)
 {
     this->resize(1280, 720);
     // 移动到屏幕中央
@@ -61,7 +61,7 @@ void MainWindow::initConnect()
 void MainWindow::showConfigDialog()
 {
     if (dialog) return;
-    dialog = new ConfigDialog(new TConfig("SYSTEM", this));
+    dialog = new ConfigDialog(_config);
     connect(dialog, &ConfigDialog::closed, this, &MainWindow::reSet);
     this->setEnabled(false);
     dialog->exec();

@@ -26,15 +26,17 @@ class MainWindow : public Widget
 {
     Q_OBJECT
 public:
-    MainWindow(QWidget* mainWidget, QWidget* parent = nullptr);
+    MainWindow(TConfig *config,QWidget* mainWidget, QWidget* parent = nullptr);
     ~MainWindow() override;
     virtual void systemSettingsChangedSlot() override;
     void initUi();
     void initConnect();
     void showConfigDialog();
     virtual void closeEvent(QCloseEvent *event) override;
+    TConfig * _config;
 private:
     QPushButton * _setButton = new QPushButton(this);
     ConfigDialog * dialog = nullptr;
+
     void reSet();
 };

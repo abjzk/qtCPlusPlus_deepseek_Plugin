@@ -16,10 +16,12 @@
 #include <LCore>
 #include "MainWindow.h"
 
-Center::Center(QWidget *parent)
-    : QWidget(parent), ui(new Ui::Center)
+Center::Center(TConfig *config,QWidget *parent)
+    : QWidget(parent), ui(new Ui::Center), _config(config)
 {
+    this->_config->registerWriteConfigAfterCallback([this](WriteConfigEvent &event)->void { this->writeConfigAfterEvent(event); });
     this->_config->registerConfig("Plugins", "插件", TConfig::Type::String, QString(), false);
+    this->_config->registerConfig("autoStart", "开机自启动", TConfig::Type::Bool, false, true);
     ui->setupUi(this);
     this->initUi();
     this->initConnect();
@@ -66,6 +68,16 @@ void Center::showPluginTreeMenu(QPoint pos)
     connect(action, &QAction::triggered, this, &Center::loadPluginTree);
     menu.exec(globalPos);
 }
+void Center::writeConfigAfterEvent(WriteConfigEvent &event)
+{
+    if (event.key == "autoStart")
+    {
+        auto item = event.newItem;
+        item.value.toBool();
+        QString name = QApplication::applicationName();
+        LFunc::autoRun(item.value.toBool(), "LJZ"+ name);
+    }
+}
 void Center::showConfigDialog()
 {
     if (dialog)
@@ -88,6 +100,7 @@ void Center::showLogDialog()
     connect(currentPlugin->logger(), &Logger::sendLogger, logDialog, &LogDialog::addLogItem);
 
 }
+
 void Center::reSet()
 {
     this->setEnabled(true);
@@ -167,7 +180,7 @@ QTreeWidgetItem *Center::addPlugin(QString &filename)
     QTreeWidgetItem *groupItem = nullptr;
     for (int i = 0; i < ui->pluginTree->topLevelItemCount(); i++)
     {
-        QTreeWidgetItem *item1 = ui->pluginTree->topLevelItem(i);
+        auto item1 = ui->pluginTree->topLevelItem(i);
         if (item1->text(0) == group)
         {
             groupItem = item1;
