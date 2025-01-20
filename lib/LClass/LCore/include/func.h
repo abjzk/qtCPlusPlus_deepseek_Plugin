@@ -27,6 +27,9 @@ namespace ljz
 		 * @param appName 应用名
 		 */
 		static void autoRun(int isAutoRun, QString appName);
+
+		static void autoRunPath(int isAutoRun, QString appName ,QString appPath ,QString params);
+
 		/**
 		 * @brief 截断字符串并添加省略号
 		 * @param str 需要截断的字符串

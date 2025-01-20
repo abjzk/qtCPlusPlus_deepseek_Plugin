@@ -117,6 +117,6 @@ public:
     virtual ~PluginFactory() = default;
 };
 
-constexpr auto QAbstractPlugin_IID = "org.Tools.QAbstractPlugin";
+#define QAbstractPlugin_IID "org.Tools.QAbstractPlugin"
 
 Q_DECLARE_INTERFACE(PluginFactory, QAbstractPlugin_IID)

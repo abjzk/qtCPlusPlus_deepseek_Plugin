@@ -101,6 +101,8 @@
         "xlocinfo": "cpp",
         "xlocmon": "cpp",
         "xlocnum": "cpp",
-        "xloctime": "cpp"
+        "xloctime": "cpp",
+        "qtablewidgetitem": "cpp",
+        "regex": "cpp"
     }
 }

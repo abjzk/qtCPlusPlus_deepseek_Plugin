@@ -131,6 +131,20 @@ void LFunc::autoRun(int isAutoRun, QString appName)
 #endif
 }
 
+void LFunc::autoRunPath(int isAutoRun, QString appName, QString appPath, QString params)
+{
+
+#ifdef _WIN32
+	QString regPath = "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run";
+	QSettings settings(regPath, QSettings::NativeFormat);
+	if (isAutoRun)
+		settings.setValue(appName, appPath + " " + params);
+	else
+		settings.remove(appName);
+#elif defined(__linux__)
+#endif
+}
+
 QString LFunc::truncateString(const QString& str, int length)
 {
 	QString truncatedStr;

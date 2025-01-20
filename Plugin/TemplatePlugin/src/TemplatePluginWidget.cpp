@@ -4,8 +4,8 @@
 #include <QIcon>
 #include <qdesktopservices.h>
 
-TemplateWidget::TemplateWidget(TConfig *config, QWidget *parent)
-    : QWidget(parent), ui(new Ui::TemplatePluginWidget()), _config(config)
+TemplateWidget::TemplateWidget(Logger * logger,TConfig *config, QWidget *parent)
+    : QWidget(parent), ui(new Ui::TemplatePluginWidget()), _config(config),_logger(logger)
 {
     ui->setupUi(this);
     this->initUi();

@@ -1,13 +1,13 @@
-#include "TemplatePlugin.h"
-#include "TemplatePluginWidget.h"
+#include "AutoStartPlugin.h"
+#include "AutoStartPluginWidget.h"
 #include <QStandardPaths>
 
-TemplatePlugin::TemplatePlugin(Logger * logger,TConfig *config,QObject *parent)
+AutoStartPlugin::AutoStartPlugin(Logger * logger,TConfig *config,QObject *parent)
     : QAbstractPlugin(logger,config,parent)
 {
 }
 
-TemplatePlugin::~TemplatePlugin()
+AutoStartPlugin::~AutoStartPlugin()
 {
 }
 
@@ -15,71 +15,71 @@ TemplatePlugin::~TemplatePlugin()
  * @brief 插件组名称
  * @return
  */
-QString TemplatePlugin::group()
+QString AutoStartPlugin::group()
 {
-    return "group";
+    return "实用工具";
 }
 
 /**
  * @brief  插件名称
  * @return
  */
-QString TemplatePlugin::name()
+QString AutoStartPlugin::name()
 {
-    return "name";
+    return "自启动管理器";
 }
 
 /**
  * @brief  插件版本
  * @return
  */
-QString TemplatePlugin::version()
+QString AutoStartPlugin::version()
 {
-    return "version";
+    return "1.0.0";
 }
 
 /**
  * @brief  插件作者
  * @return
  */
-QString TemplatePlugin::author()
+QString AutoStartPlugin::author()
 {
-    return "author";
+    return "ljzloser";
 }
 
 /**
  * @brief  插件描述
  * @return
  */
-QString TemplatePlugin::description()
+QString AutoStartPlugin::description()
 {
-    return "description";
+    return "用于程序的自启动管理";
 }
 
 /**
  * @brief  插件图标
  * @return
  */
-QIcon TemplatePlugin::icon()
+QIcon AutoStartPlugin::icon()
 {
-    return QIcon(":res/icon/TemplatePlugin.png");
+    return QIcon(":res/icon/AutoStartPlugin.png");
 }
 
 /**
  * @brief 启动插件
  * @return QWidget
  */
-QWidget *TemplatePlugin::start()
+QWidget *AutoStartPlugin::start()
 {
     QAbstractPlugin::start();
-    return new TemplateWidget(_logger,_config);
+    return new AutoStartWidget(_logger,_config);
 }
 
 
 /**
  * @brief 停止插件
  */
-void TemplatePlugin::stop()
+void AutoStartPlugin::stop()
 {
     QAbstractPlugin::stop();
 }
@@ -89,7 +89,7 @@ void TemplatePlugin::stop()
  * @param WriteConfigEvent
  * @details 
  */
-void TemplatePlugin::writeConfigBeforeEvent(WriteConfigEvent &event)
+void AutoStartPlugin::writeConfigBeforeEvent(WriteConfigEvent &event)
 {
     QAbstractPlugin::writeConfigBeforeEvent(event);
 }
@@ -99,7 +99,7 @@ void TemplatePlugin::writeConfigBeforeEvent(WriteConfigEvent &event)
  * 如果event.isValid为false，那么不会触发该函数，界面也会回滚到原来的值
  * @param WriteConfigEvent
  */
-void TemplatePlugin::writeConfigAfterEvent(WriteConfigEvent &event)
+void AutoStartPlugin::writeConfigAfterEvent(WriteConfigEvent &event)
 {
     QAbstractPlugin::writeConfigAfterEvent(event);
 }
@@ -109,7 +109,7 @@ void TemplatePlugin::writeConfigAfterEvent(WriteConfigEvent &event)
  * @param ReadConfigEvent
  * @details 
  */
-void TemplatePlugin::readConfigBeforeEvent(ReadConfigEvent &event)
+void AutoStartPlugin::readConfigBeforeEvent(ReadConfigEvent &event)
 {
     QAbstractPlugin::readConfigBeforeEvent(event);
 }
@@ -119,7 +119,7 @@ void TemplatePlugin::readConfigBeforeEvent(ReadConfigEvent &event)
  * @param ReadConfigEvent
  * @details 
  */
-void TemplatePlugin::readConfigAfterEvent(ReadConfigEvent &event)
+void AutoStartPlugin::readConfigAfterEvent(ReadConfigEvent &event)
 {
     QAbstractPlugin::readConfigAfterEvent(event);
 }
@@ -133,7 +133,7 @@ void TemplatePlugin::readConfigAfterEvent(ReadConfigEvent &event)
  *          或使用指定类型的宏来注册 示例 
  *          Int_CONFIG_REGISTER("Int", "大小", 1, true);
  */
-void TemplatePlugin::registerConfig()
+void AutoStartPlugin::registerConfig()
 {
     QAbstractPlugin::registerConfig();
 }
