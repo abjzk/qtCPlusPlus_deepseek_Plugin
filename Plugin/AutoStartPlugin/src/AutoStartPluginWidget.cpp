@@ -95,6 +95,7 @@ QList<Program> AutoStartWidget::getPrograms()
         _logger->info(QString("\{\"name\":\"%1\",\"path\":\"%2\",\"arguments\":\"%3\"\}").arg(program.name).arg(program.path).arg(program.arguments));
         programs.append(program);
     }
+    _logger->info("读取注册表中开机自启动的程序完成 size:" + QString::number(programs.size()));
     return programs;
 }
 
