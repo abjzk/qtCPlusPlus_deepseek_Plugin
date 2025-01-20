@@ -8,7 +8,9 @@
 #include <QPixmap>
 #include <QHeaderView>
 #include <QMenu>
-
+#include <QUrl>
+#include <QFileInfo>
+#include <QProcess>
 AutoStartWidget::AutoStartWidget(Logger * logger,TConfig *config, QWidget *parent)
     : QWidget(parent), ui(new Ui::AutoStartPluginWidget()), _config(config),_logger(logger)
 {
@@ -90,7 +92,7 @@ QList<Program> AutoStartWidget::getPrograms()
             program.path = values.at(0) + "exe";
             program.arguments = values.at(1).trimmed();
         }
-
+        _logger->info(QString("\{\"name\":\"%1\",\"path\":\"%2\",\"arguments\":\"%3\"\}").arg(program.name).arg(program.path).arg(program.arguments));
         programs.append(program);
     }
     return programs;
@@ -100,13 +102,31 @@ void AutoStartWidget::showTableMenu(const QPoint &pos)
 {
     QPoint globalPos = QCursor::pos();
     QMenu menu(this);
-    QAction *addAction = menu.addAction("添加");
-    QAction *removeAction = menu.addAction("删除");
-    QAction *editAction = menu.addAction("编辑");
-    QAction *backAction = menu.addAction("备份");
+    QAction * addAction = menu.addAction("添加");
+    QAction * removeAction = menu.addAction("删除");
+    QAction * editAction = menu.addAction("编辑");
+    QAction * refreshAction = menu.addAction("刷新");
+    QAction * backAction = menu.addAction("备份");
+    QAction * openInDirAction = menu.addAction("打开文件所在路径");
+    QAction * openAction = menu.addAction("打开应用程序");
+
     // connect(addAction, &QAction::triggered, this, &AutoStartWidget::addProgram);
     // connect(removeAction, &QAction::triggered, this, &AutoStartWidget::removeProgram);
     // connect(editAction, &QAction::triggered, this, &AutoStartWidget::editProgram);
+    connect(refreshAction, &QAction::triggered, this, &AutoStartWidget::loadTable);
+    connect(openInDirAction, &QAction::triggered, [=]()
+    {
+        QString path = _tableWidget->item(_tableWidget->currentRow(), 1)->text();
+        QString command = QString("explorer /select,\"%1\"").arg(path);
+        _logger->info("打开文件所在路径:" + command);
+        system(command.toLocal8Bit().data());
+    });
+    connect(openAction, &QAction::triggered, [=]()
+    {
+        QString path = _tableWidget->item(_tableWidget->currentRow(), 1)->text();
+        QUrl url = QUrl::fromLocalFile(path);
+        _logger->info("打开应用程序:" + url.toString());
+        QDesktopServices::openUrl(url);
+    });
     menu.exec(globalPos);
-
 }
