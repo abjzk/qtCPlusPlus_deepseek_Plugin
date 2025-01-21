@@ -104,5 +104,6 @@
         "xloctime": "cpp",
         "qtablewidgetitem": "cpp",
         "regex": "cpp"
-    }
+    },
+    "commentTranslate.targetLanguage": "zh-CN"
 }

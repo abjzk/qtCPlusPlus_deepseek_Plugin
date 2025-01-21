@@ -137,6 +137,8 @@ void LFunc::autoRunPath(int isAutoRun, QString appName, QString appPath, QString
 #ifdef _WIN32
 	QString regPath = "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run";
 	QSettings settings(regPath, QSettings::NativeFormat);
+	// 把appPath中的/替换成\ 
+	appPath = "\"" + appPath.replace("/", "\\") + "\"";
 	if (isAutoRun)
 		settings.setValue(appName, appPath + " " + params);
 	else

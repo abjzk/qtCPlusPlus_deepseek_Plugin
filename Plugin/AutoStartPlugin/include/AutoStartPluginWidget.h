@@ -5,15 +5,7 @@
 #include <QTabWidget>
 #include <QTableWidgetItem>
 #include <QAbstractPlugin.h>
-
-struct Program
-{
-    QString icon = "";
-    QString name = "";
-    QString path = "";
-    QString arguments = "";
-};
-
+#include "ProgramDialog.h"
 
 class AutoStartPlugin_EXPORT AutoStartWidget : public QWidget
 {
@@ -32,4 +24,10 @@ private:
     QVBoxLayout * _mainLayout = new QVBoxLayout();
     QTableWidget * _tableWidget = new QTableWidget();
     void showTableMenu(const QPoint &pos);
+    void openProgramDir();
+    void runProgram();
+    void addProgram();
+    void removeProgram();
+    void editProgram();
+    void backUp();
 };

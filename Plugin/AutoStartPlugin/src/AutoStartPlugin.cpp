@@ -136,4 +136,5 @@ void AutoStartPlugin::readConfigAfterEvent(ReadConfigEvent &event)
 void AutoStartPlugin::registerConfig()
 {
     QAbstractPlugin::registerConfig();
+    Directory_CONFIG_REGISTER("DirPath", "默认选择目录路径", QApplication::applicationDirPath(), true);    
 }

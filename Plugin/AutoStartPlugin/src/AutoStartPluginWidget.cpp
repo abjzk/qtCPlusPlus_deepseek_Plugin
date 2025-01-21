@@ -11,6 +11,11 @@
 #include <QUrl>
 #include <QFileInfo>
 #include <QProcess>
+#include <QFileDialog>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <LCore>
 AutoStartWidget::AutoStartWidget(Logger * logger,TConfig *config, QWidget *parent)
     : QWidget(parent), ui(new Ui::AutoStartPluginWidget()), _config(config),_logger(logger)
 {
@@ -111,23 +116,114 @@ void AutoStartWidget::showTableMenu(const QPoint &pos)
     QAction * openInDirAction = menu.addAction("打开文件所在路径");
     QAction * openAction = menu.addAction("打开应用程序");
 
-    // connect(addAction, &QAction::triggered, this, &AutoStartWidget::addProgram);
-    // connect(removeAction, &QAction::triggered, this, &AutoStartWidget::removeProgram);
-    // connect(editAction, &QAction::triggered, this, &AutoStartWidget::editProgram);
+    connect(addAction, &QAction::triggered, this, &AutoStartWidget::addProgram);
+    connect(removeAction, &QAction::triggered, this, &AutoStartWidget::removeProgram);
+    connect(editAction, &QAction::triggered, this, &AutoStartWidget::editProgram);
+    connect(backAction, &QAction::triggered, this, &AutoStartWidget::backUp);
     connect(refreshAction, &QAction::triggered, this, &AutoStartWidget::loadTable);
-    connect(openInDirAction, &QAction::triggered, [=]()
-    {
-        QString path = _tableWidget->item(_tableWidget->currentRow(), 1)->text();
-        QString command = QString("explorer /select,\"%1\"").arg(path);
-        _logger->info("打开文件所在路径:" + command);
-        system(command.toLocal8Bit().data());
-    });
-    connect(openAction, &QAction::triggered, [=]()
-    {
-        QString path = _tableWidget->item(_tableWidget->currentRow(), 1)->text();
-        QUrl url = QUrl::fromLocalFile(path);
-        _logger->info("打开应用程序:" + url.toString());
-        QDesktopServices::openUrl(url);
-    });
+    connect(openInDirAction, &QAction::triggered, this, &AutoStartWidget::openProgramDir);
+    connect(openAction, &QAction::triggered, this,&AutoStartWidget::runProgram);
     menu.exec(globalPos);
+}
+void AutoStartWidget::openProgramDir()
+{
+    QString path = _tableWidget->item(_tableWidget->currentRow(), 1)->text();
+    QString command = QString("explorer /select,\"%1\"").arg(path);
+    _logger->info("打开文件所在路径:" + command);
+    system(command.toLocal8Bit().data());
+}
+void AutoStartWidget::runProgram()
+{
+    QString path = _tableWidget->item(_tableWidget->currentRow(), 1)->text();
+    QUrl url = QUrl::fromLocalFile(path);
+    _logger->info("打开应用程序:" + url.toString());
+    QDesktopServices::openUrl(url);
+}
+
+void AutoStartWidget::addProgram()
+{
+    Program program;
+    ProgramDialog *dialog = new ProgramDialog(this,_config->read("DirPath").value.toString(), &program, false);
+    if (dialog->exec() == QDialog::Accepted)
+    {
+        _logger->info(program.toString());
+        // 判断是否已经存在
+        for (int i = 0; i < _tableWidget->rowCount(); i++)
+        {
+            if (_tableWidget->item(i, 0)->text() == program.name)
+            {
+                QMessageBox::warning(this, "警告", "程序名称重复!");
+                _logger->warn("程序名称重复!" + program.name);
+                return;
+            }
+        }
+        ljz::LFunc::autoRunPath(1,program.name, program.path, program.arguments);
+        _tableWidget->setRowCount(_tableWidget->rowCount() + 1);
+        _tableWidget->setItem(_tableWidget->rowCount() - 1, 0, new QTableWidgetItem(program.name));
+        _tableWidget->setItem(_tableWidget->rowCount() - 1, 1, new QTableWidgetItem(program.path));
+        _tableWidget->setItem(_tableWidget->rowCount() - 1, 2, new QTableWidgetItem(program.arguments));
+    }
+}
+
+void AutoStartWidget::removeProgram()
+{
+    int row = _tableWidget->currentRow();
+    if (row == -1)
+    {
+        return;
+    }
+    if(QMessageBox::question(this, "警告", "确定删除"+_tableWidget->item(row, 0)->text()+"吗?\n请尽量备份后再删除!", QMessageBox::Yes | QMessageBox::No) == QMessageBox::No)
+    {
+        return;
+    }
+    ljz::LFunc::autoRunPath(0, _tableWidget->item(row, 0)->text(), _tableWidget->item(row, 1)->text(), _tableWidget->item(row, 2)->text());
+    _logger->info(QString("\{\"name\":\"%1\",\"path\":\"%2\",\"arguments\":\"%3\"\}").arg(_tableWidget->item(row, 0)->text()).arg(_tableWidget->item(row, 1)->text()).arg(_tableWidget->item(row, 2)->text()));
+    _tableWidget->removeRow(row);
+}
+
+void AutoStartWidget::editProgram()
+{
+    Program program;
+    program.name = _tableWidget->item(_tableWidget->currentRow(), 0)->text();
+    program.path = _tableWidget->item(_tableWidget->currentRow(), 1)->text();
+    program.arguments = _tableWidget->item(_tableWidget->currentRow(), 2)->text();
+    ProgramDialog *dialog = new ProgramDialog(this,_config->read("DirPath").value.toString(), &program, true);
+    if (dialog->exec() == QDialog::Accepted)
+    {
+        _logger->info(program.toString());
+        ljz::LFunc::autoRunPath(1,program.name, program.path, program.arguments);
+        _tableWidget->setItem(_tableWidget->currentRow(), 0, new QTableWidgetItem(program.name));
+        _tableWidget->setItem(_tableWidget->currentRow(), 1, new QTableWidgetItem(program.path));
+        _tableWidget->setItem(_tableWidget->currentRow(), 2, new QTableWidgetItem(program.arguments));
+    }
+}
+
+void AutoStartWidget::backUp()
+{
+    QString filePath = QFileDialog::getSaveFileName(this, "选择备份文件路径", QApplication::applicationDirPath(), "*.json");
+    if (filePath.isEmpty())
+    {
+        return;
+    }
+    filePath = filePath.split(".")[0] += ".json";
+    QFile file(filePath);
+    if (!file.open(QFile::WriteOnly | QFile::Text))
+    {
+        QMessageBox::critical(this, "错误", "备份配置文件失败");
+        _logger->warn("备份失败");
+        return;
+    }
+    QJsonArray array;
+    for(int i = 0; i < _tableWidget->rowCount(); i++)
+    {
+        array.append(QJsonObject({
+            {"name", _tableWidget->item(i, 0)->text()},
+            {"path", _tableWidget->item(i, 1)->text()},
+            {"arguments", _tableWidget->item(i, 2)->text()}
+        }));
+    }
+    QJsonDocument doc(array);
+    file.write(doc.toJson());
+    file.close();
+    _logger->info("备份到:" + filePath);
 }
