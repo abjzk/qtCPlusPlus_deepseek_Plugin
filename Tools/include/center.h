@@ -24,6 +24,9 @@ private:
     Ui::Center *ui;
     void showPluginTreeMenu(QPoint pos);
     void writeConfigAfterEvent(WriteConfigEvent &event);
+    void writeConfigBeforeEvent(WriteConfigEvent &event);
+    void readConfigBeforeEvent(ReadConfigEvent &event);
+    void readConfigAfterEvent(ReadConfigEvent &event);
     void showConfigDialog();
     void showLogDialog();
     TConfig * _config;

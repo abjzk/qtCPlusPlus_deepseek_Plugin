@@ -15,17 +15,24 @@
 #include "configDialog.h"
 #include <LCore>
 #include "MainWindow.h"
-
+#include <RemoveLogTask.h>
 Center::Center(TConfig *config,QWidget *parent)
     : QWidget(parent), ui(new Ui::Center), _config(config)
 {
+    this->_config->registerReadConfigBeforeCallback([this](ReadConfigEvent &event)->void { this->readConfigBeforeEvent(event); });
+    this->_config->registerReadConfigAfterCallback([this](ReadConfigEvent &event)->void { this->readConfigAfterEvent(event); });
+    this->_config->registerWriteConfigBeforeCallback([this](WriteConfigEvent &event)->void { this->writeConfigBeforeEvent(event); });
     this->_config->registerWriteConfigAfterCallback([this](WriteConfigEvent &event)->void { this->writeConfigAfterEvent(event); });
     this->_config->registerConfig("Plugins", "插件", TConfig::Type::String, QString(), false);
     this->_config->registerConfig("autoStart", "开机自启动", TConfig::Type::Bool, false, true);
+    this->_config->registerConfig("SavelogDay", "保存日志天数", TConfig::Type::Int, 30, true);
     ui->setupUi(this);
     this->initUi();
     this->initConnect();
     this->loadPluginTree();
+    RemoveLogTask *task = new RemoveLogTask(_config->read("SavelogDay").value.toInt(), this);
+    connect(task, &RemoveLogTask::finished, task, &RemoveLogTask::deleteLater);
+    task->start();
 }
 
 Center::~Center()
@@ -72,11 +79,33 @@ void Center::writeConfigAfterEvent(WriteConfigEvent &event)
 {
     if (event.key == "autoStart")
     {
-        auto item = event.newItem;
-        item.value.toBool();
         QString name = QApplication::applicationName();
-        LFunc::autoRun(item.value.toBool(), "LJZ"+ name);
+        LFunc::autoRun(event.newValue().toBool(), "LJZ"+ name);
     }
+}
+void Center::writeConfigBeforeEvent(WriteConfigEvent &event)
+{
+    if (event.key == "SavelogDay")
+    {
+
+        int days = event.newValue().toInt();
+        if (days < 0)
+        {
+            event.isValid = false;
+            event.message = "保存日志天数不能小于0";
+        }
+        else if (days > 365)
+        {
+            event.isValid = false;
+            event.message = "保存日志天数不能大于365";
+        }
+    }
+}
+void Center::readConfigBeforeEvent(ReadConfigEvent &event)
+{
+}
+void Center::readConfigAfterEvent(ReadConfigEvent &event)
+{
 }
 void Center::showConfigDialog()
 {

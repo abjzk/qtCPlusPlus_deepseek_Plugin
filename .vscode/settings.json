@@ -103,7 +103,10 @@
         "xlocnum": "cpp",
         "xloctime": "cpp",
         "qtablewidgetitem": "cpp",
-        "regex": "cpp"
+        "regex": "cpp",
+        "qstandardpaths": "cpp",
+        "qmap": "cpp",
+        "qdatetime": "cpp"
     },
     "commentTranslate.targetLanguage": "zh-CN"
 }

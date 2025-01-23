@@ -31,10 +31,13 @@ struct WriteConfigEvent
     bool isValid = true;
     // 信息，该值为错误信息
     QString message;
+    QVariant newValue() const { return newItem.value; }
+    QVariant oldValue() const { return oldItem.value; }
 };
 struct ReadConfigEvent
 {
     ConfigItem * item;
+    QVariant value() const { return item->value; }
 };
 
 

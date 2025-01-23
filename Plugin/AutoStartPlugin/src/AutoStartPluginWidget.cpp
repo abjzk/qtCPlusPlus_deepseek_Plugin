@@ -97,7 +97,8 @@ QList<Program> AutoStartWidget::getPrograms()
             program.path = values.at(0) + "exe";
             program.arguments = values.at(1).trimmed();
         }
-        _logger->info(QString("\{\"name\":\"%1\",\"path\":\"%2\",\"arguments\":\"%3\"\}").arg(program.name).arg(program.path).arg(program.arguments));
+        _logger->info(QString(R"({"name":"%1","path":"%2","arguments":"%3"})")
+            .arg(program.name).arg(program.path).arg(program.arguments));
         programs.append(program);
     }
     _logger->info("读取注册表中开机自启动的程序完成 size:" + QString::number(programs.size()));
@@ -177,7 +178,11 @@ void AutoStartWidget::removeProgram()
         return;
     }
     ljz::LFunc::autoRunPath(0, _tableWidget->item(row, 0)->text(), _tableWidget->item(row, 1)->text(), _tableWidget->item(row, 2)->text());
-    _logger->info(QString("\{\"name\":\"%1\",\"path\":\"%2\",\"arguments\":\"%3\"\}").arg(_tableWidget->item(row, 0)->text()).arg(_tableWidget->item(row, 1)->text()).arg(_tableWidget->item(row, 2)->text()));
+    _logger->info(QString(R"({"name":"%1","path":"%2","arguments":"%3"})")
+        .arg(_tableWidget->item(row, 0)->text())
+        .arg(_tableWidget->item(row, 1)->text())
+        .arg(_tableWidget->item(row, 2)->text())
+        );
     _tableWidget->removeRow(row);
 }
 

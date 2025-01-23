@@ -86,6 +86,8 @@ QWidget* ConfigDialog::createValueWidget(LLabelWidgetFrame* frame,QString type, 
     case TConfig::Type::Int:
     {
         QSpinBox *spinBox = new QSpinBox(this);
+        spinBox->setMinimum(-1000000000);
+        spinBox->setMaximum(1000000000);
         spinBox->setValue(TConfig::stringToValue(value, type).toInt());
         connect(spinBox, &QSpinBox::valueChanged, [=](int value){
             this->valueChanged(frame->data().value<QVariantMap>().value("key").toString(), value);
