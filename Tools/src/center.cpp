@@ -120,7 +120,11 @@ void Center::showConfigDialog()
 }
 void Center::showLogDialog()
 {
-    if(logDialog) return;
+    if(logDialog)
+    {
+        logDialog->deleteLater();
+        logDialog = nullptr;
+    }
     logDialog = new LogDialog();
     logDialog->setWindowIcon(currentPlugin->icon());
     logDialog->getTitleBar()->setTitleIcon(currentPlugin->icon());
