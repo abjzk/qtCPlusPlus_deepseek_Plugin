@@ -78,6 +78,7 @@ void DeepSeek::replyFinished_()
     _isRequesting = false;
     auto code = _reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     ErrorCode errorCode = static_cast<ErrorCode>(code);
+
     if (errorCode != NoError)
     {
         emit replyFinished(QNetworkReply::NoError, code, errorCodeToString(errorCode));
@@ -201,6 +202,7 @@ DeepSeek::Message::Message(QJsonObject obj)
     {
         role = ASSISTANTROLE;
         content = choice.value("delta").toObject().value("content").toString();
+        reasoning_content = choice.value("delta").toObject().value("reasoning_content").toString();
     }
 }
 

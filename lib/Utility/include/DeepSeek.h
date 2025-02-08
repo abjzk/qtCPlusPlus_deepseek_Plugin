@@ -44,11 +44,10 @@ public:
             total_tokens = obj.value("total_tokens").toDouble();
             prompt_cache_hit_tokens = obj.value("prompt_cache_hit_tokens").toDouble();
             prompt_cache_miss_tokens = obj.value("prompt_cache_miss_tokens").toDouble();
-            auto prompt_tokens_details = obj.value("prompt_tokens_details").toObject();
-            if (prompt_tokens_details.contains("reasoning_tokens"))
-                reasoning_tokens = prompt_tokens_details.value("reasoning_tokens").toDouble();
-            if (prompt_tokens_details.contains("cached_tokens"))
-                cached_tokens = prompt_tokens_details.value("cached_tokens").toDouble();
+            if (obj.contains("completion_tokens_details"))
+                reasoning_tokens = obj.value("completion_tokens_details").toObject().value("reasoning_tokens").toDouble();
+            if (obj.contains("prompt_tokens_details"))
+                cached_tokens = obj.value("prompt_tokens_details").toObject().value("cached_tokens").toDouble();
             json = obj;
         };
         Usage() {};
@@ -66,10 +65,11 @@ public:
     };
     struct Message
     {
-        bool finish_reason; // 是否思考结束，只针对可以思考的模型
-        QString role;       // 消息角色
-        QString content;    // 消息内容
-        int index;          // 消息索引
+        bool finish_reason;        // 是否思考结束，只针对可以思考的模型
+        QString role;              // 消息角色
+        QString content;           // 消息内容
+        QString reasoning_content; // 思考消息内容
+        int index;                 // 消息索引
         Message(const QString &role, const QString &content) : role(role), content(content) {};
         Message(QJsonObject obj);
         QJsonObject toJson() const;

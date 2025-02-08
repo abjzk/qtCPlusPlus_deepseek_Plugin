@@ -3,3 +3,4 @@
 /output
 /plugin/TestPlugin/
 CMakeLists.txt.user
+*.py

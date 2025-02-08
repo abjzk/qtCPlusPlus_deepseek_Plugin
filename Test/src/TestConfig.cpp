@@ -59,20 +59,33 @@ void TestConfig::deepSeek()
     SetConsoleOutputCP(CP_UTF8);
     QEventLoop loop;
     DeepSeek *deepSeek = new DeepSeek("sk-7fcb408f17454497bc242d94b053b910");
+    deepSeek->setModel("deepseek-reasoner");
     deepSeek->setStream(true);
+
     connect(deepSeek, &DeepSeek::replyStreamMessage, [=](const DeepSeek::Message &message)
-            { std::cout << message.content.toStdString(); });
+            {   
+                if (!message.finish_reason)
+                    std::cout << message.reasoning_content.toStdString() << std::endl;
+                std::cout << message.content.toStdString();
+                if (message.finish_reason)
+                    std::cout << "\n think finish" << std::endl; });
     connect(deepSeek, &DeepSeek::replyMessage, [=](const DeepSeek::Message &message)
-            { std::cout << message.content.toStdString(); });
-    connect(deepSeek, &DeepSeek::replyFinished, [&]()
-            { std::cout << "\nFinished" << std::endl; 
-                qDebug() << deepSeek->lastUsage().json;
+            { 
+                std::cout << message.reasoning_content.toStdString() << std::endl;
+                std::cout << message.content.toStdString(); });
+    connect(deepSeek, &DeepSeek::replyFinished, [&](QNetworkReply::NetworkError error, int httpStatusCode, const QString &errorString)
+            { std::cout << "\nFinished" << std::endl;
+                auto usage = deepSeek->lastUsage();
+                qDebug() << usage.json;
+                qDebug() << "code" << httpStatusCode << "error" << errorString;
                 loop.exit(); });
     connect(deepSeek, &DeepSeek::replyBalance, [&](DeepSeek::Balance balance)
             { qDebug() << balance.toString(); });
     deepSeek->queryBalance();
     qDebug() << deepSeek->models();
-    deepSeek->seedMessage({}, "你好");
+    deepSeek->seedMessage({}, "1+1=?");
+    if (deepSeek->model() == "deepseek-reasoner")
+        std::cout << "think" << std::endl;
     loop.exec();
     delete deepSeek;
 }
