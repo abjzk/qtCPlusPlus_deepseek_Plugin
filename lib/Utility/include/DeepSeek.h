@@ -3,11 +3,56 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include "Utility_global.h"
-
+#include <QJsonObject>
+#include <QMutex>
 class UTILITY_EXPORT DeepSeek : public QObject
 {
     Q_OBJECT
 public:
+    struct Balance
+    {
+        bool is_available = true;       // 当前账户是否有余额可供 API 调用
+        QString currency = "CNY";       // 货币，人民币或美元
+        double total_balance = 0.0;     // 总的可用余额，包括赠金和充值余额
+        double granted_balance = 0.0;   // 未过期的赠金余额
+        double topped_up_balance = 0.0; // 充值余额
+        Balance() {};
+        QString toString()
+        {
+            return QString("is_available: %1\ncurrency: %2\ntotal_balance: %3\ngranted_balance: %4\ntopped_up_balance: %5")
+                .arg(is_available)
+                .arg(currency)
+                .arg(total_balance)
+                .arg(granted_balance)
+                .arg(topped_up_balance);
+        }
+    };
+    struct Usage
+    {
+        double prompt_tokens = 0.0;            // 用户 prompt 所包含的 token 数。该值等于 prompt_cache_hit_tokens + prompt_cache_miss_tokens
+        double prompt_cache_hit_tokens = 0.0;  // 用户 prompt 中，命中上下文缓存的 token 数。
+        double prompt_cache_miss_tokens = 0.0; // 用户 prompt 中，未命中上下文缓存的 token 数。
+        double completion_tokens = 0.0;        // 模型 completion 产生的 token 数。
+        double total_tokens = 0.0;             // 该请求中，所有 token 的数量（prompt + completion）。
+        double reasoning_tokens = 0.0;         // 模型思考的 token 数。
+        double cached_tokens = 0.0;            // 模型从上下文缓存中获取的 token 数。
+        QJsonObject json = QJsonObject({{"prompt_tokens", prompt_tokens}, {"completion_tokens", completion_tokens}, {"total_tokens", total_tokens}});
+        Usage(QJsonObject obj)
+        {
+            prompt_tokens = obj.value("prompt_tokens").toDouble();
+            completion_tokens = obj.value("completion_tokens").toDouble();
+            total_tokens = obj.value("total_tokens").toDouble();
+            prompt_cache_hit_tokens = obj.value("prompt_cache_hit_tokens").toDouble();
+            prompt_cache_miss_tokens = obj.value("prompt_cache_miss_tokens").toDouble();
+            auto prompt_tokens_details = obj.value("prompt_tokens_details").toObject();
+            if (prompt_tokens_details.contains("reasoning_tokens"))
+                reasoning_tokens = prompt_tokens_details.value("reasoning_tokens").toDouble();
+            if (prompt_tokens_details.contains("cached_tokens"))
+                cached_tokens = prompt_tokens_details.value("cached_tokens").toDouble();
+            json = obj;
+        };
+        Usage() {};
+    };
     enum ErrorCode
     {
         NoError = 200,
@@ -50,7 +95,19 @@ public:
     double topP() const { return _top_p; }
 
     QString systemMessage() const { return _system_messages; }
-
+    /**
+     * @brief 是否正在发送请求,只能存在一个回复。如果请求下一个请先取消当前请求
+     */
+    bool isRequesting() const { return _isRequesting; }
+    /**
+     * @brief 获取模型列表
+     */
+    QStringList models();
+    /**
+     * @brief 查询最后一次使用情况
+     * @param usage
+     */
+    Usage lastUsage() const { return _usage; };
 public slots:
     /**
      * @brief 发送种子消息
@@ -106,6 +163,14 @@ public slots:
      * @param presence_penalty
      */
     void setPresencePenalty(double presence_penalty) { _presence_penalty = presence_penalty; }
+    /**
+     * @brief 查询余额
+     */
+    void queryBalance();
+    /**
+     * @brief 停止请求
+     */
+    void stopRequest();
 signals:
     /**
      * @brief 流式消息信号
@@ -120,7 +185,11 @@ signals:
     /**
      * @brief 当前对话完成信号
      */
-    void replyFinished();
+    void replyFinished(QNetworkReply::NetworkError error, int httpStatusCode, const QString &errorString);
+    /**
+     * @brief 当前余额信号
+     */
+    void replyBalance(Balance balance);
 
 private:
     QString _token{QString()};
@@ -134,10 +203,13 @@ private:
     double _top_p{1};
     QNetworkAccessManager _manager;
     QString _system_messages{"You are a helpful assistant"};
+    Usage _usage;
+    QNetworkReply *_reply{nullptr};
+    bool _isRequesting{false};
+    QMutex _mutex;
 private slots:
     void readStream();
     void replyFinished_();
-    void replyError(QNetworkReply::NetworkError error);
 
 private:
     static QJsonObject messageToJson(const QString &role, const QString &content);

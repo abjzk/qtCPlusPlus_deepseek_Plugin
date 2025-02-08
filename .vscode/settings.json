@@ -108,7 +108,10 @@
         "qmap": "cpp",
         "qdatetime": "cpp",
         "qwebenginepage": "cpp",
-        "qrunnable": "cpp"
+        "qrunnable": "cpp",
+        "qnetworkrequest": "cpp",
+        "qmutex": "cpp",
+        "iostream": "cpp"
     },
     "commentTranslate.targetLanguage": "zh-CN"
 }

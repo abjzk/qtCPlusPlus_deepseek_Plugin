@@ -3,7 +3,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonValue>
-
+#include <QEventLoop>
 #define SYSTEMROLE "system"
 #define USERROLE "user"
 #define ASSISTANTROLE "assistant"
@@ -50,40 +50,63 @@ void DeepSeek::setFrequencyPenalty(double frequency_penalty)
 }
 void DeepSeek::readStream()
 {
-    QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
-    if (reply->error() != QNetworkReply::NoError)
+    _mutex.lock();
+    if (!_isRequesting)
         return;
-    QString text = reply->readAll();
+    _mutex.unlock();
+    if (!_reply->isOpen())
+        return;
+    if (_reply->error() != QNetworkReply::NoError)
+        return;
+    QString text = _reply->readAll();
     QStringList textList = text.split("data: ");
     for (auto t : textList)
     {
         QJsonDocument doc = QJsonDocument::fromJson(t.toUtf8());
         if (doc.isNull() || doc.isEmpty())
             continue;
-        auto message = Message(doc.object());
+        auto obj = doc.object();
+        if (obj.contains("usage"))
+            _usage = Usage(obj.value("usage").toObject());
+        auto message = Message(obj);
         emit replyStreamMessage(message);
     }
 }
 void DeepSeek::replyFinished_()
 {
-    QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
-    if (reply->error() != QNetworkReply::NoError)
-        return;
-    QString text = reply->readAll();
-
+    QMutexLocker locker(&_mutex);
+    _isRequesting = false;
+    auto code = _reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    ErrorCode errorCode = static_cast<ErrorCode>(code);
+    if (errorCode != NoError)
+    {
+        emit replyFinished(QNetworkReply::NoError, code, errorCodeToString(errorCode));
+        goto end;
+    }
+    if (_reply->error() != QNetworkReply::NoError && _reply->error() != QNetworkReply::OperationCanceledError)
+    {
+        emit replyFinished(_reply->error(), code, _reply->errorString());
+        goto end;
+    }
+    if (_reply->error() == QNetworkReply::OperationCanceledError)
+    {
+        emit replyFinished(QNetworkReply::NoError, code, "");
+        goto end;
+    }
     if (!_isStream)
     {
-        QJsonDocument doc = QJsonDocument::fromJson(text.toUtf8());
+        QJsonDocument doc = QJsonDocument::fromJson(_reply->readAll());
         if (doc.isNull() || doc.isEmpty())
             return;
-        emit replyMessage(Message(doc.object()));
+        auto obj = doc.object();
+        if (obj.contains("usage"))
+            _usage = Usage(obj.value("usage").toObject());
+        emit replyMessage(Message(obj));
     }
-    reply->deleteLater();
-    emit replyFinished();
-}
-
-void DeepSeek::replyError(QNetworkReply::NetworkError error)
-{
+    emit replyFinished(QNetworkReply::NoError, code, "");
+end:
+    _reply->deleteLater();
+    _reply = nullptr;
 }
 
 QJsonObject DeepSeek::messageToJson(const QString &role, const QString &content)
@@ -121,6 +144,10 @@ void DeepSeek::setTopP(double top_p)
 
 void DeepSeek::seedMessage(const QList<Message> &oldMessages, const QString &message)
 {
+    QMutexLocker locker(&_mutex);
+    if (_isRequesting)
+        return;
+    _isRequesting = true;
     QNetworkRequest request;
     request.setUrl(QUrl("https://api.deepseek.com/chat/completions"));
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
@@ -151,13 +178,12 @@ void DeepSeek::seedMessage(const QList<Message> &oldMessages, const QString &mes
     messages.append(messageToJson(USERROLE, message));
     obj.insert("messages", messages);
     QString json = QJsonDocument(obj).toJson(QJsonDocument::Compact);
-    QNetworkReply *_reply = _manager.post(request, QJsonDocument(obj).toJson());
+    _reply = _manager.post(request, QJsonDocument(obj).toJson());
     if (_isStream)
     {
         connect(_reply, &QNetworkReply::readyRead, this, &DeepSeek::readStream);
     }
     connect(_reply, &QNetworkReply::finished, this, &DeepSeek::replyFinished_);
-    connect(_reply, &QNetworkReply::errorOccurred, this, &DeepSeek::replyError);
 }
 
 DeepSeek::Message::Message(QJsonObject obj)
@@ -181,4 +207,67 @@ DeepSeek::Message::Message(QJsonObject obj)
 QJsonObject DeepSeek::Message::toJson() const
 {
     return QJsonObject{{"role", role}, {"content", content}};
+}
+void DeepSeek::queryBalance()
+{
+    QNetworkRequest request;
+    request.setUrl(QUrl("https://api.deepseek.com/user/balance"));
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    request.setRawHeader("Accept", "application/json");
+    request.setRawHeader("Authorization", ("Bearer " + _token).toUtf8());
+    QNetworkReply *reply = _manager.get(request);
+    connect(reply, &QNetworkReply::finished, [=]()
+            {
+            QNetworkReply::NetworkError error = reply->error();
+            if (error == QNetworkReply::NoError)
+            {
+                QJsonDocument doc = QJsonDocument::fromJson(reply->readAll());
+                QJsonObject obj = doc.object();
+                QJsonObject info = obj.value("balance_infos").toArray()[0].toObject();
+                Balance balance;
+                balance.is_available = obj.value("is_available").toBool();
+                balance.currency = info.value("currency").toString();
+                balance.total_balance = info.value("total_balance").toString().toDouble();
+                balance.granted_balance = info.value("granted_balance").toString().toDouble();
+                balance.topped_up_balance = info.value("topped_up_balance").toString().toDouble();
+                emit replyBalance(balance);
+                reply->deleteLater();
+                return;
+            }
+            emit replyBalance(Balance());
+            reply->deleteLater(); });
+}
+
+void DeepSeek::stopRequest()
+{
+    if (!_isRequesting)
+        return;
+    _reply->abort();
+}
+
+QStringList DeepSeek::models()
+{
+    QNetworkRequest request;
+    request.setUrl(QUrl("https://api.deepseek.com/models"));
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    request.setRawHeader("Accept", "application/json");
+    request.setRawHeader("Authorization", ("Bearer " + _token).toUtf8());
+    QNetworkReply *reply = _manager.get(request);
+    QEventLoop loop;
+    connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+    auto error = reply->error();
+    if (error == QNetworkReply::NoError)
+    {
+        QJsonDocument doc = QJsonDocument::fromJson(reply->readAll());
+        QJsonObject obj = doc.object();
+        QJsonArray models = obj.value("data").toArray();
+        QStringList list;
+        for (int i = 0; i < models.size(); i++)
+            list.append(models.at(i).toObject().value("id").toString());
+        reply->deleteLater();
+        return list;
+    }
+    reply->deleteLater();
+    return {"deepseek-chat", "deepseek-reasoner"};
 }
