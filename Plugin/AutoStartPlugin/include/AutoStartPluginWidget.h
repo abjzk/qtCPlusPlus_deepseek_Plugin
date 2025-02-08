@@ -4,7 +4,7 @@
 #include <QLayout>
 #include <QTabWidget>
 #include <QTableWidgetItem>
-#include <QAbstractPlugin.h>
+#include <AbstractPlugin.h>
 #include "ProgramDialog.h"
 
 class AutoStartPlugin_EXPORT AutoStartWidget : public QWidget

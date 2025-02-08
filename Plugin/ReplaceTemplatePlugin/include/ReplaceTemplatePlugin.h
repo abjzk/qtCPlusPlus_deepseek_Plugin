@@ -2,11 +2,11 @@
 #define ReplaceTemplatePlugin_H
 
 #include "ReplaceTemplatePlugin_global.h"
-#include "QAbstractPlugin.h"
+#include "AbstractPlugin.h"
 #include "config.h"
 
 
-class ReplaceTemplatePlugin_EXPORT ReplaceTemplatePlugin : public QAbstractPlugin
+class ReplaceTemplatePlugin_EXPORT ReplaceTemplatePlugin : public AbstractPlugin
 {
     Q_OBJECT
 public:
@@ -31,10 +31,10 @@ public:
 class ReplaceTemplatePlugin_EXPORT ReplaceTemplatePluginFactory : public QObject, public PluginFactory
 {
 	Q_OBJECT
-		Q_PLUGIN_METADATA(IID QAbstractPlugin_IID)
+		Q_PLUGIN_METADATA(IID AbstractPlugin_IID)
 		Q_INTERFACES(PluginFactory)
 public:
-	QAbstractPlugin* create(Logger * logger,TConfig *config) override { return new ReplaceTemplatePlugin(logger,config); };
+	AbstractPlugin* create(Logger * logger,TConfig *config) override { return new ReplaceTemplatePlugin(logger,config); };
 	~ReplaceTemplatePluginFactory() override = default;
 } ;
 

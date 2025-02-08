@@ -36,12 +36,13 @@ public:
 	static QString levelToString(spdlog::level::level_enum level);
 	static spdlog::level::level_enum stringToLevel(const QString& level);
 	void flush_on(QString name);
+	QString name() const { return _name; }
 signals:
 	void sendLogger(LoggerDetails details);
 private:
 	std::shared_ptr<spdlog::logger> _logger;
 	QString _name;
-	spdlog::level::level_enum _flushLevel;
+	//spdlog::level::level_enum _flushLevel;
 	std::shared_ptr<spdlog::sinks::daily_file_sink_mt> file_sink;
 	std::shared_ptr<spdlog::sinks::callback_sink_mt> callback_sink;
 	std::shared_ptr<spdlog::details::thread_pool> tp;

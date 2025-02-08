@@ -3,7 +3,7 @@
 #include <QStandardPaths>
 
 ImageToIcoPlugin::ImageToIcoPlugin(Logger* logger,TConfig *config,QObject *parent)
-    : QAbstractPlugin(logger,config,parent)
+    : AbstractPlugin(logger,config,parent)
 {
     this->registerConfig();
 }
@@ -44,19 +44,19 @@ QIcon ImageToIcoPlugin::icon()
 
 QWidget *ImageToIcoPlugin::start()
 {
-    QAbstractPlugin::start();
+    AbstractPlugin::start();
     return new ImageToIcoWidget(_config);
 }
 
 
 void ImageToIcoPlugin::stop()
 {
-    QAbstractPlugin::stop();
+    AbstractPlugin::stop();
 }
 
 void ImageToIcoPlugin::writeConfigBeforeEvent(WriteConfigEvent &event)
 {
-    QAbstractPlugin::writeConfigBeforeEvent(event);
+    AbstractPlugin::writeConfigBeforeEvent(event);
     if(event.key == "currentOutputPath" || event.key == "currentInputPath")
     {
         QVariant path = event.newItem.value.toString();
@@ -70,22 +70,22 @@ void ImageToIcoPlugin::writeConfigBeforeEvent(WriteConfigEvent &event)
 
 void ImageToIcoPlugin::writeConfigAfterEvent(WriteConfigEvent &event)
 {
-    QAbstractPlugin::writeConfigAfterEvent(event);
+    AbstractPlugin::writeConfigAfterEvent(event);
 }
 
 void ImageToIcoPlugin::readConfigBeforeEvent(ReadConfigEvent &event)
 {
-    QAbstractPlugin::readConfigBeforeEvent(event);
+    AbstractPlugin::readConfigBeforeEvent(event);
 }
 
 void ImageToIcoPlugin::readConfigAfterEvent(ReadConfigEvent &event)
 {
-    QAbstractPlugin::readConfigAfterEvent(event);
+    AbstractPlugin::readConfigAfterEvent(event);
 }
 
 void ImageToIcoPlugin::registerConfig()
 {
-    QAbstractPlugin::registerConfig();
+    AbstractPlugin::registerConfig();
     Directory_CONFIG_REGISTER("currentInputPath", "默认输入路径", QStandardPaths::writableLocation(QStandardPaths::DesktopLocation), true);
     Directory_CONFIG_REGISTER("currentOutputPath", "默认输出路径", QStandardPaths::writableLocation(QStandardPaths::DownloadLocation)+"/ImageToIco" , true);
     Bool_CONFIG_REGISTER("overOpenOutputPath", "转换后打开文件夹", false, true);

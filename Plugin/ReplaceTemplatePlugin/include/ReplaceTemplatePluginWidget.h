@@ -2,7 +2,7 @@
 #include "ui_ReplaceTemplatePluginWidget.h"
 #include <config.h>
 #include "ReplaceTemplateThread.h"
-#include "QAbstractPlugin.h"
+#include "AbstractPlugin.h"
 
 class ReplaceTemplatePlugin_EXPORT ReplaceTemplateWidget : public QWidget
 {

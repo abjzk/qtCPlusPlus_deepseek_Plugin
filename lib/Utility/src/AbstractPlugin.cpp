@@ -1,6 +1,6 @@
-#include "QAbstractPlugin.h"
+#include "AbstractPlugin.h"
 #include "Logger.h"
-QAbstractPlugin::QAbstractPlugin(Logger* logger,TConfig *config,QObject *parent)
+AbstractPlugin::AbstractPlugin(Logger* logger,TConfig *config,QObject *parent)
     : QObject(parent), _config(config),_logger(logger)
 {
     _config->setParent(this);
@@ -20,27 +20,27 @@ QAbstractPlugin::QAbstractPlugin(Logger* logger,TConfig *config,QObject *parent)
     });
 }
 
-QWidget *QAbstractPlugin::start()
+QWidget *AbstractPlugin::start()
 {
     return nullptr;
 }
 
-void QAbstractPlugin::stop()
+void AbstractPlugin::stop()
 {
     delete _config;
     _config = nullptr;
 }
 
-void QAbstractPlugin::registerConfig()
+void AbstractPlugin::registerConfig()
 {
     ComBox_CONFIG_REGISTER("LogLevel", "日志等级", QVariant::fromValue(ComboxData(2,Logger::levels())), true);   
 }
 
-void QAbstractPlugin::writeConfigBeforeEvent(WriteConfigEvent &event)
+void AbstractPlugin::writeConfigBeforeEvent(WriteConfigEvent &event)
 {
 }
 
-void QAbstractPlugin::writeConfigAfterEvent(WriteConfigEvent &event)
+void AbstractPlugin::writeConfigAfterEvent(WriteConfigEvent &event)
 {
     if (event.key.contains("LogLevel"))
     {
@@ -48,10 +48,10 @@ void QAbstractPlugin::writeConfigAfterEvent(WriteConfigEvent &event)
     }
 }
 
-void QAbstractPlugin::readConfigBeforeEvent(ReadConfigEvent &event)
+void AbstractPlugin::readConfigBeforeEvent(ReadConfigEvent &event)
 {
 }
 
-void QAbstractPlugin::readConfigAfterEvent(ReadConfigEvent &event)
+void AbstractPlugin::readConfigAfterEvent(ReadConfigEvent &event)
 {
 }

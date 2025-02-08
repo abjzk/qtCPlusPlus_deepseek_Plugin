@@ -2,11 +2,11 @@
 #define AutoStartPlugin_H
 
 #include "AutoStartPlugin_global.h"
-#include "QAbstractPlugin.h"
+#include "AbstractPlugin.h"
 #include "config.h"
 
 
-class AutoStartPlugin_EXPORT AutoStartPlugin : public QAbstractPlugin
+class AutoStartPlugin_EXPORT AutoStartPlugin : public AbstractPlugin
 {
     Q_OBJECT
 public:
@@ -31,10 +31,10 @@ public:
 class AutoStartPlugin_EXPORT AutoStartPluginFactory : public QObject, public PluginFactory
 {
 	Q_OBJECT
-		Q_PLUGIN_METADATA(IID QAbstractPlugin_IID)
+		Q_PLUGIN_METADATA(IID AbstractPlugin_IID)
 		Q_INTERFACES(PluginFactory)
 public:
-	QAbstractPlugin* create(Logger *logger,TConfig *config) override { return new AutoStartPlugin(logger,config); };
+	AbstractPlugin* create(Logger *logger,TConfig *config) override { return new AutoStartPlugin(logger,config); };
 	~AutoStartPluginFactory() override = default;
 } ;
 

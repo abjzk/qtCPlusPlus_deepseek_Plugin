@@ -2,7 +2,7 @@
 #include <LTextEdit.h>
 #include "mainwindow.h"
 #include "center.h"
-#include "QAbstractPlugin.h"
+#include "AbstractPlugin.h"
 // #include "LSqlExecutor.h"
 #include "config.h"
 #include "LCore"

@@ -36,4 +36,6 @@ public:
     ~LogDialog();
     QTableWidget* getTableWidget() { return qobject_cast<QTableWidget*>(this->getMainWidget()); };
     void addLogItem(const LoggerDetails& details);
+private:
+    void showContextMenu(const QPoint &pos);
 };

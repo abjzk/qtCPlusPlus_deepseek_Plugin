@@ -1,7 +1,8 @@
 #include "LogDialog.h"
 #include <QHeaderView>
 #include <QScrollBar>
-
+#include <QMenu>
+#include <qdesktopservices.h>
 
 LogTableWidget::LogTableWidget(QWidget *parent)
 {
@@ -37,8 +38,9 @@ LogDialog::LogDialog( QWidget *parent)
     table->setHorizontalHeaderLabels(headerLabels);
     // 设置表头不可排序
     table->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    // 置顶
-    // this->setWindowFlags(this->windowFlags() | Qt::WindowType::WindowStaysOnTopHint);
+    // 右键菜单
+    table->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(table, &QTableWidget::customContextMenuRequested, this, &LogDialog::showContextMenu);
 }
 
 LogDialog::~LogDialog()
@@ -69,3 +71,18 @@ void LogDialog::addLogItem(const LoggerDetails &details)
     table->scrollToBottom();
 }
 
+void LogDialog::showContextMenu(const QPoint &pos)
+{
+    auto p = QCursor::pos();
+    QMenu menu(this);
+    auto openDir = menu.addAction("打开日志目录");
+    auto clearDir = menu.addAction("清空");
+    connect(openDir, &QAction::triggered, [=]() 
+        {
+            auto url = QUrl::fromLocalFile(QApplication::applicationDirPath() + "/logs/" + this->objectName());
+            QDesktopServices::openUrl(url);
+        }
+    );
+    connect(clearDir, &QAction::triggered,this->getTableWidget(),&QTableWidget::setRowCount);
+    menu.exec(p);
+}

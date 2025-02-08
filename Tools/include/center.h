@@ -1,7 +1,7 @@
 #include "ui_center.h"
 #include <QPoint>
 #include <config.h>
-#include <QAbstractPlugin.h>
+#include <AbstractPlugin.h>
 #include "configDialog.h"
 #include "logDialog.h"
 class Center : public QWidget
@@ -15,10 +15,10 @@ public:
 
 private:
     void loadPluginTree();
-    QAbstractPlugin *currentPlugin = nullptr;
-    QAbstractPlugin *findPlugin(QString name);
+    AbstractPlugin *currentPlugin = nullptr;
+    AbstractPlugin *findPlugin(QString name);
     QTreeWidgetItem *addPlugin(QString &filename);
-    QMap<QString, QAbstractPlugin *> _plugins;
+    QMap<QString, AbstractPlugin *> _plugins;
     ConfigDialog *dialog = nullptr;
     LogDialog *logDialog = nullptr;
     Ui::Center *ui;

@@ -64,5 +64,6 @@ namespace ljz
 		{
 			return setIconColor(icon, oppositeColor(color));
 		}
+		static QDateTime chrono_time_point_to_QDateTime(const std::chrono::system_clock::time_point& time);
 	};
 }

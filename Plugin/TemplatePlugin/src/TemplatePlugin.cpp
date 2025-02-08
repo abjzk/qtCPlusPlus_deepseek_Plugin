@@ -3,7 +3,7 @@
 #include <QStandardPaths>
 
 TemplatePlugin::TemplatePlugin(Logger * logger,TConfig *config,QObject *parent)
-    : QAbstractPlugin(logger,config,parent)
+    : AbstractPlugin(logger,config,parent)
 {
 }
 
@@ -71,7 +71,7 @@ QIcon TemplatePlugin::icon()
  */
 QWidget *TemplatePlugin::start()
 {
-    QAbstractPlugin::start();
+    AbstractPlugin::start();
     return new TemplateWidget(_logger,_config);
 }
 
@@ -81,7 +81,7 @@ QWidget *TemplatePlugin::start()
  */
 void TemplatePlugin::stop()
 {
-    QAbstractPlugin::stop();
+    AbstractPlugin::stop();
 }
 
 /**
@@ -91,7 +91,7 @@ void TemplatePlugin::stop()
  */
 void TemplatePlugin::writeConfigBeforeEvent(WriteConfigEvent &event)
 {
-    QAbstractPlugin::writeConfigBeforeEvent(event);
+    AbstractPlugin::writeConfigBeforeEvent(event);
 }
 
 /**
@@ -101,7 +101,7 @@ void TemplatePlugin::writeConfigBeforeEvent(WriteConfigEvent &event)
  */
 void TemplatePlugin::writeConfigAfterEvent(WriteConfigEvent &event)
 {
-    QAbstractPlugin::writeConfigAfterEvent(event);
+    AbstractPlugin::writeConfigAfterEvent(event);
 }
 
 /**
@@ -111,7 +111,7 @@ void TemplatePlugin::writeConfigAfterEvent(WriteConfigEvent &event)
  */
 void TemplatePlugin::readConfigBeforeEvent(ReadConfigEvent &event)
 {
-    QAbstractPlugin::readConfigBeforeEvent(event);
+    AbstractPlugin::readConfigBeforeEvent(event);
 }
 
 /**
@@ -121,7 +121,7 @@ void TemplatePlugin::readConfigBeforeEvent(ReadConfigEvent &event)
  */
 void TemplatePlugin::readConfigAfterEvent(ReadConfigEvent &event)
 {
-    QAbstractPlugin::readConfigAfterEvent(event);
+    AbstractPlugin::readConfigAfterEvent(event);
 }
 
 /**
@@ -135,5 +135,5 @@ void TemplatePlugin::readConfigAfterEvent(ReadConfigEvent &event)
  */
 void TemplatePlugin::registerConfig()
 {
-    QAbstractPlugin::registerConfig();
+    AbstractPlugin::registerConfig();
 }

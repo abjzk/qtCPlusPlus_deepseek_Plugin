@@ -41,12 +41,12 @@
 #define ComBox_CONFIG_REGISTER(key, description, defaultValue, isShow) CONFIG_REGISTER(key, description, Combox, defaultValue, isShow)
 
 
-class UTILITY_EXPORT QAbstractPlugin : public QObject
+class UTILITY_EXPORT AbstractPlugin : public QObject
 {
     Q_OBJECT
 public:
-    explicit QAbstractPlugin(Logger* logger,TConfig *config,QObject *parent = nullptr);
-    virtual ~QAbstractPlugin() = default;
+    explicit AbstractPlugin(Logger* logger,TConfig *config,QObject *parent = nullptr);
+    virtual ~AbstractPlugin() = default;
     // 插件组名称
     virtual QString group() = 0;
     // 插件名称
@@ -113,10 +113,10 @@ public:
      * @brief 创建插件
      * @return
      */
-    virtual QAbstractPlugin *create(Logger *logger,TConfig *config) = 0;
+    virtual AbstractPlugin *create(Logger *logger,TConfig *config) = 0;
     virtual ~PluginFactory() = default;
 };
 
-#define QAbstractPlugin_IID "org.Tools.QAbstractPlugin"
+#define AbstractPlugin_IID "org.Tools.AbstractPlugin"
 
-Q_DECLARE_INTERFACE(PluginFactory, QAbstractPlugin_IID)
+Q_DECLARE_INTERFACE(PluginFactory, AbstractPlugin_IID)

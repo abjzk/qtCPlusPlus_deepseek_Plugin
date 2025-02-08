@@ -2,11 +2,11 @@
 #define TemplatePlugin_H
 
 #include "TemplatePlugin_global.h"
-#include "QAbstractPlugin.h"
+#include "AbstractPlugin.h"
 #include "config.h"
 
 
-class TemplatePlugin_EXPORT TemplatePlugin : public QAbstractPlugin
+class TemplatePlugin_EXPORT TemplatePlugin : public AbstractPlugin
 {
     Q_OBJECT
 public:
@@ -31,10 +31,10 @@ public:
 class TemplatePlugin_EXPORT TemplatePluginFactory : public QObject, public PluginFactory
 {
 	Q_OBJECT
-		Q_PLUGIN_METADATA(IID QAbstractPlugin_IID)
+		Q_PLUGIN_METADATA(IID AbstractPlugin_IID)
 		Q_INTERFACES(PluginFactory)
 public:
-	QAbstractPlugin* create(Logger *logger,TConfig *config) override { return new TemplatePlugin(logger,config); };
+	AbstractPlugin* create(Logger *logger,TConfig *config) override { return new TemplatePlugin(logger,config); };
 	~TemplatePluginFactory() override = default;
 } ;
 

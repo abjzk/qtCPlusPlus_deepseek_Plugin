@@ -1,7 +1,7 @@
 #include <LJZWidget.h>
 #include "Widget.h"
 #include "config.h"
-#include <QAbstractPlugin.h>
+#include <AbstractPlugin.h>
 #include <QCloseEvent>
 #include "configDialog.h"
 using namespace ljz;

@@ -20,11 +20,9 @@ ComboxData::ComboxData(int index, QStringList items)
 
 QString ComboxData::toString()
 {
-    QJsonObject obj
-    {
+    QJsonObject obj{
         {"index", index},
-        {"items", QJsonArray::fromStringList(items)}
-    };
+        {"items", QJsonArray::fromStringList(items)}};
     QJsonDocument doc(obj);
     return doc.toJson();
 }

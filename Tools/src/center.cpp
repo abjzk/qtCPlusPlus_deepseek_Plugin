@@ -8,7 +8,7 @@
 #include <QJsonDocument>
 #include <QApplication>
 #include <QDir>
-#include <QAbstractPlugin.h>
+#include <AbstractPlugin.h>
 #include <QPluginLoader>
 #include <qexception.h>
 #include <qtreewidget.h>
@@ -33,12 +33,13 @@ Center::Center(TConfig *config,QWidget *parent)
     RemoveLogTask *task = new RemoveLogTask(_config->read("SavelogDay").value.toInt(), this);
     connect(task, &RemoveLogTask::finished, task, &RemoveLogTask::deleteLater);
     task->start();
+    // QWebEnginePage *view = new QWebEnginePage(this);
 }
 
 Center::~Center()
 {
-    QList<QAbstractPlugin *> list = this->findChildren<QAbstractPlugin *>();
-    for (QAbstractPlugin *plugin : list)
+    QList<AbstractPlugin *> list = this->findChildren<AbstractPlugin *>();
+    for (AbstractPlugin *plugin : list)
     {
         plugin->stop();
     }
@@ -129,6 +130,7 @@ void Center::showLogDialog()
     logDialog->setWindowIcon(currentPlugin->icon());
     logDialog->getTitleBar()->setTitleIcon(currentPlugin->icon());
     logDialog->resize(600,400);
+    logDialog->setObjectName(currentPlugin->logger()->name());
     logDialog->show();
     connect(currentPlugin->logger(), &Logger::sendLogger, logDialog, &LogDialog::addLogItem);
 
@@ -179,7 +181,7 @@ void Center::loadPluginTree()
     {
         QString filename = list.at(i).split(".")[0];
         auto treeItem = addPlugin(filename);
-        if (!obj.contains(filename))
+        if (treeItem && !obj.contains(filename))
         {
             QJsonObject newObj = {{"enable", true}};
             obj.insert(filename, newObj);
@@ -196,16 +198,18 @@ void Center::loadPluginTree()
 
 }
 
-QAbstractPlugin *Center::findPlugin(QString name)
+AbstractPlugin *Center::findPlugin(QString name)
 {
     QPluginLoader loader(QApplication::applicationDirPath() + "/" + name + ".dll");
     PluginFactory *factory = qobject_cast<PluginFactory *>(loader.instance());
-    return factory->create(new Logger(name),new TConfig(name));
+    return factory ? factory->create(new Logger(name),new TConfig(name)) : nullptr;
 }
 
 QTreeWidgetItem *Center::addPlugin(QString &filename)
 {
-    QAbstractPlugin *plugin = findPlugin(filename);
+    AbstractPlugin *plugin = findPlugin(filename);
+    if (plugin == nullptr)
+        return nullptr;
     plugin->registerConfig();
     // plugin->start(new TConfig(plugin->name(), plugin));
     QString group = plugin->group().isEmpty() ? "未分组" : plugin->group();

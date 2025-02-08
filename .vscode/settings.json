@@ -106,7 +106,9 @@
         "regex": "cpp",
         "qstandardpaths": "cpp",
         "qmap": "cpp",
-        "qdatetime": "cpp"
+        "qdatetime": "cpp",
+        "qwebenginepage": "cpp",
+        "qrunnable": "cpp"
     },
     "commentTranslate.targetLanguage": "zh-CN"
 }

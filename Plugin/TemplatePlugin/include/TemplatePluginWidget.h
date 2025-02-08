@@ -1,7 +1,7 @@
 #include "TemplatePlugin_global.h"
 #include "ui_TemplatePluginWidget.h"
 #include <config.h>
-#include <QAbstractPlugin.h>
+#include <AbstractPlugin.h>
 class TemplatePlugin_EXPORT TemplateWidget : public QWidget
 {
 

@@ -3,7 +3,7 @@
 #include <QStandardPaths>
 
 AutoStartPlugin::AutoStartPlugin(Logger * logger,TConfig *config,QObject *parent)
-    : QAbstractPlugin(logger,config,parent)
+    : AbstractPlugin(logger,config,parent)
 {
 }
 
@@ -71,7 +71,7 @@ QIcon AutoStartPlugin::icon()
  */
 QWidget *AutoStartPlugin::start()
 {
-    QAbstractPlugin::start();
+    AbstractPlugin::start();
     return new AutoStartWidget(_logger,_config);
 }
 
@@ -81,7 +81,7 @@ QWidget *AutoStartPlugin::start()
  */
 void AutoStartPlugin::stop()
 {
-    QAbstractPlugin::stop();
+    AbstractPlugin::stop();
 }
 
 /**
@@ -91,7 +91,7 @@ void AutoStartPlugin::stop()
  */
 void AutoStartPlugin::writeConfigBeforeEvent(WriteConfigEvent &event)
 {
-    QAbstractPlugin::writeConfigBeforeEvent(event);
+    AbstractPlugin::writeConfigBeforeEvent(event);
 }
 
 /**
@@ -101,7 +101,7 @@ void AutoStartPlugin::writeConfigBeforeEvent(WriteConfigEvent &event)
  */
 void AutoStartPlugin::writeConfigAfterEvent(WriteConfigEvent &event)
 {
-    QAbstractPlugin::writeConfigAfterEvent(event);
+    AbstractPlugin::writeConfigAfterEvent(event);
 }
 
 /**
@@ -111,7 +111,7 @@ void AutoStartPlugin::writeConfigAfterEvent(WriteConfigEvent &event)
  */
 void AutoStartPlugin::readConfigBeforeEvent(ReadConfigEvent &event)
 {
-    QAbstractPlugin::readConfigBeforeEvent(event);
+    AbstractPlugin::readConfigBeforeEvent(event);
 }
 
 /**
@@ -121,7 +121,7 @@ void AutoStartPlugin::readConfigBeforeEvent(ReadConfigEvent &event)
  */
 void AutoStartPlugin::readConfigAfterEvent(ReadConfigEvent &event)
 {
-    QAbstractPlugin::readConfigAfterEvent(event);
+    AbstractPlugin::readConfigAfterEvent(event);
 }
 
 /**
@@ -135,6 +135,6 @@ void AutoStartPlugin::readConfigAfterEvent(ReadConfigEvent &event)
  */
 void AutoStartPlugin::registerConfig()
 {
-    QAbstractPlugin::registerConfig();
+    AbstractPlugin::registerConfig();
     Directory_CONFIG_REGISTER("DirPath", "默认选择目录路径", QApplication::applicationDirPath(), true);    
 }

@@ -171,3 +171,17 @@ inline QColor ljz::LFunc::oppositeColor(const QColor& color)
 {
 	return QColor(255 - color.red(), 255 - color.green(), 255 - color.blue());
 }
+
+QDateTime ljz::LFunc::chrono_time_point_to_QDateTime(const std::chrono::system_clock::time_point& time)
+{
+    // 将 time_point 转换为 time_t
+    std::time_t _time = std::chrono::system_clock::to_time_t(time);
+    // 提取毫秒部分
+    auto duration = time.time_since_epoch();
+    auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration) % 1000;
+
+    // 将 std::time_t 转换为 QDateTime
+    QDateTime dateTime = QDateTime::fromSecsSinceEpoch(static_cast<qint64>(_time), Qt::LocalTime);
+
+	return dateTime;
+}

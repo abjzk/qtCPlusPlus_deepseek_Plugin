@@ -2,11 +2,11 @@
 #define ImageToIcoPlugin_H
 
 #include "ImageToIcoPlugin_global.h"
-#include "QAbstractPlugin.h"
+#include "AbstractPlugin.h"
 #include "config.h"
 
 
-class ImageToIcoPlugin_EXPORT ImageToIcoPlugin : public QAbstractPlugin
+class ImageToIcoPlugin_EXPORT ImageToIcoPlugin : public AbstractPlugin
 {
     Q_OBJECT
 public:
@@ -31,10 +31,10 @@ public:
 class ImageToIcoPlugin_EXPORT ImageToIcoPluginFactory : public QObject, public PluginFactory
 {
 	Q_OBJECT
-		Q_PLUGIN_METADATA(IID QAbstractPlugin_IID)
+		Q_PLUGIN_METADATA(IID AbstractPlugin_IID)
 		Q_INTERFACES(PluginFactory)
 public:
-	QAbstractPlugin* create(Logger *logger,TConfig *config) override { return new ImageToIcoPlugin(logger,config); };
+	AbstractPlugin* create(Logger *logger,TConfig *config) override { return new ImageToIcoPlugin(logger,config); };
 	~ImageToIcoPluginFactory() override = default;
 } ;
 

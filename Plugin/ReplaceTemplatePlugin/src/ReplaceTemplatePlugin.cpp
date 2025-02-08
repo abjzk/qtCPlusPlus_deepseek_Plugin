@@ -3,7 +3,7 @@
 #include <QStandardPaths>
 
 ReplaceTemplatePlugin::ReplaceTemplatePlugin(Logger * logger,TConfig *config,QObject *parent)
-    : QAbstractPlugin(logger,config,parent)
+    : AbstractPlugin(logger,config,parent)
 {
 }
 
@@ -71,7 +71,7 @@ QIcon ReplaceTemplatePlugin::icon()
  */
 QWidget *ReplaceTemplatePlugin::start()
 {
-    QAbstractPlugin::start();
+    AbstractPlugin::start();
     return new ReplaceTemplateWidget(_logger,_config);
 }
 
@@ -81,7 +81,7 @@ QWidget *ReplaceTemplatePlugin::start()
  */
 void ReplaceTemplatePlugin::stop()
 {
-    QAbstractPlugin::stop();
+    AbstractPlugin::stop();
 }
 
 /**
@@ -91,7 +91,7 @@ void ReplaceTemplatePlugin::stop()
  */
 void ReplaceTemplatePlugin::writeConfigBeforeEvent(WriteConfigEvent &event)
 {
-    QAbstractPlugin::writeConfigBeforeEvent(event);
+    AbstractPlugin::writeConfigBeforeEvent(event);
 }
 
 /**
@@ -101,7 +101,7 @@ void ReplaceTemplatePlugin::writeConfigBeforeEvent(WriteConfigEvent &event)
  */
 void ReplaceTemplatePlugin::writeConfigAfterEvent(WriteConfigEvent &event)
 {
-    QAbstractPlugin::writeConfigAfterEvent(event);
+    AbstractPlugin::writeConfigAfterEvent(event);
 }
 
 /**
@@ -111,7 +111,7 @@ void ReplaceTemplatePlugin::writeConfigAfterEvent(WriteConfigEvent &event)
  */
 void ReplaceTemplatePlugin::readConfigBeforeEvent(ReadConfigEvent &event)
 {
-    QAbstractPlugin::readConfigBeforeEvent(event);
+    AbstractPlugin::readConfigBeforeEvent(event);
 }
 
 /**
@@ -121,7 +121,7 @@ void ReplaceTemplatePlugin::readConfigBeforeEvent(ReadConfigEvent &event)
  */
 void ReplaceTemplatePlugin::readConfigAfterEvent(ReadConfigEvent &event)
 {
-    QAbstractPlugin::readConfigAfterEvent(event);
+    AbstractPlugin::readConfigAfterEvent(event);
 }
 
 /**
@@ -135,7 +135,7 @@ void ReplaceTemplatePlugin::readConfigAfterEvent(ReadConfigEvent &event)
  */
 void ReplaceTemplatePlugin::registerConfig()
 {
-    QAbstractPlugin::registerConfig();
+    AbstractPlugin::registerConfig();
     // QStringList types = {"jpg", "jpeg", "png", "gif", "bmp", "ico", "exe", "dll", "mp3", "mp4", "avi", "zip", "rar", "tar", "tar.gz", "iso", "xlsx", "docx"};
     Bool_CONFIG_REGISTER("isRecursive", "是否递归替换文件", true, true);
     // String_CONFIG_REGISTER("BinaryFileTypes","二进制文件类型", types.join(";"), true);
