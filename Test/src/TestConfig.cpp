@@ -61,17 +61,26 @@ void TestConfig::deepSeek()
     DeepSeek *deepSeek = new DeepSeek("sk-7fcb408f17454497bc242d94b053b910");
     deepSeek->setModel("deepseek-reasoner");
     deepSeek->setStream(true);
-
-    connect(deepSeek, &DeepSeek::replyStreamMessage, [=](const DeepSeek::Message &message)
+    bool flag = true;
+    connect(deepSeek, &DeepSeek::replyStreamMessage, [&](const DeepSeek::Message &message)
             {   
+
+                if (message.finish_reason && deepSeek->model() == "deepseek-reasoner" && flag)
+                {
+                    std::cout << "\n think finish" << std::endl;
+                    flag = false;
+                }
                 if (!message.finish_reason)
-                    std::cout << message.reasoning_content.toStdString() << std::endl;
-                std::cout << message.content.toStdString();
-                if (message.finish_reason)
-                    std::cout << "\n think finish" << std::endl; });
+                    std::cout << message.reasoning_content.toStdString();
+                else
+                    std::cout << message.content.toStdString(); });
     connect(deepSeek, &DeepSeek::replyMessage, [=](const DeepSeek::Message &message)
             { 
-                std::cout << message.reasoning_content.toStdString() << std::endl;
+                if (deepSeek->model() == "deepseek-reasoner")
+                {
+                    std::cout << "\n think finish" << std::endl;
+                    std::cout << message.reasoning_content.toStdString() << std::endl;
+                }
                 std::cout << message.content.toStdString(); });
     connect(deepSeek, &DeepSeek::replyFinished, [&](QNetworkReply::NetworkError error, int httpStatusCode, const QString &errorString)
             { std::cout << "\nFinished" << std::endl;
@@ -83,7 +92,7 @@ void TestConfig::deepSeek()
             { qDebug() << balance.toString(); });
     deepSeek->queryBalance();
     qDebug() << deepSeek->models();
-    deepSeek->seedMessage({}, "1+1=?");
+    deepSeek->seedMessage({}, "你好");
     if (deepSeek->model() == "deepseek-reasoner")
         std::cout << "think" << std::endl;
     loop.exec();

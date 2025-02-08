@@ -191,7 +191,6 @@ DeepSeek::Message::Message(QJsonObject obj)
 {
     auto choices = obj.value("choices").toArray();
     auto choice = choices.at(0).toObject();
-    finish_reason = choice.value("finish_reason").toString() == "stop";
     index = choice.value("index").toInt();
     if (choice.contains("message"))
     {
@@ -201,8 +200,11 @@ DeepSeek::Message::Message(QJsonObject obj)
     else
     {
         role = ASSISTANTROLE;
-        content = choice.value("delta").toObject().value("content").toString();
-        reasoning_content = choice.value("delta").toObject().value("reasoning_content").toString();
+        auto _content = choice.value("delta").toObject().value("content");
+        auto _reasoning_content = choice.value("delta").toObject().value("reasoning_content");
+        finish_reason = !(!_reasoning_content.isNull() && _content.isNull());
+        content = _content.isNull() ? "" : _content.toString();
+        reasoning_content = _reasoning_content.isNull() ? "" : _reasoning_content.toString();
     }
 }
 
