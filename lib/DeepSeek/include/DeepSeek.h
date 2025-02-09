@@ -2,10 +2,10 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
-#include "Utility_global.h"
+#include "DeepSeek_global.h"
 #include <QJsonObject>
 #include <QMutex>
-class UTILITY_EXPORT DeepSeek : public QObject
+class DEEPSEEK_EXPORT DeepSeek : public QObject
 {
     Q_OBJECT
 public:
