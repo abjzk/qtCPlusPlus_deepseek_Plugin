@@ -16,6 +16,10 @@
 #include <LCore>
 #include "MainWindow.h"
 #include <RemoveLogTask.h>
+#ifdef Q_OS_WIN
+#include <Windows.h>
+#endif
+
 Center::Center(TConfig *config, QWidget *parent)
     : QWidget(parent), ui(new Ui::Center), _config(config)
 {
@@ -172,6 +176,14 @@ void Center::pluginItemClicked(QTreeWidgetItem *item, int column)
     {
         MainWindow *mainWindow = qobject_cast<MainWindow *>(parent);
         mainWindow->systemSettingsChangedSlot();
+        // #ifdef Q_OS_WIN
+        //         mainWindow->setWindowFlags(Qt::FramelessWindowHint | Qt::Window); // 无边框
+        //         mainWindow->setAttribute(Qt::WA_TranslucentBackground);           // 背景透明
+        //         HWND hwnd = reinterpret_cast<HWND>(mainWindow->winId());
+        //         DWORD style = ::GetWindowLong(hwnd, GWL_STYLE);
+        //         ::SetWindowLong(hwnd, GWL_STYLE, style | WS_MAXIMIZEBOX | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU);
+        //         mainWindow->show();
+        // #endif
     }
 }
 void Center::loadPluginTree()

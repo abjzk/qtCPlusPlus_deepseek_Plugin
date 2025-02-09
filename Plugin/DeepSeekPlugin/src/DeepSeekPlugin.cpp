@@ -72,7 +72,8 @@ QIcon DeepSeekPlugin::icon()
 QWidget *DeepSeekPlugin::start()
 {
     AbstractPlugin::start();
-    return new DeepSeekWidget(_logger, _config);
+    _widget = new DeepSeekWidget(_logger, _config);
+    return _widget;
 }
 
 /**
@@ -128,6 +129,9 @@ void DeepSeekPlugin::writeConfigBeforeEvent(WriteConfigEvent &event)
 void DeepSeekPlugin::writeConfigAfterEvent(WriteConfigEvent &event)
 {
     AbstractPlugin::writeConfigAfterEvent(event);
+    if (_widget == nullptr)
+        return;
+    _widget->setParmas(event.key, event.newValue());
 }
 
 /**

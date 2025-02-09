@@ -214,6 +214,10 @@ QJsonObject DeepSeek::Message::toJson() const
 {
     return QJsonObject{{"role", role}, {"content", content}};
 }
+QJsonObject DeepSeek::Message::toAllJson() const
+{
+    return QJsonObject{{"role", role}, {"content", content}, {"reasoning_content", reasoning_content}};
+}
 void DeepSeek::setPresencePenalty(double presence_penalty)
 {
     if (!DeepSeek::verifyPresencePenalty(presence_penalty))

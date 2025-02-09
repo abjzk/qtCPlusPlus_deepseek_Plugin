@@ -8,7 +8,7 @@ class Center : public QWidget
 {
     Q_OBJECT
 public:
-    explicit Center(TConfig *config,QWidget *parent = nullptr);
+    explicit Center(TConfig *config, QWidget *parent = nullptr);
     ~Center();
     void initUi();
     void initConnect();
@@ -29,7 +29,7 @@ private:
     void readConfigAfterEvent(ReadConfigEvent &event);
     void showConfigDialog();
     void showLogDialog();
-    TConfig * _config;
+    TConfig *_config;
     void reSet();
     void pluginItemClicked(QTreeWidgetItem *item, int column);
 };

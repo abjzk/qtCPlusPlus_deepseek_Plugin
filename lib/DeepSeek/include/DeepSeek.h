@@ -71,8 +71,10 @@ public:
         QString reasoning_content; // 思考消息内容
         int index;                 // 消息索引
         Message(const QString &role, const QString &content) : role(role), content(content) {};
+        Message(const QString &role, const QString &content, const QString &reasoning_content) : role(role), content(content), reasoning_content(reasoning_content) {};
         Message(QJsonObject obj);
         QJsonObject toJson() const;
+        QJsonObject toAllJson() const;
     };
 
     static QString errorCodeToString(const ErrorCode &code);
@@ -109,6 +111,10 @@ public:
      */
     Usage lastUsage() const { return _usage; };
 public slots:
+    /**
+     * @brief 设置 API 令牌
+     */
+    void setToken(const QString &token) { _token = token; }
     /**
      * @brief 发送种子消息
      * @param oldMessages 历史消息

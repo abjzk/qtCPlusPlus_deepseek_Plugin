@@ -3,5 +3,8 @@
         <file>icon/DeepSeekPlugin.png</file>
         <file>icon/DeepSeekPlugin.svg</file>
         <file>icon/user.png</file>
+        <file>icon/copy.png</file>
+        <file>icon/save.png</file>
+        <file>icon/loading.gif</file>
     </qresource>
 </RCC>
