@@ -199,12 +199,14 @@ void DeepSeekWidget::finished(QNetworkReply::NetworkError error, int httpStatusC
                    .arg(content)
                    .arg(_identifier);
     _sqlExecutor->executeNonQuery(sql);
-
-    // 在listWidget中第一行插入一行
-    QListWidgetItem *item = new QListWidgetItem();
-    item->setText(_name);
-    item->setData(Qt::UserRole, _identifier);
-    ui->chatListWidget->insertItem(0, item);
+    if (_mainLayout->count() == 3)
+    {
+        // 在listWidget中第一行插入一行
+        QListWidgetItem *item = new QListWidgetItem();
+        item->setText(_name);
+        item->setData(Qt::UserRole, _identifier);
+        ui->chatListWidget->insertItem(0, item);
+    }
 
     _logger->info("finished");
     _logger->info(QString("total_tokens: %1").arg(deepSeek->lastUsage().total_tokens));

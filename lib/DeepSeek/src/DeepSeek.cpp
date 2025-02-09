@@ -60,7 +60,7 @@ void DeepSeek::readStream()
         return;
     QString text = _reply->readAll();
     QStringList textList = text.split("data: ");
-    for (auto t : textList)
+    for (const auto &t : textList)
     {
         QJsonDocument doc = QJsonDocument::fromJson(t.toUtf8());
         if (doc.isNull() || doc.isEmpty())
@@ -78,7 +78,6 @@ void DeepSeek::replyFinished_()
     _isRequesting = false;
     auto code = _reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     ErrorCode errorCode = static_cast<ErrorCode>(code);
-
     if (errorCode != NoError)
     {
         emit replyFinished(QNetworkReply::NoError, code, errorCodeToString(errorCode));
@@ -148,6 +147,7 @@ void DeepSeek::seedMessage(const QList<Message> &oldMessages, const QString &mes
     QMutexLocker locker(&_mutex);
     if (_isRequesting)
         return;
+    _usage = Usage();
     _isRequesting = true;
     QNetworkRequest request;
     request.setUrl(QUrl("https://api.deepseek.com/chat/completions"));
