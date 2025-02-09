@@ -178,8 +178,8 @@ void DeepSeek::seedMessage(const QList<Message> &oldMessages, const QString &mes
         messages.append(oldMessage.toJson());
     messages.append(messageToJson(USERROLE, message));
     obj.insert("messages", messages);
-    QString json = QJsonDocument(obj).toJson(QJsonDocument::Compact);
-    _reply = _manager.post(request, QJsonDocument(obj).toJson());
+    auto json = QJsonDocument(obj).toJson(QJsonDocument::Compact);
+    _reply = _manager.post(request, json);
     if (_isStream)
     {
         connect(_reply, &QNetworkReply::readyRead, this, &DeepSeek::readStream);
@@ -196,6 +196,8 @@ DeepSeek::Message::Message(QJsonObject obj)
     {
         role = choice.value("message").toObject().value("role").toString();
         content = choice.value("message").toObject().value("content").toString();
+        reasoning_content = choice.value("message").toObject().value("reasoning_content").toString();
+        finish_reason = choice.value("finish_reason").toString() == "stop";
     }
     else
     {
