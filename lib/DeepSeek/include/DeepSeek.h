@@ -162,7 +162,7 @@ public slots:
      * @brief 介于 -2.0 和 2.0 之间的数字。如果该值为正，那么新 token 会根据其是否已在已有文本中出现受到相应的惩罚，从而增加模型谈论新主题的可能性。
      * @param presence_penalty
      */
-    void setPresencePenalty(double presence_penalty) { _presence_penalty = presence_penalty; }
+    void setPresencePenalty(double presence_penalty);
     /**
      * @brief 查询余额
      */
@@ -171,6 +171,13 @@ public slots:
      * @brief 停止请求
      */
     void stopRequest();
+
+public:
+    static bool verifyTopP(double top_p);
+    static bool verifyTemperature(double temperature);
+    static bool verifyMaxTokens(int max_tokens);
+    static bool verifyFrequencyPenalty(double frequency_penalty);
+    static bool verifyPresencePenalty(double presence_penalty);
 signals:
     /**
      * @brief 流式消息信号

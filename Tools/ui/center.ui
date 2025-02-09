@@ -20,6 +20,12 @@
       <enum>Qt::Orientation::Horizontal</enum>
      </property>
      <widget class="QTreeWidget" name="pluginTree">
+      <property name="maximumSize">
+       <size>
+        <width>200</width>
+        <height>16777215</height>
+       </size>
+      </property>
       <column>
        <property name="text">
         <string notr="true">插件</string>
@@ -102,7 +108,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>407</width>
+            <width>666</width>
             <height>518</height>
            </rect>
           </property>

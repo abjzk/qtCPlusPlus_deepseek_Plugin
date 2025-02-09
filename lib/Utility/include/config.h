@@ -19,7 +19,7 @@ public:
 // 写入配置时的事件
 struct WriteConfigEvent
 {
-    //key
+    // key
     QString key;
     // 旧值
     ConfigItem oldItem;
@@ -33,13 +33,18 @@ struct WriteConfigEvent
     QString message;
     QVariant newValue() const { return newItem.value; }
     QVariant oldValue() const { return oldItem.value; }
+    // 取消写入
+    void cancel(QString message_)
+    {
+        isValid = false;
+        message = message_;
+    }
 };
 struct ReadConfigEvent
 {
-    ConfigItem * item;
+    ConfigItem *item;
     QVariant value() const { return item->value; }
 };
-
 
 // 定义两个回调函数，分别是写入配置文件前和写入配置文件后的回调函数
 typedef std::function<void(WriteConfigEvent &event)> WriteConfigBeforeCallback;
@@ -77,13 +82,14 @@ public:
     bool read(ConfigItem &item);
     bool readAll(QList<ConfigItem> &items);
     ConfigItem read(QString key);
-    bool write(QString key, QVariant &value,QString &message);
+    bool write(QString key, QVariant &value, QString &message);
     bool write(QMap<QString, QVariant> &map);
     void registerConfig(const QString &key, const QString &description, const Type &type, const QVariant &defaultValue, bool isShow = true);
     void registerWriteConfigBeforeCallback(WriteConfigBeforeCallback callback) { writeConfigBeforeCallback = callback; }
     void registerWriteConfigAfterCallback(WriteConfigAfterCallback callback) { writeConfigAfterCallback = callback; }
     void registerReadConfigBeforeCallback(ReadConfigBeforeCallback callback) { readConfigBeforeCallback = callback; }
     void registerReadConfigAfterCallback(ReadConfigAfterCallback callback) { readConfigAfterCallback = callback; }
+
 private:
     void checkTable();
     // 回调函数

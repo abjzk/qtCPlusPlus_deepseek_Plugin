@@ -58,7 +58,8 @@ void TestConfig::deepSeek()
 {
     SetConsoleOutputCP(CP_UTF8);
     QEventLoop loop;
-    DeepSeek *deepSeek = new DeepSeek("sk-7fcb408f17454497bc242d94b053b910");
+    TConfig *config = new TConfig("DeepSeek");
+    DeepSeek *deepSeek = new DeepSeek(config->read("token").value.toString());
     deepSeek->setModel("deepseek-reasoner");
     deepSeek->setStream(true);
     bool flag = true;

@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/res">
+        <file>icon/DeepSeekPlugin.png</file>
+        <file>icon/DeepSeekPlugin.svg</file>
+        <file>icon/user.png</file>
+    </qresource>
+</RCC>

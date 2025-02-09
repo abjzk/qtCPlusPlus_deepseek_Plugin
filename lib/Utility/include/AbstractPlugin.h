@@ -38,14 +38,13 @@
 // 注册Color类型的配置, key, description, defaultValue, isShow
 #define Color_CONFIG_REGISTER(key, description, defaultValue, isShow) CONFIG_REGISTER(key, description, Color, defaultValue, isShow)
 // 注册ComBox类型的配置, key, description, defaultValue, isShow
-#define ComBox_CONFIG_REGISTER(key, description, defaultValue, isShow) CONFIG_REGISTER(key, description, Combox, defaultValue, isShow)
-
+#define ComBox_CONFIG_REGISTER(key, description, defaultValue, isShow) CONFIG_REGISTER(key, description, Combox, QVariant::fromValue(defaultValue), isShow)
 
 class UTILITY_EXPORT AbstractPlugin : public QObject
 {
     Q_OBJECT
 public:
-    explicit AbstractPlugin(Logger* logger,TConfig *config,QObject *parent = nullptr);
+    explicit AbstractPlugin(Logger *logger, TConfig *config, QObject *parent = nullptr);
     virtual ~AbstractPlugin() = default;
     // 插件组名称
     virtual QString group() = 0;
@@ -64,7 +63,7 @@ public:
      * @param config 配置
      * @return QWidget
      */
-    virtual QWidget * start();
+    virtual QWidget *start();
     /**
      * @brief 停止插件
      */
@@ -100,9 +99,10 @@ public:
      * @param ReadEvent
      */
     virtual void readConfigAfterEvent(ReadConfigEvent &event);
+
 protected:
     TConfig *_config;
-    Logger* _logger;
+    Logger *_logger;
 };
 
 // 插件工厂
@@ -113,7 +113,7 @@ public:
      * @brief 创建插件
      * @return
      */
-    virtual AbstractPlugin *create(Logger *logger,TConfig *config) = 0;
+    virtual AbstractPlugin *create(Logger *logger, TConfig *config) = 0;
     virtual ~PluginFactory() = default;
 };
 

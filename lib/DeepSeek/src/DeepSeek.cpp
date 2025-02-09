@@ -117,7 +117,7 @@ QJsonObject DeepSeek::messageToJson(const QString &role, const QString &content)
 
 void DeepSeek::setMaxTokens(int max_tokens)
 {
-    if (max_tokens < 1 || max_tokens > 8192)
+    if (!DeepSeek::verifyMaxTokens(max_tokens))
         return;
     _max_tokens = max_tokens;
 }
@@ -131,14 +131,14 @@ void DeepSeek::setStopStrings(const QStringList &stopStrings)
 
 void DeepSeek::setTemperature(double temperature)
 {
-    if (temperature < 0.0 || temperature > 2.0)
+    if (!DeepSeek::verifyTemperature(temperature))
         return;
     _temperature = temperature;
 }
 
 void DeepSeek::setTopP(double top_p)
 {
-    if (top_p < 0.0 || top_p > 1.0)
+    if (!DeepSeek::verifyTopP(top_p))
         return;
     _top_p = top_p;
 }
@@ -214,6 +214,12 @@ QJsonObject DeepSeek::Message::toJson() const
 {
     return QJsonObject{{"role", role}, {"content", content}};
 }
+void DeepSeek::setPresencePenalty(double presence_penalty)
+{
+    if (!DeepSeek::verifyPresencePenalty(presence_penalty))
+        return;
+    _presence_penalty = presence_penalty;
+}
 void DeepSeek::queryBalance()
 {
     QNetworkRequest request;
@@ -249,6 +255,31 @@ void DeepSeek::stopRequest()
     if (!_isRequesting)
         return;
     _reply->abort();
+}
+
+bool DeepSeek::verifyTopP(double top_p)
+{
+    return top_p >= 0.0 && top_p <= 1.0;
+}
+
+bool DeepSeek::verifyTemperature(double temperature)
+{
+    return temperature >= 0.0 && temperature <= 2.0;
+}
+
+bool DeepSeek::verifyMaxTokens(int max_tokens)
+{
+    return max_tokens >= 1 && max_tokens <= 8192;
+}
+
+bool DeepSeek::verifyFrequencyPenalty(double frequency_penalty)
+{
+    return frequency_penalty >= -2.0 && frequency_penalty <= 2.0;
+}
+
+bool DeepSeek::verifyPresencePenalty(double presence_penalty)
+{
+    return presence_penalty >= -2.0 && presence_penalty <= 2.0;
 }
 
 QStringList DeepSeek::models()

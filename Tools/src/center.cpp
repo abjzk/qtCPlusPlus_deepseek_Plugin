@@ -16,13 +16,17 @@
 #include <LCore>
 #include "MainWindow.h"
 #include <RemoveLogTask.h>
-Center::Center(TConfig *config,QWidget *parent)
+Center::Center(TConfig *config, QWidget *parent)
     : QWidget(parent), ui(new Ui::Center), _config(config)
 {
-    this->_config->registerReadConfigBeforeCallback([this](ReadConfigEvent &event)->void { this->readConfigBeforeEvent(event); });
-    this->_config->registerReadConfigAfterCallback([this](ReadConfigEvent &event)->void { this->readConfigAfterEvent(event); });
-    this->_config->registerWriteConfigBeforeCallback([this](WriteConfigEvent &event)->void { this->writeConfigBeforeEvent(event); });
-    this->_config->registerWriteConfigAfterCallback([this](WriteConfigEvent &event)->void { this->writeConfigAfterEvent(event); });
+    this->_config->registerReadConfigBeforeCallback([this](ReadConfigEvent &event) -> void
+                                                    { this->readConfigBeforeEvent(event); });
+    this->_config->registerReadConfigAfterCallback([this](ReadConfigEvent &event) -> void
+                                                   { this->readConfigAfterEvent(event); });
+    this->_config->registerWriteConfigBeforeCallback([this](WriteConfigEvent &event) -> void
+                                                     { this->writeConfigBeforeEvent(event); });
+    this->_config->registerWriteConfigAfterCallback([this](WriteConfigEvent &event) -> void
+                                                    { this->writeConfigAfterEvent(event); });
     this->_config->registerConfig("Plugins", "插件", TConfig::Type::String, QString(), false);
     this->_config->registerConfig("autoStart", "开机自启动", TConfig::Type::Bool, false, true);
     this->_config->registerConfig("SavelogDay", "保存日志天数", TConfig::Type::Int, 30, true);
@@ -50,7 +54,8 @@ void Center::initUi()
 {
     // 给treeWidget设置右键菜单
     // 初始化分割器的尺寸
-    ui->splitter->setSizes(QList<int>() << 200 << 600);
+    ui->splitter->setStretchFactor(0, 1);
+    ui->splitter->setStretchFactor(1, 6);
     ui->pluginTree->setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
     ui->pluginTree->setItemsExpandable(true);
     QFont font = ui->pluginTree->font();
@@ -65,7 +70,7 @@ void Center::initConnect()
     connect(ui->pluginTree, &QTreeWidget::customContextMenuRequested, this, &Center::showPluginTreeMenu);
     connect(ui->pluginTree, &QTreeWidget::itemClicked, this, &Center::pluginItemClicked);
     connect(ui->pushButton, &QPushButton::clicked, this, &Center::showConfigDialog);
-    connect(ui->logButton,&QPushButton::clicked,this,&Center::showLogDialog);
+    connect(ui->logButton, &QPushButton::clicked, this, &Center::showLogDialog);
 }
 
 void Center::showPluginTreeMenu(QPoint pos)
@@ -81,7 +86,7 @@ void Center::writeConfigAfterEvent(WriteConfigEvent &event)
     if (event.key == "autoStart")
     {
         QString name = QApplication::applicationName();
-        LFunc::autoRun(event.newValue().toBool(), "LJZ"+ name);
+        LFunc::autoRun(event.newValue().toBool(), "LJZ" + name);
     }
 }
 void Center::writeConfigBeforeEvent(WriteConfigEvent &event)
@@ -121,7 +126,7 @@ void Center::showConfigDialog()
 }
 void Center::showLogDialog()
 {
-    if(logDialog)
+    if (logDialog)
     {
         logDialog->deleteLater();
         logDialog = nullptr;
@@ -129,11 +134,10 @@ void Center::showLogDialog()
     logDialog = new LogDialog();
     logDialog->setWindowIcon(currentPlugin->icon());
     logDialog->getTitleBar()->setTitleIcon(currentPlugin->icon());
-    logDialog->resize(600,400);
+    logDialog->resize(600, 400);
     logDialog->setObjectName(currentPlugin->logger()->name());
     logDialog->show();
     connect(currentPlugin->logger(), &Logger::sendLogger, logDialog, &LogDialog::addLogItem);
-
 }
 
 void Center::reSet()
@@ -147,15 +151,17 @@ void Center::reSet()
 }
 void Center::pluginItemClicked(QTreeWidgetItem *item, int column)
 {
-    if(item->childCount() > 0) return;
-    if(currentPlugin && item->text(0) == currentPlugin->name()) return;
+    if (item->childCount() > 0)
+        return;
+    if (currentPlugin && item->text(0) == currentPlugin->name())
+        return;
     delete ui->scrollArea->widget();
     if (currentPlugin)
         currentPlugin->stop();
     delete currentPlugin;
-    if(logDialog)
+    if (logDialog)
         logDialog->deleteLater();
-        logDialog = nullptr;
+    logDialog = nullptr;
     currentPlugin = this->findPlugin(item->data(0, Qt::UserRole).toString());
     ui->nameLabel->setText(currentPlugin->name());
     ui->versionlabel->setText(currentPlugin->version());
@@ -195,14 +201,13 @@ void Center::loadPluginTree()
     QTreeWidgetItem *groupItem = ui->pluginTree->topLevelItem(0);
     QTreeWidgetItem *pluginItem = groupItem->child(0);
     this->pluginItemClicked(pluginItem, 0);
-
 }
 
 AbstractPlugin *Center::findPlugin(QString name)
 {
     QPluginLoader loader(QApplication::applicationDirPath() + "/" + name + ".dll");
     PluginFactory *factory = qobject_cast<PluginFactory *>(loader.instance());
-    return factory ? factory->create(new Logger(name),new TConfig(name)) : nullptr;
+    return factory ? factory->create(new Logger(name), new TConfig(name)) : nullptr;
 }
 
 QTreeWidgetItem *Center::addPlugin(QString &filename)

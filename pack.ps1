@@ -8,11 +8,14 @@ param (
 # 判断传入参数，如果没有传入则默认为 Release；如果传入的是 0 或 1，则分别设置为 Release 或 Debug
 if (-not $BuildType) {
     $BuildType = "Release"
-} elseif ($BuildType -eq "0") {
+}
+elseif ($BuildType -eq "0") {
     $BuildType = "Release"
-} elseif ($BuildType -eq "1") {
+}
+elseif ($BuildType -eq "1") {
     $BuildType = "Debug"
-} else {
+}
+else {
     Write-Host "无效的构建类型，默认为 Release."
     $BuildType = "Release"
 }
