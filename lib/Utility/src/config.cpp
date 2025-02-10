@@ -1,6 +1,12 @@
 #include "config.h"
 #include <QApplication>
 
+
+QString ConfigItem::valueString() const
+{
+    return TConfig::valueToString(value, type);
+}
+
 TConfig::TConfig(const QString &name, QObject *parent)
     : _name(name), QObject(parent)
 {
@@ -12,52 +18,107 @@ TConfig::~TConfig()
     delete excuteSql;
 }
 
-bool TConfig::read(const QString &key, QVariant &value)
+
+
+bool TConfig::read(ConfigItem &item)
 {
-    QString sql = QString("SELECT value,type FROM Config WHERE key = '%1' and name = '%2'").arg(key).arg(_name);
+    ReadConfigEvent event = {&item};
+    QString key = item.key;
+    if(this->readConfigBeforeCallback != nullptr)
+        this->readConfigBeforeCallback(event);
+    QString sql = QString("SELECT key,value,type,description,isShow FROM Config WHERE key = '%1' and name = '%2'").arg(item.key).arg(_name);
     auto row = excuteSql->executeFirstRow(sql);
-    if (row.size() > 0)
-    {
-        value = TConfig::stringToValue(row["value"].toString(), row["type"].toString());
-        return true;
-    }
-    return false;
+    if (row.size() <= 0) return false;
+    item.key = key;
+    item.value = TConfig::stringToValue(row["value"].toString(), row["type"].toString());
+    item.type = row["type"].toString();
+    item.description = row["description"].toString();
+    item.isShow = row["isShow"].toBool();
+    if(this->readConfigAfterCallback != nullptr)
+        this->readConfigAfterCallback(event);
+    item.key = key;
+    return true;
 }
 
-QVariant TConfig::read(const QString &key)
+bool TConfig::readAll(QList<ConfigItem> &items)
 {
-    QVariant value;
-    read(key, value);
-    return value;
-}
-
-bool TConfig::read(QMap<QString, QVariant> &map)
-{
-    QString sql = QString("SELECT key,value,type FROM Config WHERE name = '%1'").arg(_name);
-    auto rows = excuteSql->executeQuery(sql);
-    if (rows.size() == 0) return false;
-    for (auto row : rows)
+    QString sql = QString("SELECT key FROM Config WHERE name = '%1'").arg(_name);
+    QVariantList keys = excuteSql->executeFirstColumn(sql);
+    for (auto key : keys)
     {
-        map[row["key"].toString()] = TConfig::stringToValue(row["value"].toString(), row["type"].toString());
+        ConfigItem item;
+        item.key = key.toString();
+        if(read(item))
+            items.append(item);
     }
     return true;
 }
 
-QMap<QString, QVariant> TConfig::readAll()
+ConfigItem TConfig::read(QString key)
 {
-    QMap<QString, QVariant> map;
-    read(map);
-    return map;
+    ConfigItem item;
+    item.key = key;
+    read(item);
+    return item;
 }
 
-bool TConfig::write(const QString &key, QVariant &value)
+bool TConfig::write(QString key, QVariant &value,QString& message)
 {
-    return false;
+    // 查询key是否存在
+    QString checkSql = QString("SELECT COUNT(*) FROM Config WHERE key = '%1' AND name = '%2'").arg(key).arg(_name);
+    int count = excuteSql->executeScalar(checkSql, 0);
+    if (count == 0){
+        message = QString("key:%1不存在").arg(key);
+        return false;
+    }
+    else
+    {
+        // key存在，进行类型验证和更新操作
+        QString typeSql = QString("SELECT key,value,type,description,isShow FROM Config WHERE key = '%1' AND name = '%2'").arg(key).arg(_name);
+        QVariantMap row = excuteSql->executeFirstRow(typeSql);
+        QString type = row["type"].toString();
+        QString valueStr = row["value"].toString();
+        ConfigItem oldValue;
+        oldValue.key = row["key"].toString();
+        oldValue.description = row["description"].toString();
+        oldValue.isShow = row["isShow"].toBool();
+        oldValue.value = TConfig::stringToValue(valueStr, type);
+        oldValue.type = type;
+        ConfigItem newValue;
+        newValue.key = row["key"].toString();
+        newValue.description = row["description"].toString();
+        newValue.isShow = row["isShow"].toBool();
+        newValue.value = value;
+        newValue.type = type;
+        WriteConfigEvent event = {key, oldValue, newValue, type, true, ""};
+        if (this->writeConfigBeforeCallback != nullptr)
+            this->writeConfigBeforeCallback(event);
+        if (!event.isValid)
+        {
+            message = event.message;
+            return false;
+        }
+        QString updateSql = QString("UPDATE Config SET value = '%1' WHERE key = '%2' AND name = '%3'")
+                            .arg(valueToString(event.newItem.value, event.type))
+                            .arg(event.newItem.key)
+                            .arg(_name);
+        excuteSql->executeNonQuery(updateSql);
+        if (this->writeConfigAfterCallback != nullptr)
+            this->writeConfigAfterCallback(event);
+        return true;
+    }
 }
+
+
 
 bool TConfig::write(QMap<QString, QVariant> &map)
 {
-    return false;
+    for (auto it = map.begin(); it != map.end(); it++)
+    {
+        QString message;
+        write(it.key(), it.value(), message);
+    }
+    return true;
 }
 void TConfig::registerConfig(const QString &key, const QString &description, const Type &type, const QVariant &defaultValue, bool isShow)
 {
@@ -118,6 +179,8 @@ TConfig::Type TConfig::getTypeFromString(const QString &type)
         return Type::Directory;
     else if (type == "color")
         return Type::Color;
+    else if (type == "combox")
+        return Type::Combox;
     else
         return Type::String;
 }
@@ -147,6 +210,8 @@ QString TConfig::getTypeToString(const TConfig::Type &type)
         return "directory";
     case Type::Color:
         return "color";
+    case Type::Combox:
+        return "combox";
     default:
         return "string";
     }
@@ -178,6 +243,8 @@ QString TConfig::valueToString(const QVariant &value, const QString &type)
         return value.toString();
     case Type::Color:
         return value.value<QColor>().name();
+    case Type::Combox:
+        return value.value<ComboxData>().toString();
     default:
         return value.toString();
     }
@@ -209,7 +276,11 @@ QVariant TConfig::stringToValue(const QString &value, const QString &type)
         return value;
     case Type::Color:
         return QColor(value);
+    case Type::Combox:
+        return QVariant::fromValue(ComboxData(value));
     default:
         return value;
     }
 }
+
+

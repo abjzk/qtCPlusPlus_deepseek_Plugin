@@ -2,6 +2,9 @@
 #include <QString>
 #include <QSettings>
 #include "lcore_global.h"
+#include <QIcon>
+#include <QColor>
+#include <QPainter>
 namespace ljz
 {
 	class LCORE_EXPORT LFunc
@@ -24,6 +27,9 @@ namespace ljz
 		 * @param appName 应用名
 		 */
 		static void autoRun(int isAutoRun, QString appName);
+
+		static void autoRunPath(int isAutoRun, QString appName ,QString appPath ,QString params);
+
 		/**
 		 * @brief 截断字符串并添加省略号
 		 * @param str 需要截断的字符串
@@ -51,5 +57,13 @@ namespace ljz
 			};
 			return result;
 		}
+		static QIcon setIconColor(const QIcon& icon, const QColor& color);
+
+		static QColor oppositeColor(const QColor& color);
+		static QIcon getoppositeColorIcon(const QIcon& icon, const QColor& color)
+		{
+			return setIconColor(icon, oppositeColor(color));
+		}
+		static QDateTime chrono_time_point_to_QDateTime(const std::chrono::system_clock::time_point& time);
 	};
 }

@@ -1,5 +1,6 @@
 #include "TestConfig.h"
-
+#include <iostream>
+#include <windows.h>
 void TestConfig::registerConfig()
 {
     TConfig *config = new TConfig("config.ini");
@@ -16,15 +17,85 @@ void TestConfig::registerConfig()
     config->registerConfig("Time", "名称", TConfig::Type::Time, QTime::fromString("00:00:00", "hh:mm:ss"));
 
     // 判断读取后是否和预期一致
-    QCOMPARE(config->read("DateTime").toDateTime(), QDateTime::fromString("2020-01-01 00:00:00", "yyyy-MM-dd hh:mm:ss"));
-    QCOMPARE(config->read("Color").value<QColor>(), QColor(255, 0, 0));
-    QCOMPARE(config->read("File").toString(), "D:\\test.txt");
-    QCOMPARE(config->read("String").toString(), "test");
-    QCOMPARE(config->read("Int").toInt(), 1);
-    QCOMPARE(config->read("Bool").toBool(), true);
-    QCOMPARE(config->read("Float").toFloat(), 1.1f);
-    QCOMPARE(config->read("Double").toDouble(), 1.1);
-    QCOMPARE(config->read("Directory").toString(), "D:\\test");
-    QCOMPARE(config->read("Date").toDate(), QDate::fromString("2020-01-01", "yyyy-MM-dd"));
-    QCOMPARE(config->read("Time").toTime(), QTime::fromString("00:00:00", "hh:mm:ss"));
+    QCOMPARE(config->read("DateTime").value.toDateTime(), QDateTime::fromString("2020-01-01 00:00:00", "yyyy-MM-dd hh:mm:ss"));
+    QCOMPARE(config->read("Color").value.value<QColor>(), QColor(255, 0, 0));
+    QCOMPARE(config->read("File").value.toString(), "D:\\test.txt");
+    QCOMPARE(config->read("String").value.toString(), "test");
+    QCOMPARE(config->read("Int").value.toInt(), 1);
+    QCOMPARE(config->read("Bool").value.toBool(), true);
+    QCOMPARE(config->read("Float").value.toFloat(), 1.1f);
+    QCOMPARE(config->read("Double").value.toDouble(), 1.1);
+    QCOMPARE(config->read("Directory").value.toString(), "D:\\test");
+    QCOMPARE(config->read("Date").value.toDate(), QDate::fromString("2020-01-01", "yyyy-MM-dd"));
+    QCOMPARE(config->read("Time").value.toTime(), QTime::fromString("00:00:00", "hh:mm:ss"));
+}
+
+void TestConfig::writeConfig()
+{
+
+    TConfig *config = new TConfig("config.ini");
+
+    // 1. 注册初始配置，确保有数据可测试
+    config->registerConfig("DateTime", "名称", TConfig::Type::DateTime, QDateTime::fromString("2020-01-01 00:00:00", "yyyy-MM-dd hh:mm:ss"));
+    config->registerConfig("Int", "名称", TConfig::Type::Int, 1);
+    QString message;
+    // 2. 测试 key 存在且类型匹配
+    QVariant newDateTime = QDateTime::fromString("2024-12-03 12:00:00", "yyyy-MM-dd hh:mm:ss");
+    bool writeResult1 = config->write("DateTime", newDateTime, message);
+    qDebug() << message;
+    QCOMPARE(writeResult1, true);                                       // 更新应该成功
+    QCOMPARE(config->read("DateTime").value.toDateTime(), newDateTime); // 验证值已更新
+
+    // 4. 测试 key 不存在
+    QVariant newValue = 42;
+    bool writeResult3 = config->write("NonExistentKey", newValue, message);
+    QCOMPARE(writeResult3, false); // 更新失败，因为 key 不存在
+
+    delete config;
+}
+
+void TestConfig::deepSeek()
+{
+    SetConsoleOutputCP(CP_UTF8);
+    QEventLoop loop;
+    TConfig *config = new TConfig("DeepSeek");
+    DeepSeek *deepSeek = new DeepSeek(config->read("token").value.toString());
+    deepSeek->setModel("deepseek-reasoner");
+    deepSeek->setStream(true);
+    bool flag = true;
+    connect(deepSeek, &DeepSeek::replyStreamMessage, [&](const DeepSeek::Message &message)
+            {   
+
+                if (message.finish_reason && deepSeek->model() == "deepseek-reasoner" && flag)
+                {
+                    std::cout << "\n think finish" << std::endl;
+                    flag = false;
+                }
+                if (!message.finish_reason)
+                    std::cout << message.reasoning_content.toStdString();
+                else
+                    std::cout << message.content.toStdString(); });
+    connect(deepSeek, &DeepSeek::replyMessage, [=](const DeepSeek::Message &message)
+            { 
+                if (deepSeek->model() == "deepseek-reasoner")
+                {
+                    std::cout << "\n think finish" << std::endl;
+                    std::cout << message.reasoning_content.toStdString() << std::endl;
+                }
+                std::cout << message.content.toStdString(); });
+    connect(deepSeek, &DeepSeek::replyFinished, [&](QNetworkReply::NetworkError error, int httpStatusCode, const QString &errorString)
+            { std::cout << "\nFinished" << std::endl;
+                auto usage = deepSeek->lastUsage();
+                qDebug() << usage.json;
+                qDebug() << "code" << httpStatusCode << "error" << errorString;
+                loop.exit(); });
+    connect(deepSeek, &DeepSeek::replyBalance, [&](DeepSeek::Balance balance)
+            { qDebug() << balance.toString(); });
+    deepSeek->queryBalance();
+    qDebug() << deepSeek->models();
+    deepSeek->seedMessage({}, "你好");
+    if (deepSeek->model() == "deepseek-reasoner")
+        std::cout << "think" << std::endl;
+    loop.exec();
+    delete deepSeek;
 }

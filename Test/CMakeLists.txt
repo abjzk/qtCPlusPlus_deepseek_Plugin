@@ -17,6 +17,7 @@ include_directories(${PROJECT_SOURCE_DIR}/include
     ${Lib_DIR}/LClass/LCore/include
     ${Lib_DIR}/LClass/LWidget/include
     ${Lib_DIR}/Utility/include
+    ${Lib_DIR}/DeepSeek/include
 )
 set(CMAKE_AUTOUIC_SEARCH_PATHS ${PROJECT_SOURCE_DIR}/ui)
 FILE(GLOB_RECURSE RC_FILES ${PROJECT_SOURCE_DIR}/res/*.rc) 
@@ -62,6 +63,7 @@ target_link_libraries(Test PRIVATE Qt${QT_VERSION_MAJOR}::Widgets
     LWidget
     LCore
     Utility
+    DeepSeek
     Qt${QT_VERSION_MAJOR}::Network
     Qt${QT_VERSION_MAJOR}::Sql
     Qt${QT_VERSION_MAJOR}::Xml

@@ -13,24 +13,162 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
       <enum>Qt::Orientation::Horizontal</enum>
      </property>
-     <widget class="QTreeWidget" name="treeWidget">
+     <widget class="QTreeWidget" name="pluginTree">
+      <property name="maximumSize">
+       <size>
+        <width>200</width>
+        <height>16777215</height>
+       </size>
+      </property>
       <column>
        <property name="text">
-        <string notr="true">1</string>
+        <string notr="true">插件</string>
        </property>
       </column>
      </widget>
-     <widget class="QWidget" name="widget" native="true"/>
+     <widget class="QWidget" name="widget" native="true">
+      <property name="toolTip">
+       <string/>
+      </property>
+      <layout class="QGridLayout" name="gridLayout">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item row="0" column="4">
+        <spacer name="horizontalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="2">
+        <widget class="QLabel" name="authorlabel">
+         <property name="toolTip">
+          <string>插件作者</string>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Shape::WinPanel</enum>
+         </property>
+         <property name="text">
+          <string>作者</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="6">
+        <widget class="QPushButton" name="pushButton">
+         <property name="maximumSize">
+          <size>
+           <width>25</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>插件设置</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../res/Resource.qrc">
+           <normaloff>:/res/icon/set.png</normaloff>:/res/icon/set.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="7">
+        <widget class="QScrollArea" name="scrollArea">
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <widget class="QWidget" name="scrollAreaWidgetContents">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>666</width>
+            <height>518</height>
+           </rect>
+          </property>
+         </widget>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLabel" name="nameLabel">
+         <property name="toolTip">
+          <string>插件名称</string>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Shape::WinPanel</enum>
+         </property>
+         <property name="text">
+          <string>名称</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QLabel" name="versionlabel">
+         <property name="toolTip">
+          <string>插件版本</string>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Shape::WinPanel</enum>
+         </property>
+         <property name="text">
+          <string>版本</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="5">
+        <widget class="QPushButton" name="logButton">
+         <property name="maximumSize">
+          <size>
+           <width>25</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>插件日志</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../res/Resource.qrc">
+           <normaloff>:/res/icon/log.png</normaloff>:/res/icon/log.png</iconset>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../res/Resource.qrc"/>
+ </resources>
  <connections/>
 </ui>
