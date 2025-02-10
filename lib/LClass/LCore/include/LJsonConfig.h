@@ -7,7 +7,7 @@
 #include <QJsonParseError>
 #include "LConfig.h"
 #include "lcore_global.h"
-namespace ljz
+namespace jzk
 {
 	class LCORE_EXPORT LJsonConfig : public LConfig
 	{

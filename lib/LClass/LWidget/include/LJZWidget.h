@@ -10,10 +10,12 @@
 #include <QStyle>
 #include <QWidget>
 #include <QEvent>
+#include <QLabel>
 #include <QSpacerItem>
+#include <QFrame>
 
 
-namespace ljz
+namespace jzk
 {
 	class LWIDGET_EXPORT LBaseTitleBar : public QWidget
 	{
@@ -73,6 +75,7 @@ namespace ljz
 		void paintEvent(QPaintEvent* event) override;
 		void closeButtonClick() override;
 		void minButtonClick() override;
+		void addWidget(QWidget* widget);
 
 	protected:
 		void mouseDoubleClickEvent(QMouseEvent* event) override;
@@ -145,5 +148,24 @@ namespace ljz
 		QWidget* _statusBar = nullptr; //状态栏
 		QVBoxLayout* _layout = new QVBoxLayout(this);
 		Info _info;
+	};
+	class LWIDGET_EXPORT LLabelWidgetFrame : public QFrame
+	{
+		Q_OBJECT
+	public:
+		LLabelWidgetFrame(QString labelName,QWidget* valueWidget,QWidget* parent = nullptr);
+		~LLabelWidgetFrame() override = default;
+		void setLabelName(QString labelName);
+		void setValueWidget(QWidget* valueWidget);
+		QString labelName() const { return this->_label->text(); }
+		QWidget* valueWidget(){ return this->_valueWidget; }
+		QLabel *label(){ return this->_label; }
+		QVariant data() const { return this->_data; }
+		void setData(const QVariant& data){ this->_data = data; }
+	private:
+		QLabel* _label = new QLabel(this);
+		QWidget* _valueWidget = nullptr;
+		QHBoxLayout* _layout = new QHBoxLayout(this);
+		QVariant _data;
 	};
 }

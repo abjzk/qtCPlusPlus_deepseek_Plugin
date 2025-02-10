@@ -1,17 +1,17 @@
 #include "LInstanceMap.h"
 #include <QThread>
-using namespace ljz;
+using namespace jzk;
 
-ljz::Content::Content(QString key, const QVariant &value, const QVariant &oldValue, Type type, const QDateTime& time)
+jzk::Content::Content(QString key, const QVariant &value, const QVariant &oldValue, Type type, const QDateTime& time)
     : _key(std::move(key)), _value(value), _oldValue(oldValue), _type(type), _time(QDateTime::currentDateTime())
 {
 
 }
 
-ljz::Content::~Content()
+jzk::Content::~Content()
 = default;
 
-QString ljz::Content::toString() const
+QString jzk::Content::toString() const
 {
     return QString(
         R"(
@@ -26,12 +26,12 @@ QString ljz::Content::toString() const
     ).arg(_key).arg(_value.toString()).arg(_oldValue.toString()).arg(_type).arg(_time.toString("yyyy-MM-dd hh:mm:ss"));
 }
 
-ljz::LInstanceMap& ljz::LInstanceMap::instance()
+jzk::LInstanceMap& jzk::LInstanceMap::instance()
 {
     static LInstanceMap _instance; // 单例
     return _instance;
 }
-void ljz::LInstanceMap::set(const QString &key, const QVariant &value, bool isRegister)
+void jzk::LInstanceMap::set(const QString &key, const QVariant &value, bool isRegister)
 {
     _lock.lockForWrite();
     bool keyExist = this->contains(key);
@@ -50,21 +50,21 @@ void ljz::LInstanceMap::set(const QString &key, const QVariant &value, bool isRe
         this->registerKey(QStringList() << key);
     }
 }
-void ljz::LInstanceMap::set(const QMap<QString, QVariant> &map, bool isRegister)
+void jzk::LInstanceMap::set(const QMap<QString, QVariant> &map, bool isRegister)
 {
     for (auto it = map.begin(); it != map.end(); it++)
     {
         this->set(it.key(), it.value(), isRegister);
     }
 }
-QVariant ljz::LInstanceMap::get(const QString &key)
+QVariant jzk::LInstanceMap::get(const QString &key)
 {
     _lock.lockForRead();
     QVariant value = _map.value(key);
     _lock.unlock();
     return value;
 }
-QVariantList ljz::LInstanceMap::get(const QStringList &keys)
+QVariantList jzk::LInstanceMap::get(const QStringList &keys)
 {
     QVariantList list;
     for (const auto & key : keys)
@@ -73,15 +73,15 @@ QVariantList ljz::LInstanceMap::get(const QStringList &keys)
     }
     return list;
 }
-ljz::LInstanceMap::LInstanceMap()
+jzk::LInstanceMap::LInstanceMap()
     :QObject(nullptr)
 {
 }
 
-ljz::LInstanceMap::~LInstanceMap()
+jzk::LInstanceMap::~LInstanceMap()
 = default;
 
-void ljz::LInstanceMap::remove(const QString &key, bool isUnRegister)
+void jzk::LInstanceMap::remove(const QString &key, bool isUnRegister)
 {
     _lock.lockForWrite();
     if (!this->contains(key))
@@ -104,7 +104,7 @@ void ljz::LInstanceMap::remove(const QString &key, bool isUnRegister)
     }
 }
 
-void ljz::LInstanceMap::remove(const QStringList &keys, bool isUnRegister)
+void jzk::LInstanceMap::remove(const QStringList &keys, bool isUnRegister)
 {
     for (const auto & key : keys)
     {
@@ -112,7 +112,7 @@ void ljz::LInstanceMap::remove(const QStringList &keys, bool isUnRegister)
     }
 }
 
-void ljz::LInstanceMap::clear()
+void jzk::LInstanceMap::clear()
 {
     for(auto it = _map.begin(); it != _map.end(); it++)
     {
@@ -120,82 +120,82 @@ void ljz::LInstanceMap::clear()
     }
 }
 
-int ljz::LInstanceMap::count()
+int jzk::LInstanceMap::count()
 {
     QMutexLocker locker(&_mutex);
     return _map.count();
 }
 
-QStringList ljz::LInstanceMap::keys()
+QStringList jzk::LInstanceMap::keys()
 {
     QMutexLocker locker(&_mutex);
     return _map.keys();
 }
 
-bool ljz::LInstanceMap::contains(const QString &key)
+bool jzk::LInstanceMap::contains(const QString &key)
 {
     QMutexLocker locker(&_mutex);
     return _map.contains(key);
 }
 
-bool ljz::LInstanceMap::isEmpty()
+bool jzk::LInstanceMap::isEmpty()
 {
     QMutexLocker locker(&_mutex);
     return _map.isEmpty();
 }
 
-QMap<QString, QVariant> ljz::LInstanceMap::map()
+QMap<QString, QVariant> jzk::LInstanceMap::map()
 {
     return _map;
 }
 
-void ljz::LInstanceMap::registerkey(const QString key)
+void jzk::LInstanceMap::registerkey(const QString key)
 {
     QMutexLocker locker(&_mutex);
     _keySet.insert(key);
 }
 
-void ljz::LInstanceMap::registerKey(const QStringList &keys)
+void jzk::LInstanceMap::registerKey(const QStringList &keys)
 {
     this->registerKey(QSet<QString>(keys.begin(), keys.end()));
 }
 
-void ljz::LInstanceMap::registerKey(const QSet<QString> &keys)
+void jzk::LInstanceMap::registerKey(const QSet<QString> &keys)
 {
     QMutexLocker locker(&_mutex);
     _keySet.unite(keys);
 }
 
-void ljz::LInstanceMap::unRegisterKey(const QString &key)
+void jzk::LInstanceMap::unRegisterKey(const QString &key)
 {
     QMutexLocker locker(&_mutex);
     _keySet.remove(key);
 }
 
-void ljz::LInstanceMap::unRegisterKey(const QStringList &keys)
+void jzk::LInstanceMap::unRegisterKey(const QStringList &keys)
 {
     this->unRegisterKey(QSet<QString>(keys.begin(), keys.end()));
 }
 
-void ljz::LInstanceMap::unRegisterKey(const QSet<QString> &keys)
+void jzk::LInstanceMap::unRegisterKey(const QSet<QString> &keys)
 {
     QMutexLocker locker(&_mutex);
     _keySet.subtract(keys);
 }
 
-QStringList ljz::LInstanceMap::registeredKeys()
+QStringList jzk::LInstanceMap::registeredKeys()
 {
     QMutexLocker locker(&_mutex);
     return {_keySet.begin(), _keySet.end()};
 }
 
-bool ljz::LInstanceMap::isRegistered(const QString &key)
+bool jzk::LInstanceMap::isRegistered(const QString &key)
 {
     QMutexLocker locker(&_mutex);
     return _keySet.contains(key);
 }
 
-void ljz::LInstanceMap::valueChange(Content content)
+void jzk::LInstanceMap::valueChange(Content content)
 {
     if (content._time < time)
         qDebug() << "error";

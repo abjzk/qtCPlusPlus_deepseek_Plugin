@@ -1,6 +1,6 @@
 ﻿#include "LComboBox.h"
 #include <QNetworkInterface>
-using namespace ljz;
+using namespace jzk;
 bool KeyPressEater::eventFilter(QObject* watched, QEvent* event)
 {
 	if (event->type() == QEvent::KeyPress)

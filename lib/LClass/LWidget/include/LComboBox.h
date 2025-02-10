@@ -8,7 +8,7 @@
 #include <QCompleter>
 #include "LLineedit.h"
 
-namespace ljz
+namespace jzk
 {
 	class KeyPressEater :public QObject
 	{

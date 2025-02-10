@@ -5,7 +5,7 @@
 #include <qtmetamacros.h>
 #include <qvariant.h>
 
-namespace ljz
+namespace jzk
 {
 	class LWIDGET_EXPORT LAnimationOpacityEffect : public QGraphicsOpacityEffect
 	{

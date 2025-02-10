@@ -1,6 +1,6 @@
 #include "LSqlExecutor.h"
 
-ljz::LSqlExecutor::LSqlExecutor(const QString &sqlLitepath, QObject *parent, QString name)
+jzk::LSqlExecutor::LSqlExecutor(const QString &sqlLitepath, QObject *parent, QString name)
     :QObject(parent)
 {
     if (name == "")

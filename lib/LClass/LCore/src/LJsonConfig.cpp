@@ -1,5 +1,5 @@
 ﻿#include "LJsonConfig.h"
-using namespace ljz;
+using namespace jzk;
 LJsonConfig::LJsonConfig(const QString& path)
 	: LConfig(path)
 {

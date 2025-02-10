@@ -3,7 +3,7 @@
 #include <QWidget>
 #include <QPropertyAnimation>
 #include <QTimer>
-namespace ljz
+namespace jzk
 {
 	/**
 	 * This is the base class for all progress bars.\n

@@ -8,7 +8,7 @@
 #include <QObject>
 #include <QPushButton>
 #include <QApplication>
-namespace ljz
+namespace jzk
 {
 	class LWIDGET_EXPORT LPixmapButton : public QPushButton
 	{

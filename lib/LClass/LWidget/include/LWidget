@@ -8,4 +8,4 @@
 #ifdef WIN32
 #include "LJZWidget.h"
 #endif
-using namespace ljz;
+using namespace jzk;

@@ -3,7 +3,7 @@
 #include <QKeyEvent>
 #include <QTimer>
 
-using namespace ljz;
+using namespace jzk;
 
 LFileLineEdit::Info::Info(QFileDialog::FileMode mode, const QString& path, const QString& title,
 	const QStringList& filters, const QIcon& icon)
@@ -19,9 +19,9 @@ LFileLineEdit::LFileLineEdit(QWidget* parent)
 	this->addAction(this->_clearAction, QLineEdit::TrailingPosition);
 	connect(this->_clearAction, &QAction::triggered, [=]()
 		{
-			this->clear();
 			this->setToolTip("");
 			emit this->fileCleared();
+			this->clear();
 		});
 	reAction();
 }

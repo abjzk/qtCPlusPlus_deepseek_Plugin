@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/res">
+        <file>icon/ReplaceTemplatePlugin.png</file>
+    </qresource>
+</RCC>

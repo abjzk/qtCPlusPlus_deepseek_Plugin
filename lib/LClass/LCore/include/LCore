@@ -8,4 +8,4 @@
 #include "LLog.h"
 //#include "LInstanceMap.h"
 
-using namespace ljz;
+using namespace jzk;

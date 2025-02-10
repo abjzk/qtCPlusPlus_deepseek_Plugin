@@ -5,7 +5,7 @@
 #endif
 #include <QDir>
 #include <QColor>
-using namespace ljz;
+using namespace jzk;
 
 QString LFunc::escapeSpecialCharacters(const QString& text)
 {
@@ -131,6 +131,22 @@ void LFunc::autoRun(int isAutoRun, QString appName)
 #endif
 }
 
+void LFunc::autoRunPath(int isAutoRun, QString appName, QString appPath, QString params)
+{
+
+#ifdef _WIN32
+	QString regPath = "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run";
+	QSettings settings(regPath, QSettings::NativeFormat);
+	// 把appPath中的/替换成\ 
+	appPath = "\"" + appPath.replace("/", "\\") + "\"";
+	if (isAutoRun)
+		settings.setValue(appName, appPath + " " + params);
+	else
+		settings.remove(appName);
+#elif defined(__linux__)
+#endif
+}
+
 QString LFunc::truncateString(const QString& str, int length)
 {
 	QString truncatedStr;
@@ -139,4 +155,33 @@ QString LFunc::truncateString(const QString& str, int length)
 	else
 		QString truncatedStr = str.left(static_cast<qsizetype>(length) - 3) + "..."; // 留出三个位置给 "..."
 	return truncatedStr;
+}
+
+inline QIcon jzk::LFunc::setIconColor(const QIcon& icon, const QColor& color)
+{
+	QPixmap pixmap = icon.pixmap(QSize(64, 64));
+	QPainter painter(&pixmap);
+	painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+	painter.fillRect(pixmap.rect(), color);
+	QIcon colorIcon = QIcon(pixmap);
+	return colorIcon;
+}
+
+inline QColor jzk::LFunc::oppositeColor(const QColor& color)
+{
+	return QColor(255 - color.red(), 255 - color.green(), 255 - color.blue());
+}
+
+QDateTime jzk::LFunc::chrono_time_point_to_QDateTime(const std::chrono::system_clock::time_point& time)
+{
+    // 将 time_point 转换为 time_t
+    std::time_t _time = std::chrono::system_clock::to_time_t(time);
+    // 提取毫秒部分
+    auto duration = time.time_since_epoch();
+    auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration) % 1000;
+
+    // 将 std::time_t 转换为 QDateTime
+    QDateTime dateTime = QDateTime::fromSecsSinceEpoch(static_cast<qint64>(_time), Qt::LocalTime);
+
+	return dateTime;
 }

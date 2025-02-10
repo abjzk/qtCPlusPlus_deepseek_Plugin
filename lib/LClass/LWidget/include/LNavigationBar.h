@@ -6,7 +6,7 @@
 #include "LComboBox.h"
 #include <QToolBar>
 
-namespace ljz
+namespace jzk
 {
 	class LWIDGET_EXPORT LNavigationBar :public QWidget
 	{

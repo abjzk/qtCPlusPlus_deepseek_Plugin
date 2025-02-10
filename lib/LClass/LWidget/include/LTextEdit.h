@@ -14,7 +14,7 @@
 #include <QPlainTextEdit>
 #include <QAbstractScrollArea>
 
-namespace ljz
+namespace jzk
 {
 	class LLineNumberArea;
 	struct FindItemInfo

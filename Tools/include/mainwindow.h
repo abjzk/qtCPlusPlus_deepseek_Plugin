@@ -1,5 +1,10 @@
 #include <LJZWidget.h>
-using namespace ljz;
+#include "Widget.h"
+#include "config.h"
+#include <AbstractPlugin.h>
+#include <QCloseEvent>
+#include "configDialog.h"
+using namespace jzk;
 
 class TitleBar : public LBaseTitleBar
 {
@@ -17,14 +22,21 @@ public slots:
 };
 
 
-class MainWindow : public LWidget
+class MainWindow : public Widget
 {
     Q_OBJECT
 public:
-    MainWindow(QWidget* mainWidget, QWidget* parent = nullptr);
-    ~MainWindow() override = default;
+    MainWindow(TConfig *config,QWidget* mainWidget, QWidget* parent = nullptr);
+    ~MainWindow() override;
+    virtual void systemSettingsChangedSlot() override;
+    void initUi();
+    void initConnect();
+    void showConfigDialog();
+    virtual void closeEvent(QCloseEvent *event) override;
+    TConfig * _config;
 private:
-    void systemSettingsChangedSlot();
-    static QIcon setIconColor(const QIcon& icon, const QColor& color);
-    static QColor oppositeColor(const QColor& color);
+    QPushButton * _setButton = new QPushButton(this);
+    ConfigDialog * dialog = nullptr;
+
+    void reSet();
 };

@@ -9,7 +9,7 @@
 #include <QTableView>
 #include <QAbstractItemModel>
 
-using namespace ljz;
+using namespace jzk;
 
 LFindItemDialog::LFindItemDialog(QWidget* parent)
 	:QDialog(parent)
@@ -1026,6 +1026,6 @@ void LTextEdit::findItemClicked(FindItemInfo info)
 	vScrollBar->setValue(scrollValue);
 }
 
-ljz::LTerminalEdit::LTerminalEdit(QWidget *parent)
+jzk::LTerminalEdit::LTerminalEdit(QWidget *parent)
 {
 }

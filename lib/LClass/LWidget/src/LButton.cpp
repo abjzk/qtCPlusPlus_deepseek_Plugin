@@ -1,6 +1,6 @@
 ﻿#include "LButton.h"
 #include <QPainterPath>
-using namespace ljz;
+using namespace jzk;
 
 LPixmapButton::LPixmapButton(QWidget* parent)
 	:QPushButton(parent)

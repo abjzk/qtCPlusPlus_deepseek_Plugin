@@ -1,6 +1,6 @@
 ﻿#include "LInIConfig.h"
 
-using namespace ljz;
+using namespace jzk;
 
 bool LInIConfig::read(const QVariant& key, QVariant& value)
 {

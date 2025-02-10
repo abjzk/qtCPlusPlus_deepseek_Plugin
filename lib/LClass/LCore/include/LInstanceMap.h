@@ -6,7 +6,7 @@
 #include <QSet>
 #include "lcore_global.h"
 #include <QThread>
-namespace ljz
+namespace jzk
 {
     // 更新内容
     class LCORE_EXPORT Content

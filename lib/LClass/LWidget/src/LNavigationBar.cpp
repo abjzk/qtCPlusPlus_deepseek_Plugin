@@ -1,5 +1,5 @@
 #include "LNavigationBar.h"
-using namespace ljz;
+using namespace jzk;
 
 void LNavigationBar::setItems(const QList<Item>& items)
 {

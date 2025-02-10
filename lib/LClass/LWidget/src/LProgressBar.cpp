@@ -1,7 +1,7 @@
 ﻿#include "LProgressBar.h"
 #include <QPainter>
 #include <QPainterPath>
-using namespace ljz;
+using namespace jzk;
 
 int LBaseProgressBar::minimum() const
 {

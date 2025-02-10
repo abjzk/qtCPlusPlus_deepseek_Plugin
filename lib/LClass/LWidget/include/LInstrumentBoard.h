@@ -7,7 +7,7 @@
 #include <QTime>
 #include <QTimer>
 #include <QWidget>
-namespace ljz
+namespace jzk
 {
 	class LWIDGET_EXPORT LInstrumentBoard : public QWidget
 	{

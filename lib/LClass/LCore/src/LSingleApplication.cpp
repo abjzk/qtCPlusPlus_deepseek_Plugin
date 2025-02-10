@@ -5,7 +5,7 @@
 #include <QFileInfo>
 #include <QMessageBox>
 
-using namespace ljz;
+using namespace jzk;
 
 LSingleApplication::LSingleApplication(int& args, char** argv)
 	:QApplication(args, argv),

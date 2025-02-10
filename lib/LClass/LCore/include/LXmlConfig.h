@@ -4,7 +4,7 @@
 
 #include <QtXml/QtXml>
 
-namespace ljz
+namespace jzk
 {
 	class LXmlConfig :
 		public LConfig

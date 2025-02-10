@@ -2,7 +2,7 @@
 #include "LConfig.h"
 #include <qsettings.h>
 #include "lcore_global.h"
-namespace ljz
+namespace jzk
 {
 	class LCORE_EXPORT LInIConfig :
 		public LConfig

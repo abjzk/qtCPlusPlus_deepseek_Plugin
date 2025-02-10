@@ -1,5 +1,5 @@
 ﻿#include "LXmlConfig.h"
-using namespace ljz;
+using namespace jzk;
 bool LXmlConfig::read(const QVariant& key, QVariant& value)
 {
 	return false;

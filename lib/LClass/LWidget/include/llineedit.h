@@ -8,7 +8,7 @@
 #include <QHostAddress>
 #include <QAbstractSpinBox>
 #include <QValidator>
-namespace ljz {
+namespace jzk {
 	class LWIDGET_EXPORT LFileLineEdit : public QLineEdit
 	{
 		Q_OBJECT

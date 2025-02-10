@@ -1,6 +1,6 @@
 ﻿#include "LConfig.h"
 
-using namespace ljz;
+using namespace jzk;
 
 LConfig::LConfig(const QString& path)
 	: m_path(path), m_error(Error::NoError), m_errorString(QString())

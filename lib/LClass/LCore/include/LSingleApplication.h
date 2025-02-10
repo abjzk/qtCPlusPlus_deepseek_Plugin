@@ -5,7 +5,7 @@
 #include <QApplication>
 #include "lcore_global.h"
 class QLocalServer;
-namespace ljz
+namespace jzk
 {
 	class LCORE_EXPORT LSingleApplication : public QApplication
 	{

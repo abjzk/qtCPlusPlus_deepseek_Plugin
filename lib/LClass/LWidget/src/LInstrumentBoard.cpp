@@ -3,7 +3,7 @@
 #include <QApplication>
 #include <QMenu>
 #include <QClipboard>
-using namespace ljz;
+using namespace jzk;
 LInstrumentBoard::LInstrumentBoard(double minValue, double maxValue, int precision, QWidget* parent)
 	:QWidget(parent)
 {

@@ -1,6 +1,6 @@
 ﻿#include "LGraphicsEffect.h"
 #include <qpropertyanimation.h>
-using namespace ljz;
+using namespace jzk;
 LAnimationOpacityEffect::LAnimationOpacityEffect(QObject* parent)
 	: QGraphicsOpacityEffect(parent)
 {

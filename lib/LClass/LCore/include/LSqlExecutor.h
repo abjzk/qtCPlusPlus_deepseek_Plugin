@@ -11,7 +11,7 @@
 #include <QVariantMap>
 #include "lcore_global.h"
 
-namespace ljz
+namespace jzk
 {
 	class LCORE_EXPORT LSqlExecutor : public QObject
 	{

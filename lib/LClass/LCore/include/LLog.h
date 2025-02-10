@@ -7,7 +7,7 @@
 #include <qdir.h>
 #include "lcore_global.h"
 /*
-namespace ljz
+namespace jzk
 {
 	enum LogLeaver {
 		Fatal = 0,
