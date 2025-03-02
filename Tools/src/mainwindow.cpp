@@ -47,10 +47,17 @@ void MainWindow::systemSettingsChangedSlot()
 
 void MainWindow::initUi()
 {
+
+    _setButton->setFixedSize(35, 35);
     _setButton->setIcon(QIcon(":res/icon/set.png"));
-    _setButton->setFixedSize(25, 25);
+    _setButton->setCursor(Qt::PointingHandCursor);
     _setButton->setToolTip("系统设置");
     this->getTitleBar()->addWidget(_setButton);
+
+
+
+
+
 }
 
 void MainWindow::initConnect()

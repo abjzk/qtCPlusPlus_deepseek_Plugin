@@ -1,4 +1,4 @@
-#include <LJZWidget.h>
+#include <JZKWidget.h>
 #include "Widget.h"
 #include "config.h"
 #include <AbstractPlugin.h>

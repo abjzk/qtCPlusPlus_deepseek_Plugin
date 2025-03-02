@@ -257,3 +257,8 @@ QTreeWidgetItem *Center::addPlugin(QString &filename)
     delete plugin;
     return pluginItem;
 }
+void Center::on_logButton_customContextMenuRequested(const QPoint &pos)
+{
+
+}
+

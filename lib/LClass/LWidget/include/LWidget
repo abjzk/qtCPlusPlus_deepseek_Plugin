@@ -6,6 +6,6 @@
 #include "LProgressBar.h"
 #include "LLineedit.h"
 #ifdef WIN32
-#include "LJZWidget.h"
+#include "JZKWidget.h"
 #endif
 using namespace jzk;

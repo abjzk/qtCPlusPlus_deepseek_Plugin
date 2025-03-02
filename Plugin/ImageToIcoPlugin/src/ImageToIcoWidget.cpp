@@ -39,11 +39,13 @@ void ImageToIcoWidget::initConnect()
     connect(ui->inLineEdit, &LFileLineEdit::fileSelected, this, &ImageToIcoWidget::loadTable);
     connect(ui->startButton, &QPushButton::clicked, this, &ImageToIcoWidget::startConvert);
     connect(ui->comboBox, &QComboBox::currentTextChanged, [=]()
-            { this->loadTable(ui->inLineEdit->text().split(";"), ui->comboBox->currentText()); });
+            {
+            this->loadTable(ui->inLineEdit->text().split(";"),
+             ui->comboBox->currentText()); });
     connect(ui->openOutputButton, &QPushButton::clicked, [=]()
             {
-        QString path = ui->outLineEdit->text();
-        QDesktopServices::openUrl(QUrl::fromLocalFile(path)); });
+            QString path = ui->outLineEdit->text();
+            QDesktopServices::openUrl(QUrl::fromLocalFile(path)); });
 }
 
 void ImageToIcoWidget::loadTable(const QStringList &files, const QString filter)
@@ -115,3 +117,8 @@ void ImageToIcoWidget::startConvert()
     if (_config->read("overOpenOutputPath").value.toBool())
         QDesktopServices::openUrl(QUrl::fromLocalFile(outdir));
 }
+
+
+
+
+

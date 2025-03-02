@@ -132,7 +132,18 @@
         "qjsonarray": "cpp",
         "qimage": "cpp",
         "qdesktopservices": "cpp",
-        "qdir": "cpp"
+        "qdir": "cpp",
+        "qframe": "cpp",
+        "queue": "cpp",
+        "qicon": "cpp",
+        "qlabel": "cpp",
+        "qlayout": "cpp",
+        "qclipboard": "cpp",
+        "qjsondocument": "cpp",
+        "qjsonobject": "cpp",
+        "xstddef": "cpp",
+        "cwctype": "cpp",
+        "qpushbutton": "cpp"
     },
     "commentTranslate.targetLanguage": "zh-CN",
     "commentTranslate.hover.enabled": true

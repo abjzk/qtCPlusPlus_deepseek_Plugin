@@ -1,0 +1,32 @@
+{
+	"BUILD_DIR" : "E:/C++project/Tools/Tools/build/Desktop_Qt_6_7_3_MSVC2022_64bit-Debug/Tools_autogen",
+	"CMAKE_BINARY_DIR" : "E:/C++project/Tools/Tools/build/Desktop_Qt_6_7_3_MSVC2022_64bit-Debug",
+	"CMAKE_CURRENT_BINARY_DIR" : "E:/C++project/Tools/Tools/build/Desktop_Qt_6_7_3_MSVC2022_64bit-Debug",
+	"CMAKE_CURRENT_SOURCE_DIR" : "E:/C++project/Tools/Tools",
+	"CMAKE_SOURCE_DIR" : "E:/C++project/Tools/Tools",
+	"CROSS_CONFIG" : false,
+	"GENERATOR" : "Ninja",
+	"INCLUDE_DIR" : "E:/C++project/Tools/Tools/build/Desktop_Qt_6_7_3_MSVC2022_64bit-Debug/Tools_autogen/include",
+	"INPUTS" : 
+	[
+		"E:/C++project/Tools/Tools/res/Tools.ico",
+		"E:/C++project/Tools/Tools/res/icon/refresh.png",
+		"E:/C++project/Tools/Tools/res/icon/maximize.png",
+		"E:/C++project/Tools/Tools/res/icon/log.png",
+		"E:/C++project/Tools/Tools/res/icon/set.png",
+		"E:/C++project/Tools/Tools/res/icon/minimize.png",
+		"E:/C++project/Tools/Tools/res/icon/restore.png",
+		"E:/C++project/Tools/Tools/res/icon/close.png"
+	],
+	"LOCK_FILE" : "E:/C++project/Tools/Tools/build/Desktop_Qt_6_7_3_MSVC2022_64bit-Debug/CMakeFiles/Tools_autogen.dir/AutoRcc_Resource_PNK5WDWK6L_Lock.lock",
+	"MULTI_CONFIG" : false,
+	"OPTIONS" : [ "--no-zstd", "-name", "Resource" ],
+	"OUTPUT_CHECKSUM" : "PNK5WDWK6L",
+	"OUTPUT_NAME" : "qrc_Resource.cpp",
+	"RCC_EXECUTABLE" : "E:/Qt/6.7.3/msvc2022_64/bin/rcc.exe",
+	"RCC_LIST_OPTIONS" : [ "--list" ],
+	"SETTINGS_FILE" : "E:/C++project/Tools/Tools/build/Desktop_Qt_6_7_3_MSVC2022_64bit-Debug/CMakeFiles/Tools_autogen.dir/AutoRcc_Resource_PNK5WDWK6L_Used.txt",
+	"SOURCE" : "E:/C++project/Tools/Tools/res/Resource.qrc",
+	"USE_BETTER_GRAPH" : false,
+	"VERBOSITY" : 0
+}

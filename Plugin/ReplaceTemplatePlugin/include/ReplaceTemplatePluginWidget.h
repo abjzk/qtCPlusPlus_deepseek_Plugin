@@ -10,6 +10,9 @@ class ReplaceTemplatePlugin_EXPORT ReplaceTemplateWidget : public QWidget
 public:
     ReplaceTemplateWidget(Logger * logger,TConfig *config,QWidget *parent = nullptr);
     ~ReplaceTemplateWidget();
+private slots:
+    void on_outputEdit_cursorPositionChanged(int arg1, int arg2);
+
 private:
     void initUi();
     void initConnect();

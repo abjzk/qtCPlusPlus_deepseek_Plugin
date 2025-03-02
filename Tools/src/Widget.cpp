@@ -22,6 +22,8 @@ Widget::Widget(QWidget *mainWidget, QWidget *parent)
     });
 }
 
+
+
 void Widget::systemSettingsChangedSlot()
 {
     QMap<LTitleBar::ButtonIcon, QIcon> iconMap{
@@ -32,6 +34,7 @@ void Widget::systemSettingsChangedSlot()
     };
     LTitleBar *titleBar = qobject_cast<LTitleBar*>(this->getTitleBar());
     titleBar->setStandardIconMap(iconMap);
+    
     QList<QPushButton*> list = this->findChildren<QPushButton*>();
     for (QPushButton *button : list)
     {

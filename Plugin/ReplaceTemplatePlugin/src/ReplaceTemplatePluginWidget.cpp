@@ -108,3 +108,9 @@ void ReplaceTemplateWidget::loadFileTree(const QStringList &files, const QString
 {
     if (files.isEmpty()) return;
 }
+
+void ReplaceTemplateWidget::on_outputEdit_cursorPositionChanged(int arg1, int arg2)
+{
+
+}
+

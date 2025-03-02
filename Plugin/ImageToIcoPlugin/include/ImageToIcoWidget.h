@@ -7,6 +7,12 @@ class ImageToIcoPlugin_EXPORT ImageToIcoWidget : public QWidget
 public:
     ImageToIcoWidget(TConfig *config,QWidget *parent = nullptr);
     ~ImageToIcoWidget();
+private slots:
+
+
+
+
+
 private:
     void initUi();
     void initConnect();

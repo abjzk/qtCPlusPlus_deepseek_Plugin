@@ -13,6 +13,9 @@ public:
     void initUi();
     void initConnect();
 
+private slots:
+    void on_logButton_customContextMenuRequested(const QPoint &pos);
+
 private:
     void loadPluginTree();
     AbstractPlugin *currentPlugin = nullptr;

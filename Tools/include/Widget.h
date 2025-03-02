@@ -1,5 +1,5 @@
 #pragma once
-#include <LJZWidget.h>
+#include <JZKWidget.h>
 #include <QPushButton>
 using namespace jzk;
 

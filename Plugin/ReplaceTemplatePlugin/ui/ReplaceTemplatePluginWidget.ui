@@ -69,6 +69,25 @@
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QLabel" name="label">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <kerning>true</kerning>
+         <hintingpreference>PreferDefaultHinting</hintingpreference>
+         <fontweight>Medium</fontweight>
+        </font>
+       </property>
        <property name="text">
         <string>模板文件夹路径</string>
        </property>
@@ -81,14 +100,32 @@
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>40</width>
+         <width>999999999</width>
          <height>20</height>
         </size>
        </property>
       </spacer>
      </item>
      <item>
-      <widget class="LFileLineEdit" name="templateEdit"/>
+      <widget class="LFileLineEdit" name="templateEdit">
+       <property name="minimumSize">
+        <size>
+         <width>305</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>305</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <hintingpreference>PreferVerticalHinting</hintingpreference>
+        </font>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -96,6 +133,25 @@
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
       <widget class="QLabel" name="label_3">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <kerning>true</kerning>
+         <hintingpreference>PreferDefaultHinting</hintingpreference>
+         <fontweight>Medium</fontweight>
+        </font>
+       </property>
        <property name="text">
         <string>二进制文件类型</string>
        </property>
@@ -108,14 +164,32 @@
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>40</width>
+         <width>999999999</width>
          <height>20</height>
         </size>
        </property>
       </spacer>
      </item>
      <item>
-      <widget class="QLineEdit" name="binTypeEdit"/>
+      <widget class="QLineEdit" name="binTypeEdit">
+       <property name="minimumSize">
+        <size>
+         <width>305</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>305</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <hintingpreference>PreferVerticalHinting</hintingpreference>
+        </font>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -123,6 +197,25 @@
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QLabel" name="label_2">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <kerning>true</kerning>
+         <hintingpreference>PreferDefaultHinting</hintingpreference>
+         <fontweight>Medium</fontweight>
+        </font>
+       </property>
        <property name="text">
         <string>生成路径</string>
        </property>
@@ -133,16 +226,43 @@
        <property name="orientation">
         <enum>Qt::Orientation::Horizontal</enum>
        </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Policy::Expanding</enum>
+       </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>40</width>
-         <height>20</height>
+         <width>999999999</width>
+         <height>0</height>
         </size>
        </property>
       </spacer>
      </item>
      <item>
-      <widget class="LFileLineEdit" name="outputEdit"/>
+      <widget class="LFileLineEdit" name="outputEdit">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>305</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>305</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <hintingpreference>PreferVerticalHinting</hintingpreference>
+        </font>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -150,6 +270,25 @@
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
       <widget class="QLabel" name="label_4">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <kerning>true</kerning>
+         <hintingpreference>PreferDefaultHinting</hintingpreference>
+         <fontweight>Medium</fontweight>
+        </font>
+       </property>
        <property name="text">
         <string>是否生成顶层目录</string>
        </property>
@@ -162,7 +301,7 @@
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>40</width>
+         <width>999999999</width>
          <height>20</height>
         </size>
        </property>
