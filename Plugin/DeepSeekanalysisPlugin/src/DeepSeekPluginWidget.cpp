@@ -8,6 +8,8 @@
 #include <QMenu>
 #include <QAction>
 #include <QUuid>
+#include <QDebug>
+
 DeepSeekWidget::DeepSeekWidget(Logger *logger, TConfig *config, QWidget *parent)
     : QWidget(parent), ui(new Ui::DeepSeekPluginWidget()), _config(config), _logger(logger)
 {
@@ -71,7 +73,10 @@ void DeepSeekWidget::setParmas(QString key, QVariant value)
     {
         deepSeek->setToken(value.toString());
     }
+
 }
+
+
 /**
  * @brief 初始化UI界面最好在这里完成
  */
@@ -93,12 +98,14 @@ void DeepSeekWidget::initUi()
     // 多选
     ui->chatListWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
     ui->textEdit->setPlaceholderText("请输入你的问题后按下Ctrl+Enter来进行提问!");
+    
 }
 /**
  * @brief 初始化各种信号和槽最好在这里完成
  */
 void DeepSeekWidget::initConnect()
 {
+    connect(deepSeek, &DeepSeek::replyBalance, this, &DeepSeekWidget::moneyChange);//jzk
     connect(deepSeek, &DeepSeek::replyStreamMessage, this, &DeepSeekWidget::addLastMessage);
     connect(deepSeek, &DeepSeek::replyMessage, this, &DeepSeekWidget::addLastMessage);
     connect(deepSeek, &DeepSeek::replyFinished, this, &DeepSeekWidget::finished);
@@ -108,16 +115,18 @@ void DeepSeekWidget::initConnect()
     connect(ui->chatListWidget, &QListWidget::customContextMenuRequested, this, &DeepSeekWidget::showListWidgetContextMenu);
 }
 /**
- * @brief 余额展示槽
+ * @brief 余额更新//jzk
  */
-
-void DeepSeekWidget::on_moneylabel_linkActivated(const QString &link)
-{
-    //
-   
+void DeepSeekWidget::moneyChange(const DeepSeek::Balance &balance){
+    //double转字符串
+    ui->moneyShow->setText( QString("余额: %2").arg(balance.total_balance));
+    qDebug() << QString("余额: %8").arg(balance.total_balance);
 }
+/**
+ * @brief 事件Ctrl + Enter ，发送消息
+ */
 void DeepSeekWidget::keyPressEvent(QKeyEvent *event)
-{
+{   qDebug() << QString("keyPressEvent");
     // Ctrl + Enter
     if (event->key() == Qt::Key_Return && event->modifiers() == Qt::ControlModifier)
     {
@@ -134,7 +143,10 @@ void DeepSeekWidget::keyPressEvent(QKeyEvent *event)
         ChatFrame *reasonerFrame = new ChatFrame(Role::Assistant, this);
         _mainLayout->insertWidget(_mainLayout->count() - 1, reasonerFrame);
         _logger->info(QString("seed: %1").arg(text));
+        //deepseek库更新消息
         deepSeek->seedMessage(oldMessage(), text);
+        // deepseek库更新余额//jzk
+        deepSeek->queryBalance();
         QTimer::singleShot(500, this, [=]
                            { ui->chatScrollArea->ensureWidgetVisible(reasonerFrame); });
         reasonerFrame->startLoading();
@@ -154,7 +166,8 @@ void DeepSeekWidget::keyPressEvent(QKeyEvent *event)
 }
 
 void DeepSeekWidget::addLastMessage(const DeepSeek::Message &message)
-{
+{   
+    qDebug() << QString("addLastMessage");
     auto widget = _mainLayout->itemAt(_mainLayout->count() - 2)->widget();
     if (widget)
     {
@@ -175,7 +188,8 @@ void DeepSeekWidget::addLastMessage(const DeepSeek::Message &message)
 }
 
 void DeepSeekWidget::finished(QNetworkReply::NetworkError error, int httpStatusCode, const QString &errorString)
-{
+{   
+    qDebug() << QString("finished");
     ui->textEdit->setEnabled(true);
     ui->textEdit->setFocus();
 
@@ -258,6 +272,9 @@ void DeepSeekWidget::newChat()
 void DeepSeekWidget::loadChat()
 {
     ui->chatListWidget->clear();
+    qDebug()<<"loadChat";
+    // deepseek库更新余额//jzk
+    deepSeek->queryBalance();
     auto sql = QString("SELECT chat_name,identifier FROM ChatMessage where isLegal = 1 order by datetime desc");
     auto rows = _sqlExecutor->executeQuery(sql);
     for (int i = 0; i < rows.size(); ++i)
@@ -283,13 +300,17 @@ void DeepSeekWidget::showContextMenu(const QPoint &pos)
 void DeepSeekWidget::showListWidgetContextMenu(const QPoint &pos)
 {
     QMenu menu(this);
-    auto deleteChatAction = menu.addAction("删除");
+    auto deleteChatAction = menu.addAction("删除（无法恢复）");
+    
     connect(deleteChatAction, &QAction::triggered, this, &DeepSeekWidget::deleteChat);
     menu.exec(QCursor::pos());
 }
 
 void DeepSeekWidget::loadChatMessage(QListWidgetItem *item)
 {
+    qDebug()<<"loadChatMessage";
+    // deepseek库更新余额//jzk
+    deepSeek->queryBalance();
     this->newChat();
     _identifier = item->data(Qt::UserRole).toString();
     auto sql = QString("SELECT chat_name,identifier,content FROM ChatMessage WHERE identifier = '%1'").arg(_identifier);
@@ -336,3 +357,10 @@ void DeepSeekWidget::deleteChat()
         delete item;
     }
 }
+
+
+
+
+
+
+

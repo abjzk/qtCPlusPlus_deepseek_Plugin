@@ -11,7 +11,7 @@
 #include <QWidget>
 #include <LCore>
 
-class DeepSeekPlugin_EXPORT DeepSeekWidget : public QWidget
+class DeepSeekanalysisPlugin_EXPORT DeepSeekWidget : public QWidget
 {
 
     Q_OBJECT
@@ -22,20 +22,23 @@ public:
 public:
     void setParmas(QString key, QVariant value);
 
+
 private:
     void initUi();
     void initConnect();
     Ui::DeepSeekPluginWidget *ui;
+    //配置 日志
     TConfig *_config;
     Logger *_logger;
+
     QString _identifier;
     QString _name;
     QWidget *_mainWidget = new QWidget(this);
     QVBoxLayout *_mainLayout = new QVBoxLayout(_mainWidget);
     DeepSeek *deepSeek = nullptr;
-    void on_moneylabel_linkActivated(const QString &link);
     virtual void keyPressEvent(QKeyEvent *event) override;
     void addLastMessage(const DeepSeek::Message &message);
+    void moneyChange(const DeepSeek::Balance &balance);
     void finished(QNetworkReply::NetworkError error, int httpStatusCode, const QString &errorString);
     QList<DeepSeek::Message> oldMessage();
     QWidget *_spacer = nullptr;

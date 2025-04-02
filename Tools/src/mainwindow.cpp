@@ -54,10 +54,6 @@ void MainWindow::initUi()
     _setButton->setToolTip("系统设置");
     this->getTitleBar()->addWidget(_setButton);
 
-
-
-
-
 }
 
 void MainWindow::initConnect()

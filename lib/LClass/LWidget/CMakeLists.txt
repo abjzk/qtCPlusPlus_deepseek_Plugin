@@ -42,5 +42,5 @@ target_link_libraries(LWidget
 
 target_compile_definitions(LWidget
     PRIVATE
-        LWIDGET_LIB
+    LWIDGET_LIB
 )

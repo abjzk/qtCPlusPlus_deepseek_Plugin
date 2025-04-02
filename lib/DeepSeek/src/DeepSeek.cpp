@@ -141,7 +141,7 @@ void DeepSeek::setTopP(double top_p)
         return;
     _top_p = top_p;
 }
-
+//消息部分
 void DeepSeek::seedMessage(const QList<Message> &oldMessages, const QString &message)
 {
     QMutexLocker locker(&_mutex);
@@ -224,6 +224,7 @@ void DeepSeek::setPresencePenalty(double presence_penalty)
         return;
     _presence_penalty = presence_penalty;
 }
+//余额
 void DeepSeek::queryBalance()
 {
     QNetworkRequest request;

@@ -2,6 +2,14 @@
 #include "LSqlExecutor.h"
 #include <Utility_global.h>
 #include "utility.h"
+/**
+ * @brief 对于不同的参数格式进行处理，以及写入配置前后的处理
+ * @param
+ * (QString key, QVariant value, QString type, QString description, bool isShow = true)
+ * 或者()
+ * @details ConfigItem
+ */
+
 class UTILITY_EXPORT ConfigItem
 {
 public:
@@ -101,6 +109,9 @@ private:
 public:
     static Type getTypeFromString(const QString &type);
     static QString getTypeToString(const Type &type);
+    //对应Type的字符串
+
     static QString valueToString(const QVariant &value, const QString &type);
+    //对应Type的具体值
     static QVariant stringToValue(const QString &value, const QString &type);
 };

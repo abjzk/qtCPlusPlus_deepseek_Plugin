@@ -143,7 +143,17 @@
         "qjsonobject": "cpp",
         "xstddef": "cpp",
         "cwctype": "cpp",
-        "qpushbutton": "cpp"
+        "qpushbutton": "cpp",
+        "qstringlistmodel": "cpp",
+        "qcoreapplication": "cpp",
+        "qfile": "cpp",
+        "cstdarg": "cpp",
+        "qfiledialog": "cpp",
+        "qvboxlayout": "cpp",
+        "qevent": "cpp",
+        "qaction": "cpp",
+        "qmovie": "cpp",
+        "qkeyevent": "cpp"
     },
     "commentTranslate.targetLanguage": "zh-CN",
     "commentTranslate.hover.enabled": true

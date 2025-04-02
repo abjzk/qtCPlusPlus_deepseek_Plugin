@@ -26,7 +26,7 @@ QString DeepSeekPlugin::group()
  */
 QString DeepSeekPlugin::name()
 {
-    return "Chat";
+    return "ProgramAnalysis";
 }
 
 /**
@@ -53,7 +53,7 @@ QString DeepSeekPlugin::author()
  */
 QString DeepSeekPlugin::description()
 {
-    return "聊天";
+    return "description new DeepSeekanalysis  ";
 }
 
 /**
@@ -91,7 +91,7 @@ void DeepSeekPlugin::stop()
  */
 void DeepSeekPlugin::writeConfigBeforeEvent(WriteConfigEvent &event)
 {
-    AbstractPlugin::writeConfigBeforeEvent(event);
+    // AbstractPlugin::writeConfigBeforeEvent(event);
     auto key = event.key;
     auto value = event.newValue();
     if (key == "top_p")

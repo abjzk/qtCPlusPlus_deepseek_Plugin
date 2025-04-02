@@ -5,6 +5,7 @@
 #include "DeepSeek_global.h"
 #include <QJsonObject>
 #include <QMutex>
+//
 class DEEPSEEK_EXPORT DeepSeek : public QObject
 {
     Q_OBJECT
@@ -202,7 +203,7 @@ signals:
     /**
      * @brief 当前余额信号
      */
-    void replyBalance(Balance balance);
+    void replyBalance(const Balance &balance);
 
 private:
     QString _token{QString()};
