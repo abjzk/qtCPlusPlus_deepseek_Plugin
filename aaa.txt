@@ -1,0 +1,24 @@
+14:29:50: 为项目Tools执行步骤 ...
+14:29:50: 正在启动 "E:\Program Files\CMake\bin\cmake.exe" --build E:/C++project/Tools/build --target DeepSeekanalysisPlugin --config Debug
+
+閫傜敤浜  .NET Framework MSBuild 鐗堟湰 17.13.9+e0f243f1e
+
+  Automatic MOC and UIC for target DeepSeek
+  DeepSeek.vcxproj -> E:\C++project\Tools\bin\Debug\DeepSeek.dll
+  Automatic MOC and UIC for target LCore
+  LCore.vcxproj -> E:\C++project\Tools\bin\Debug\LCore.dll
+  Automatic MOC and UIC for target LWidget
+  LWidget.vcxproj -> E:\C++project\Tools\bin\Debug\LWidget.dll
+  spdlog.vcxproj -> E:\C++project\Tools\bin\Debug\spdlogd.lib
+  Automatic MOC and UIC for target Utility
+  Utility.vcxproj -> E:\C++project\Tools\bin\Debug\Utility.dll
+  Automatic MOC and UIC for target DeepSeekanalysisPlugin
+  DeepSeekPluginWidget.cpp
+    姝ｅ湪鍒涘缓搴  E:/C++project/Tools/bin/Debug/DeepSeekanalysisPlugin.lib 鍜屽璞  E:/C++project/Tools/bin/Debug/DeepSeekanalysisPlugin.exp
+DeepSeekPluginWidget.obj : error LNK2019: 鏃犳硶瑙ｆ瀽鐨勫閮ㄧ鍙  "public: __cdecl FileAnalysisTask::FileAnalysisTask(class QString const &,class QString const &,class QString const &,class jzk::LSqlExecutor *,class Logger *,class QMutex *,class QWaitCondition *,class QList<struct std::pair<class QString,class QString> > *,class std::function<class QString __cdecl(class QString const &)>)" (??0FileAnalysisTask@@QEAA@AEBVQString@@00PEAVLSqlExecutor@jzk@@PEAVLogger@@PEAVQMutex@@PEAVQWaitCondition@@PEAV?$QList@U?$pair@VQString@@V1@@std@@@@V?$function@$$A6A?AVQString@@AEBV1@@Z@std@@@Z)锛屽嚱鏁  "private: void __cdecl DeepSeekWidget::on_pushButton_clicked(void)" (?on_pushButton_clicked@DeepSeekWidget@@AEAAXXZ) 涓紩鐢ㄤ簡璇ョ鍙  [E:\C++project\Tools\build\Plugin\DeepSeekanalysisPlugin\DeepSeekanalysisPlugin.vcxproj]
+DeepSeekPluginWidget.obj : error LNK2019: 鏃犳硶瑙ｆ瀽鐨勫閮ㄧ鍙  "private: class QString __cdecl DeepSeekWidget::analyzeFileOnMainThread(class QString const &)" (?analyzeFileOnMainThread@DeepSeekWidget@@AEAA?AVQString@@AEBV2@@Z)锛屽嚱鏁  "public: class QString __cdecl `private: void __cdecl DeepSeekWidget::on_pushButton_clicked(void)'::`2'::<lambda_1>::operator()(class QString const &)const " (??R<lambda_1>@?1??on_pushButton_clicked@DeepSeekWidget@@AEAAXXZ@QEBA?AVQString@@AEBV3@@Z) 涓紩鐢ㄤ簡璇ョ鍙  [E:\C++project\Tools\build\Plugin\DeepSeekanalysisPlugin\DeepSeekanalysisPlugin.vcxproj]
+E:\C++project\Tools\bin\Debug\DeepSeekanalysisPlugin.dll : fatal error LNK1120: 2 涓棤娉曡В鏋愮殑澶栭儴鍛戒护 [E:\C++project\Tools\build\Plugin\DeepSeekanalysisPlugin\DeepSeekanalysisPlugin.vcxproj]
+14:30:00: 进程"E:\Program Files\CMake\bin\cmake.exe"退出，退出代码 1 。
+14:30:00: Error while building/deploying project Tools (kit: Qt 6.7.3 MSVC2022 64bit)
+14:30:00: When executing step "构建"
+14:30:00: Elapsed time: 00:09.

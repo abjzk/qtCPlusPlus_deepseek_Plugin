@@ -156,6 +156,53 @@ namespace jzk
 				return rec;
 			}
 		}
+        /**
+         * @brief 执行非查询语句（支持参数化）
+         * @param query 要执行的SQL语句（可含占位符）
+         * @param params 参数键值对（如 {":name", "John"} 或 {"?1", 42}）
+         * @param useTransaction 是否开启事务
+         * @return 受影响的行数
+         */
+        int executeNonQuerywithparams(const QString &query,
+                            const QMap<QString, QVariant> &params = {},
+                            bool useTransaction = true)
+        {
+            if (!db.isOpen() && !db.open()) {
+                qDebug() << "DB open error:" << db.lastError();
+                throw std::runtime_error(db.lastError().text().toStdString());
+            }
+
+            QSqlQuery q(db);
+            q.setForwardOnly(true);  // 优化性能
+
+            // 准备语句
+            if (!q.prepare(query)) {
+                throw std::runtime_error("Prepare failed: " + q.lastError().text().toStdString());
+            }
+
+            // 绑定参数
+            for (auto it = params.constBegin(); it != params.constEnd(); ++it) {
+                q.bindValue(it.key(), it.value());
+            }
+
+            // 事务处理
+            if (useTransaction && !db.transaction()) {
+                throw std::runtime_error("Transaction start: " + db.lastError().text().toStdString());
+            }
+
+            // 执行语句
+            if (!q.exec()) {
+                if (useTransaction) db.rollback();
+                throw std::runtime_error("Execute error: " + q.lastError().text().toStdString());
+            }
+
+            // 提交事务
+            if (useTransaction && !db.commit()) {
+                throw std::runtime_error("Commit failed: " + db.lastError().text().toStdString());
+            }
+
+            return q.numRowsAffected();
+        }
 		/**
 		 * @brief 执行非查询语句
 		 * @param query 要执行的语句

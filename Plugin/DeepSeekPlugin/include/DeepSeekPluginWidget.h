@@ -46,4 +46,5 @@ private:
     void loadChatMessage(QListWidgetItem *item);
     void deleteChat();
     LSqlExecutor *_sqlExecutor = new LSqlExecutor(QApplication::applicationDirPath() + "/config.db");
+
 };
