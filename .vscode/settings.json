@@ -153,7 +153,8 @@
         "qevent": "cpp",
         "qaction": "cpp",
         "qmovie": "cpp",
-        "qkeyevent": "cpp"
+        "qkeyevent": "cpp",
+        "qstringdecoder": "cpp"
     },
     "commentTranslate.targetLanguage": "zh-CN",
     "commentTranslate.hover.enabled": true

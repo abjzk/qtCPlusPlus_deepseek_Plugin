@@ -141,7 +141,7 @@ void DeepSeek::setTopP(double top_p)
         return;
     _top_p = top_p;
 }
-//消息部分
+//发历史消息回消息
 void DeepSeek::seedMessage(const QList<Message> &oldMessages, const QString &message)
 {
     QMutexLocker locker(&_mutex);

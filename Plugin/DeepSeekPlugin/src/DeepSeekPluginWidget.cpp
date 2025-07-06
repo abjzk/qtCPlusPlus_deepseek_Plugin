@@ -11,7 +11,7 @@
 DeepSeekWidget::DeepSeekWidget(Logger *logger, TConfig *config, QWidget *parent)
     : QWidget(parent), ui(new Ui::DeepSeekPluginWidget()), _config(config), _logger(logger)
 {
-    _sqlExecutor->executeNonQuery(R"(CREATE TABLE IF NOT EXISTS ChatMessage 
+    _sqlExecutor->executeNonQuery(R"(CREATE TABLE IF NOT EXISTS ChatMessage
         (id INTEGER PRIMARY KEY AUTOINCREMENT,identifier TEXT, datetime TEXT, chat_name TEXT, content TEXT, isLegal INTEGER);)");
     ui->setupUi(this);
     deepSeek = new DeepSeek(_config->read("token").valueString(), this);
@@ -23,6 +23,7 @@ DeepSeekWidget::DeepSeekWidget(Logger *logger, TConfig *config, QWidget *parent)
     deepSeek->setFrequencyPenalty(_config->read("frequency_penalty").value.toDouble());
     deepSeek->setModel(_config->read("model").value.value<ComboxData>().currentText());
     deepSeek->setStream(_config->read("isStream").value.toBool());
+
     this->initUi();
     this->initConnect();
     this->loadChat();
@@ -107,15 +108,15 @@ void DeepSeekWidget::initConnect()
     connect(ui->chatListWidget, &QListWidget::itemClicked, this, &DeepSeekWidget::loadChatMessage);
     connect(ui->chatListWidget, &QListWidget::customContextMenuRequested, this, &DeepSeekWidget::showListWidgetContextMenu);
 }
-/**
- * @brief 余额展示槽
- */
+// /**
+//  * @brief 余额展示槽
+//  */
 
-void DeepSeekWidget::on_moneylabel_linkActivated(const QString &link)
-{
-    //
+// void DeepSeekWidget::on_moneylabel_linkActivated(const QString &link)
+// {
+//     //
    
-}
+// }
 void DeepSeekWidget::keyPressEvent(QKeyEvent *event)
 {
     // Ctrl + Enter
