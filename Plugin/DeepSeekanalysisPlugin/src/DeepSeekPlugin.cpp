@@ -53,7 +53,7 @@ QString DeepSeekPlugin::author()
  */
 QString DeepSeekPlugin::description()
 {
-    return "description new DeepSeekanalysis";
+    return "description new DeepSeekanalysis  ";
 }
 
 /**
@@ -91,8 +91,7 @@ void DeepSeekPlugin::stop()
  */
 void DeepSeekPlugin::writeConfigBeforeEvent(WriteConfigEvent &event)
 {
-    qDebug()<<"writeConfigBeforeEvent";
-    AbstractPlugin::writeConfigBeforeEvent(event);
+    // AbstractPlugin::writeConfigBeforeEvent(event);
     auto key = event.key;
     auto value = event.newValue();
     if (key == "top_p")
@@ -129,7 +128,6 @@ void DeepSeekPlugin::writeConfigBeforeEvent(WriteConfigEvent &event)
  */
 void DeepSeekPlugin::writeConfigAfterEvent(WriteConfigEvent &event)
 {
-    qDebug()<<"writeConfigAfterEvent";
     AbstractPlugin::writeConfigAfterEvent(event);
     if (_widget == nullptr)
         return;
@@ -143,7 +141,6 @@ void DeepSeekPlugin::writeConfigAfterEvent(WriteConfigEvent &event)
  */
 void DeepSeekPlugin::readConfigBeforeEvent(ReadConfigEvent &event)
 {
-    // qDebug()<<"writeConfigAfterEvent";
     AbstractPlugin::readConfigBeforeEvent(event);
 }
 
@@ -154,7 +151,6 @@ void DeepSeekPlugin::readConfigBeforeEvent(ReadConfigEvent &event)
  */
 void DeepSeekPlugin::readConfigAfterEvent(ReadConfigEvent &event)
 {
-    // qDebug()<<"readConfigAfterEvent";
     AbstractPlugin::readConfigAfterEvent(event);
 }
 
@@ -170,7 +166,7 @@ void DeepSeekPlugin::readConfigAfterEvent(ReadConfigEvent &event)
 void DeepSeekPlugin::registerConfig()
 {
     AbstractPlugin::registerConfig();
-    String_CONFIG_REGISTER("token", "Api-key", "", 1);
+    String_CONFIG_REGISTER("token", "Api-key", "", true);
     Double_CONFIG_REGISTER("top_p", "top_p", 1, 1);
     Double_CONFIG_REGISTER("temperature", "temperature", 1, 1);
     Int_CONFIG_REGISTER("max_tokens", "max_tokens", 4096, 1);
@@ -180,6 +176,6 @@ void DeepSeekPlugin::registerConfig()
                            ComboxData(0, {"deepseek-chat", "deepseek-reasoner"}), 1);
 
     Double_CONFIG_REGISTER("presencePenalty", "presencePenalty", 0, 1);
-    String_CONFIG_REGISTER("system_messages", "系统提示词", "You are a helpful assistant now.", 1);
-    ComBox_CONFIG_REGISTER("seed_key", "发送快捷键", ComboxData(1, {"Enter", "Ctrl+Enter"}), 1);
+    String_CONFIG_REGISTER("system_messages", "系统提示词", "You are a helpful assistant", 1);
+    ComBox_CONFIG_REGISTER("seed_key", "发送快捷键", ComboxData(1, {"Enter", "Ctrl+Enter"}), 0);
 }
