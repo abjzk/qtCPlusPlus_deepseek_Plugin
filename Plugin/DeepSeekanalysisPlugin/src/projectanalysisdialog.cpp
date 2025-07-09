@@ -32,7 +32,7 @@ ProjectAnalysisDialog::ProjectAnalysisDialog(QWidget *parent)
     analysisLevelSpin->setValue(3);
 
     QFormLayout *scanLayout = new QFormLayout(scanGroup);
-    scanLayout->addRow("最小子文件级数 (FL):", minFileLevelSpin);
+    scanLayout->addRow("最大子文件级数 (FL):", minFileLevelSpin);
     scanLayout->addRow("忽略文件后缀 (LF):", ignoreSuffixesEdit);
     scanLayout->addRow(showFileTreeCheck);
     scanLayout->addRow(showFilteredFilesCheck);
@@ -153,7 +153,7 @@ void ProjectAnalysisDialog::accept()
     analysisConfig["keywords"] = keywordsArray;
 
     // 保存开发者设置
-    analysisConfig["json_template"]="./AnalysisProm.md";
+    analysisConfig["json_template"]="./AnalysisProm.txt";
     if (developerModeCheck->isChecked()) {
         analysisConfig["json_template"] = jsonTemplateEdit->text();
     }

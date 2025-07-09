@@ -15,7 +15,7 @@
 #include <utility>
 #include <config.h>
 // 分析结果回调函数类型
-typedef std::function<QString(const QString&)> AnalysisCallback;
+typedef std::function<QString(const QString&,const QString&)> AnalysisCallback;
 class FileAnalysisTask : public QRunnable {
 public:
 
@@ -41,6 +41,7 @@ public:
     void saveJsonToFile(const QString& filePath, const QJsonObject& json);
     void saveToFile(const QString& filePath, const QString& content);
     QJsonObject extractJsonReport(const QString& analysisResult);
+    QString run1();
 private:
 
 

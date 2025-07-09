@@ -42,7 +42,14 @@ public:
     void setParmas(QString key, QVariant value);
     // 多线程分析辅助函数
     QString analyzeFileOnMainThread(const QString& question);
+
+    void changeFish();
+    QString analyzeFileOnMainThread(const QString &question, const QString &question_que);
 private:
+    QMutex _mutex;
+    QWaitCondition iscontinue;
+    bool isanalysis;
+    bool _issummary;
     void initUi();
     void initConnect();
     PathConfigDialog* pathConfigDialog;
@@ -51,7 +58,8 @@ private:
     TConfig *_config;
     Logger *_logger;
     QString _seed_key;     // 发送快捷键
-    QString _identifier;
+    QString _identifier;//项目id
+    QString _fileName;//文件名
     QString _name;//对话项名
     QString _inputPath;    // 输入目录路径
     QString _outputPath;   // 输出目录路径
@@ -64,7 +72,9 @@ private:
     void addLastMessage(const DeepSeek::Message &message);
     void moneyChange(const DeepSeek::Balance &balance);
     void finished(QNetworkReply::NetworkError error, int httpStatusCode, const QString &errorString);
-    QList<DeepSeek::Message> oldMessage();
+
+    // QList<DeepSeek::Message> oldMessage();
+    QList<DeepSeek::Message> oldMessage(bool signal=false);
     QWidget *_spacer = nullptr;
 
     void newChat();
@@ -73,15 +83,14 @@ private:
     void showListWidgetContextMenu(const QPoint &pos);
     void loadChatMessage(QListWidgetItem *item);
     void deleteChat();
-
     // 文件分析相关函数
-    void fileAnalysis(const QString& filePath, const QString& outputDir);
-    void AnalysisTR(); // 分析结果转换
+    // void fileAnalysis(const QString& filePath, const QString& outputDir);
     void AnalysisSummary(); // 分析结果总结
-
-
-
     void on_pushButton_clicked(); // 主分析按钮点击处理
-
     jzk::LSqlExecutor *_sqlExecutor = new jzk::LSqlExecutor(QApplication::applicationDirPath() + "/Deepseekconfig.db"); // 添加命名空间
+signals:
+       /**
+     * @brief 完成对话信号
+     */
+    // void Finished();
 };

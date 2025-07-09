@@ -187,17 +187,17 @@ public:
     static bool verifyPresencePenalty(double presence_penalty);
 signals:
     /**
-     * @brief 流式消息信号
+     * @brief 流式消息信号（逐块返回）
      * @param message 流式消息内容
      */
     void replyStreamMessage(const Message &message);
     /**
-     * @brief 消息信号
+     * @brief 消息信号（完整返回）
      * @param message 消息内容
      */
     void replyMessage(const Message &message);
     /**
-     * @brief 当前对话完成信号
+     * @brief 请求完成信号
      */
     void replyFinished(QNetworkReply::NetworkError error, int httpStatusCode, const QString &errorString);
     /**

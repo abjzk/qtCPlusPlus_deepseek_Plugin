@@ -48,6 +48,8 @@ void DeepSeek::setFrequencyPenalty(double frequency_penalty)
         return;
     _frequency_penalty = frequency_penalty;
 }
+//类似于针对流式的replyFinished_（），replyStreamMessage对应replyFinished信号
+//流式时replyFinished_（）前才会触发这个函数作为额外一步
 void DeepSeek::readStream()
 {
     _mutex.lock();
@@ -72,9 +74,10 @@ void DeepSeek::readStream()
         emit replyStreamMessage(message);
     }
 }
+// 请求完成回调函数，如果非流式，发送replyMessage信号，否则不发，再发送replyFinished信号
 void DeepSeek::replyFinished_()
 {
-    QMutexLocker locker(&_mutex);
+    QMutexLocker locker(&_mutex);//// 构造时加锁，析构时自动解锁
     _isRequesting = false;
     auto code = _reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     ErrorCode errorCode = static_cast<ErrorCode>(code);
@@ -141,7 +144,7 @@ void DeepSeek::setTopP(double top_p)
         return;
     _top_p = top_p;
 }
-//发历史消息回消息
+//给deepsekAPI发信息，收到请求回复后调用replyFinished_
 void DeepSeek::seedMessage(const QList<Message> &oldMessages, const QString &message)
 {
     QMutexLocker locker(&_mutex);

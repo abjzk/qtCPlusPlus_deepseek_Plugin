@@ -40,17 +40,17 @@ void FileAnalysisTask::run() {
 
     // 记录问题大小
     m_logger->info(QString("生成分析问题，大小: %1 字符").arg(question.size()));
-
+    QString question_que = generateQuestion(m_filePath, "",true);//去代码的问题
     // 3. 通过回调在主线程执行分析
-    QString analysisResult = m_analysisCallback(question);
-
+    QString analysisResult = m_analysisCallback(question,question_que);
+    // return analysisResult;
     // 4. 保存分析结果
     saveResult(analysisResult);
 
     // 5. 通知主线程结果更新
-    QMutexLocker locker(m_mutex);
-    m_results->append(qMakePair(m_filePath, analysisResult));
-    m_condition->wakeAll();
+//     QMutexLocker locker(m_mutex);
+//     m_results->append(qMakePair(m_filePath, analysisResult));
+//     m_condition->wakeAll();
 }
 
 QString FileAnalysisTask::readFileWithTruncation(const QString& filePath) {
@@ -111,9 +111,10 @@ QString FileAnalysisTask::generateQuestion(const QString& filePath, const QStrin
     // 准备模板变量
     QJsonObject variables;
     variables["file_path"] = filePath;
+    // variables["file_path"] = filePath;
     if(isdataUp){variables["file_content"] = "【过长省略，如有需要请查看对应文件路径】";}
     else variables["file_content"] = content;
-    variables["file_size"] = QString::number(content.size());
+    // variables["file_size"] = QString::number(content.size());
 
     // 检测文件语言
     QString language = "Unknown";
@@ -128,12 +129,12 @@ QString FileAnalysisTask::generateQuestion(const QString& filePath, const QStrin
     } else if (filePath.endsWith(".cs")) {
         language = "C#";
     }
-    variables["language"] = language;
+    // variables["language"] = language;
     //规则
     // 解析模板中的变量占位符
     QString question = templateContent;
     for (auto it = variables.begin(); it != variables.end(); ++it) {
-        QString placeholder = QString("{{%1}}").arg(it.key());
+        QString placeholder = QString("{%1}").arg(it.key());
         question.replace(placeholder, it.value().toString());
     }
     int i=1;
@@ -148,7 +149,7 @@ QString FileAnalysisTask::generateQuestion(const QString& filePath, const QStrin
     variables["extra_rules"] = uRules;
 
     // 处理特殊占位符
-    question.replace("{{detect_language(file_path)}}", language);
+    // question.replace("{code_language}", language);
 
     // 校验并截断问题大小
     return truncateQuestionIfNeeded(question);
@@ -202,15 +203,18 @@ QString FileAnalysisTask::truncateQuestionIfNeeded(const QString& question) {
 
 void FileAnalysisTask::saveResult(const QString& analysisResult) {
     // 保存原始分析结果到文本文件
-    QString resultTextFile = m_outputDir + "/" +"-"+ m_filePath+"-"+QFileInfo(m_filePath).baseName() + "_analysis.txt";
+
+    QString resultTextFile = m_outputDir +"/" +QFileInfo(m_filePath).baseName() + "_analysis.txt";
+    qDebug()<<QString("保存原始分析结果到文本文件:").arg(resultTextFile);
     saveToFile(resultTextFile, analysisResult);
 
     // 从分析结果中提取JSON部分
-    QJsonObject jsonReport = extractJsonReport(analysisResult);
+    // QJsonObject jsonReport = extractJsonReport(analysisResult);
 
     // 保存JSON报告到单独文件
-    QString resultJsonFile = m_outputDir + "/" +"-"+ m_filePath+"-"+ QFileInfo().baseName() + "_analysis.json";
-    saveJsonToFile(resultJsonFile, jsonReport);
+    // qDebug()<<"保存JSON报告到单独文件";
+    // QString resultJsonFile = m_outputDir  + QFileInfo().baseName() + "_analysis.json";
+    // saveJsonToFile(resultJsonFile, jsonReport);
 
     // 准备数据库插入数据
     // QString functionalOverview = jsonReport.value("summary").toObject().value("functional_overview").toString();
@@ -227,6 +231,7 @@ void FileAnalysisTask::saveResult(const QString& analysisResult) {
     // }
 
     // 保存到数据库
+    qDebug()<<"保存到数据库";
     // QString analysisResult和 QString question = generateQuestion(m_filePath, fileContent);
     QString question = generateQuestion(m_filePath, "",true);//去代码的问题
     QJsonArray array;
@@ -251,14 +256,17 @@ void FileAnalysisTask::saveResult(const QString& analysisResult) {
     array.append(chatassistant);
     QJsonDocument doc(array);
     QString content = doc.toJson(QJsonDocument::Compact);
+    // CREATE TABLE messages
+        // (id INTEGER PRIMARY KEY AUTOINCREMENT,programID TEXT, fileName TEXT, datetime TEXT,content TEXT,resultPath TEXT)
     auto sql = QString("INSERT INTO messages (programID,  fileName, datetime,content ,resultPath)"
-                       "VALUES ('%1', '%2', '%3', '%4')")
+                       "VALUES ('%1', '%2', '%3', '%4', '%5')")
                    .arg(m_programID)
                    .arg(QFileInfo(m_filePath).path())
                    .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"))
                    .arg(content)
-                   .arg(resultJsonFile);
+                   .arg(resultTextFile);
     m_sqlExecutor->executeNonQuery(sql);
+    qDebug()<<"保存到数据库完成";
 }
 
 QJsonObject FileAnalysisTask::extractJsonReport(const QString& analysisResult) {
