@@ -1,0 +1,51 @@
+```
+### 项目级依赖分析汇总
+基于以下文件分析结果，构建项目完整依赖图谱：
+
+### 分析要求
+1. 识别核心功能模块及其边界
+2. 构建跨文件调用链
+3. 发现循环依赖和单点故障
+4. 识别关键路径和性能瓶颈
+
+### 输入数据
+{
+  "project_name": "{project_name}",
+  "entry_points": ["main", "handle_request"], // 项目入口函数
+  "file_analysis": [  // 各文件分析结果
+    {file_content},
+
+  ]
+}
+
+### 输出格式
+{
+  "project_fingerprint": "string", // 项目版本指纹
+  "core_modules": [{
+    "module_name": "string",
+    "component_files": ["path"],
+    "interface_functions": ["function_id"],
+    "dependencies": ["module_name"]
+  }],
+  "critical_paths": [{
+    "path_name": "关键业务流",
+    "function_chain": ["function_id1", "function_id2"],
+    "estimated_latency": "100ms",
+    "bottlenecks": ["function_id"]
+  }],
+  "architecture_issues": {
+    "circular_dependencies": [["moduleA", "moduleB"]],
+    "single_points_of_failure": ["function_id"],
+    "tightly_coupled_modules": ["moduleC-moduleD"]
+  },
+  "full_dependency_graph": "mermaid语法",
+  "function_catalog": {  // 函数全局目录
+    "function_id": {
+      "file_path": "string",
+      "module": "string",
+      "call_count": int, // 被调用次数
+      "criticality": "high|medium|low"
+    }
+  }
+}
+```
