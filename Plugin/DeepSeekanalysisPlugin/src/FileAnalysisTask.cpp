@@ -242,7 +242,7 @@ void FileAnalysisTask::saveResult(const QString& analysisResult) {
     //                  {"reasoning_content", chatFrame->reasonerText()},
     //                  {"total_tokens", chatFrame->tokenSize()},
     //                  {"datetime", chatFrame->dateTime()}};
-    QJsonObject chatuser{{"role", 'user'},
+    QJsonObject chatuser{{"role", "user"},
                      {"content", question},
                      {"reasoning_content",""},
                      {"total_tokens", NULL},

@@ -11,7 +11,7 @@ DeepSeekWidget::DeepSeekWidget(Logger *logger, TConfig *config, QWidget *parent)
     // file_analysis (表)
     //     索引，项目id，项目根目录，项目子文件名，messages (表)索引，创立时间，弹窗返回的各种模设定提问和模型参数json，涉及变量的路径，分析json结果路径,
     _sqlExecutor->executeNonQuery(R"(CREATE TABLE IF NOT EXISTS file_analysis
-        (id INTEGER PRIMARY KEY AUTOINCREMENT,programID TEXT,rootPath TEXT, filesName TEXT,datetime TEXT, params TEXT,paramPath TEXT,jsonResultPath TEXT);)");
+        (id INTEGER PRIMARY KEY AUTOINCREMENT,programID TEXT,rootPath TEXT, filesName TEXT, chat_name TEXT,datetime TEXT, params TEXT,paramPath TEXT,jsonResultPath TEXT, content TEXT);)");
     //     messages (表)
     //     索引，对应的项目id，文件名，创立时间，对话内容（尽量采用变量替换代码,减少内存消耗）,结果路径
     _sqlExecutor->executeNonQuery(R"(CREATE TABLE IF NOT EXISTS messages
@@ -168,23 +168,24 @@ void DeepSeekWidget::keyPressEvent(QKeyEvent *event)
         if (deepSeek->isRequesting())
             return;
         auto text = ui->textEdit->toPlainText();
-        //新对话发送消息前设定两路径jzk***
-        // if (_mainLayout->count() == 1){
-        //     //初始化输入输出目录配置对话框
-        //     pathConfigDialog=new PathConfigDialog(this);
-        //     //确定项目输入输出路径
-        //     pathConfigDialog->show();
-        //     qDebug() << QString("newChatPath");
-        //     //先创建对应行再更新路径
-        //     while(pathConfigDialog->exec() != QDialog::Accepted){};
-        //     //检查返回值转换
-        //     QJsonObject paths=pathConfigDialog->getConfig();
-        //     _inputPath=paths.value("outputDir").toString();
-        //     _outputPath=paths.value("inputDir").toString();
-        //     qDebug() << (_inputPath);qDebug() << (_outputPath);
-        //     delete pathConfigDialog;
-        //     pathConfigDialog=nullptr;
-        // }
+
+        // 生成项目总结报告刚生成判断
+        qDebug()<< QString("keyPressEvent")<<_identifier<<_name;
+        //项目分析项展示不一样
+        if(_name.startsWith("项目分析: ") && _name.endsWith(_identifier)){
+            auto chatFrame = static_cast<ChatFrame *>(_mainLayout->itemAt(_mainLayout->count() - 2)->widget());
+            QString content = chatFrame->chatText();
+            if(content.startsWith("正在生成项目总结报告"))
+            text="以上是对于项目的各个文件的分析以及最后的总结。\n\n下面是新的提问：\n\n"+text;
+            //创建新数据
+            qDebug() << QString("AnalysisMessage插入新项目分析数据");
+            //更新对话到数据库,读取config表里的模型参数，更新到表中*****
+            auto sql1 = QString("INSERT INTO AnalysisMessage (identifier, datetime, chat_name, isLegal) VALUES ('%1', '%2', '%3', 1)")
+                            .arg(_identifier)
+                            .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"))
+                            .arg(_name);
+            _sqlExecutor->executeNonQuery(sql1);
+        }
         //对话-问
         ChatFrame *chatFrame = new ChatFrame(Role::User, this);
         chatFrame->setChatText(text);
@@ -215,25 +216,14 @@ void DeepSeekWidget::keyPressEvent(QKeyEvent *event)
             qDebug() << QString("插入新数据");
             _identifier = QUuid::createUuid().toString();
             _name = text.size() > 10 ? text.left(10) + "..." : text;
-            //更新对话到数据库,读取config表里的模型参数，更新到file_analysis表中*****
+            //更新对话到数据库,读取config表里的模型参数，更新到表中*****
             auto sql1 = QString("INSERT INTO AnalysisMessage (identifier,inputPath,outputPath, datetime, chat_name, isLegal) VALUES ('%1', '%2', '%3','%4', '%5', 0)")
                            .arg(_identifier)
                            .arg(_inputPath)
                            .arg(_outputPath)
                            .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"))
                            .arg(_name);
-            // auto sql = QString("UPDATE file_analysis SET '%1' = '%2' isLegal = 1 WHERE identifier = '%3'").arg(key)
-            //                .arg(value.value<ComboxData>().currentText())
-            //                .arg(_identifier);
-            // _sqlExecutor->executeNonQuery(sql1);
-            // _sqlExecutor->executeNonQuery(sql);
-
-
-            // auto sql_path = QString("UPDATE AnalysisMessage SET inputPath = '%1', outputPath = '%2' WHERE identifier = '%3'")
-            //                .arg(_inputPath)
-            //                .arg(_outputPath)
-            //                .arg(_identifier);
-            // _sqlExecutor->executeNonQuery(sql);
+            _sqlExecutor->executeNonQuery(sql1);
             _inputPath="";
             _outputPath="";
         }
@@ -297,6 +287,7 @@ void DeepSeekWidget::finished(QNetworkReply::NetworkError error, int httpStatusC
                 array.append(chat);
             }
         }
+
         QJsonDocument doc(array);
         QString content = doc.toJson(QJsonDocument::Compact);
         //确定两路径才创建对话列表
@@ -320,33 +311,34 @@ void DeepSeekWidget::finished(QNetworkReply::NetworkError error, int httpStatusC
             qCritical() << "数据库更新失败:" << e.what();
             // 这里可以添加恢复逻辑或用户提示
         }
+
     }else if(!_issummary){
         //文件分析时的聊天区操作
-        auto chatFrame = static_cast<ChatFrame *>(_mainLayout->itemAt(_mainLayout->count() - 3)->widget());
-        if (chatFrame)
-        {
+        // auto chatFrame = static_cast<ChatFrame *>(_mainLayout->itemAt(_mainLayout->count() - 3)->widget());
+        // if (chatFrame)
+        // {
 
-            QJsonObject chat{{"role", chatFrame->role()},
-                             {"content", chatFrame->chatText()},
-                             {"reasoning_content", chatFrame->reasonerText()},
-                             {"total_tokens", chatFrame->tokenSize()},
-                             {"datetime", chatFrame->dateTime()}};
-            array.append(chat);
-        }
-        //布局中的最后一聊天框（提问已经放入）
-        auto chatFramereply = static_cast<ChatFrame *>(_mainLayout->itemAt(_mainLayout->count() - 2)->widget());
-        if (chatFramereply &&chatFramereply->role()=="assistant")
-        {
+        //     QJsonObject chat{{"role", chatFrame->role()},
+        //                      {"content", chatFrame->chatText()},
+        //                      {"reasoning_content", chatFrame->reasonerText()},
+        //                      {"total_tokens", chatFrame->tokenSize()},
+        //                      {"datetime", chatFrame->dateTime()}};
+        //     array.append(chat);
+        // }
+        // //布局中的最后一聊天框（提问已经放入）
+        // auto chatFramereply = static_cast<ChatFrame *>(_mainLayout->itemAt(_mainLayout->count() - 2)->widget());
+        // if (chatFramereply &&chatFramereply->role()=="assistant")
+        // {
 
-            QJsonObject chat{{"role", chatFramereply->role()},
-                             {"content", chatFramereply->chatText()},
-                             {"reasoning_content", chatFramereply->reasonerText()},
-                             {"total_tokens", chatFramereply->tokenSize()},
-                             {"datetime", chatFramereply->dateTime()}};
-            array.append(chat);
-        }else{
-            qDebug()<<"回复聊天chatFrame读取失败";
-        }
+        //     QJsonObject chat{{"role", chatFramereply->role()},
+        //                      {"content", chatFramereply->chatText()},
+        //                      {"reasoning_content", chatFramereply->reasonerText()},
+        //                      {"total_tokens", chatFramereply->tokenSize()},
+        //                      {"datetime", chatFramereply->dateTime()}};
+        //     array.append(chat);
+        // }else{
+        //     qDebug()<<"回复聊天chatFrame读取失败";
+        // }
         // 在分析类保存结果时进行了数据库行创建
 
         // QJsonDocument doc(array);
@@ -369,7 +361,9 @@ void DeepSeekWidget::finished(QNetworkReply::NetworkError error, int httpStatusC
         // }
     }else{
 
-            // 处理分析模式下的结果
+        // 处理分析模式下的结果
+        // //布局中的最后一聊天框（提问已经放入）
+
             auto widget = _mainLayout->itemAt(_mainLayout->count() - 2)->widget();
             if (widget) {
                 ChatFrame *chatFrame = static_cast<ChatFrame *>(widget);
@@ -383,15 +377,30 @@ void DeepSeekWidget::finished(QNetworkReply::NetworkError error, int httpStatusC
                     out << summaryContent;
                     summaryFile.close();
                 }
+                // auto chatFramereply = static_cast<ChatFrame *>(_mainLayout->itemAt(_mainLayout->count() - 2)->widget());
+                if (chatFrame &&chatFrame->role()=="assistant")
+                {
 
+                        QJsonObject chat{{"role", chatFrame->role()},
+                                         {"content", chatFrame->chatText()},
+                                         {"reasoning_content", chatFrame->reasonerText()},
+                                         {"total_tokens", chatFrame->tokenSize()},
+                                         {"datetime", chatFrame->dateTime()}};
+                        array.append(chat);
+                    }else{
+                        qDebug()<<"回复聊天chatFrame读取失败";
+                    }
                 // 更新数据库中的总结路径
                 try {
                     QMap<QString, QVariant> params;
                     params[":jsonResultPath"] = summaryPath;
                     params[":programID"] = _identifier;
+                    QJsonDocument doc(array);
+                    QString content = doc.toJson(QJsonDocument::Compact);
+                    params[":content"] = content;
 
                     _sqlExecutor->executeNonQuerywithparams(
-                        "UPDATE file_analysis SET jsonResultPath = :jsonResultPath "
+                        "UPDATE file_analysis SET jsonResultPath = :jsonResultPath,content = :content  "
                         "WHERE programID = :programID",
                         params
                         );
@@ -472,13 +481,26 @@ void DeepSeekWidget::loadChat()
         auto row = rows.at(i);
         auto identifier = row.value("identifier").toString();
         auto chat_name = row.value("chat_name").toString();
+        if(chat_name.startsWith("项目分析: ") && chat_name.endsWith(identifier))continue;//跳过重复项目对话
         QListWidgetItem *item = new QListWidgetItem();
         item->setText(chat_name);
         item->setData(Qt::UserRole, identifier);
         ui->chatListWidget->addItem(item);
     }
-    //先在分析表找合法对话identifier，放到左边对话项列表
-
+    //先在分析表找合法对话ID，放到左边对话项列表
+    auto sql_analysis = QString("SELECT chat_name,programID  FROM file_analysis where filesName IS NOT NULL order by datetime desc");
+    auto rows_analysis = _sqlExecutor->executeQuery(sql_analysis);
+    for (int i = 0; i < rows_analysis.size(); ++i)
+    {
+        auto row = rows_analysis.at(i);
+        auto identifier = row.value("programID").toString();
+        auto chat_name = row.value("chat_name").toString();
+        QListWidgetItem *item = new QListWidgetItem();
+        qDebug()<<identifier;
+        item->setText(chat_name);
+        item->setData(Qt::UserRole, identifier);
+        ui->chatListWidget->addItem(item);
+    }
 }
 
 void DeepSeekWidget::showContextMenu(const QPoint &pos)
@@ -500,15 +522,86 @@ void DeepSeekWidget::showListWidgetContextMenu(const QPoint &pos)
 
 void DeepSeekWidget::loadChatMessage(QListWidgetItem *item)
 {
-    qDebug()<<"loadChatMessage";
+
     // deepseek库更新余额//jzk
     deepSeek->queryBalance();
     this->newChat();
     _identifier = item->data(Qt::UserRole).toString();
+    _name = item->text();
+    qDebug()<<_identifier<<_name;
+    //项目分析项展示不一样
+    if(_name.startsWith("项目分析: ") && _name.endsWith(_identifier)){
+        qDebug()<<"项目分析loadChatMessage";
+        //获取message表内容创建对话区
+        auto sql = QString("SELECT content FROM messages WHERE programID = '%1'").arg(_identifier);
+        QList<QVariantMap> rows = _sqlExecutor->executeQuery(sql);
+
+        for(auto _: rows){
+            auto content_all = _.value("content").toString();
+            auto doc = QJsonDocument::fromJson(content_all.toUtf8());
+            auto array = doc.array();
+            int num=1;
+            for (auto arr : array)
+            {
+                auto obj = arr.toObject();
+                if(obj.value("role").toString()!="assistant" ||num!=1)continue;
+                auto role = obj.value("role").toString();
+                auto content = obj.value("content").toString();
+                auto reasoning_content = obj.value("reasoning_content").toString();
+                auto datetime = obj.value("datetime").toString();
+                auto total_tokens = obj.value("total_tokens").toInt();
+
+                auto chatFrame = new ChatFrame(stringToRole(role), nullptr);
+                if (!content.isEmpty())
+                {
+                    chatFrame->addChatText(content);
+                }
+                if (!reasoning_content.isEmpty())
+                {
+                    chatFrame->addReasonerText(reasoning_content);
+                }
+                chatFrame->setTokenSize(total_tokens);
+                chatFrame->setDateTime(datetime);
+                _mainLayout->insertWidget(_mainLayout->count() - 1, chatFrame);
+                num++;
+            }
+        }
+        //获取analysis表结果创建对话区
+        auto sql1 = QString("SELECT content FROM  file_analysis WHERE programID = '%1'").arg(_identifier);
+        auto row = _sqlExecutor->executeFirstRow(sql1);
+        // _identifier = row.value("identifier").toString();
+        // _name = row.value("chat_name").toString();
+        auto content = row.value("content").toString();
+        auto doc = QJsonDocument::fromJson(content.toUtf8());
+        auto array = doc.array();
+        for (auto row : array)
+        {
+            auto obj = row.toObject();
+            auto role = obj.value("role").toString();
+            auto content = obj.value("content").toString();
+            auto reasoning_content = obj.value("reasoning_content").toString();
+            auto datetime = obj.value("datetime").toString();
+            auto total_tokens = obj.value("total_tokens").toInt();
+            auto chatFrame = new ChatFrame(stringToRole(role), nullptr);
+            if (!content.isEmpty())
+            {
+                chatFrame->addChatText(content);
+            }
+            if (!reasoning_content.isEmpty())
+            {
+                chatFrame->addReasonerText(reasoning_content);
+            }
+            chatFrame->setTokenSize(total_tokens);
+            chatFrame->setDateTime(datetime);
+            _mainLayout->insertWidget(_mainLayout->count() - 1, chatFrame);
+        }
+
+    }
+    qDebug()<<"loadChatMessage";
     auto sql = QString("SELECT chat_name,identifier,content FROM AnalysisMessage WHERE identifier = '%1'").arg(_identifier);
     auto row = _sqlExecutor->executeFirstRow(sql);
-    _identifier = row.value("identifier").toString();
-    _name = row.value("chat_name").toString();
+    // _identifier = row.value("identifier").toString();
+    // _name = row.value("chat_name").toString();
     auto content = row.value("content").toString();
     auto doc = QJsonDocument::fromJson(content.toUtf8());
     auto array = doc.array();
@@ -533,14 +626,27 @@ void DeepSeekWidget::loadChatMessage(QListWidgetItem *item)
         chatFrame->setDateTime(datetime);
         _mainLayout->insertWidget(_mainLayout->count() - 1, chatFrame);
     }
+
 }
 
 void DeepSeekWidget::deleteChat()
 {
     auto items = ui->chatListWidget->selectedItems();
+
     for (auto item : items)
     {
         auto identifier = item->data(Qt::UserRole).toString();
+        _name= item->text();
+
+        //项目分析项展示不一样
+        if(_name.startsWith("项目分析: ") && _name.endsWith(_identifier)){
+            auto sql = QString("Delete FROM file_analysis WHERE programID  = '%1'").arg(identifier);
+            _sqlExecutor->executeNonQuery(sql);
+            auto sql1 = QString("Delete FROM messages WHERE programID  = '%1'").arg(identifier);
+            _sqlExecutor->executeNonQuery(sql1);
+            continue;
+        }
+
         if (identifier == _identifier)
             newChat();
         auto sql = QString("Delete FROM AnalysisMessage WHERE identifier = '%1'").arg(identifier);
@@ -551,98 +657,6 @@ void DeepSeekWidget::deleteChat()
 }
 
 
-// // 单文件分析
-// void DeepSeekWidget::fileAnalysis(){
-
-//     // 建立线程，读取参数，对文件参照json提问并回答，将记录保存到对应表中
-//     //
-// }
-
-
-// // 文件分析结果转换
-// void DeepSeekWidget::AnalysisTR(){
-//     //根据对应列表多行进行多线程循环
-//     // 线程中读取数据库和本地文件
-//     //按分析参数精简回答，最后生成更好的汇总提问
-// }
-// // 文件分析结果总结
-// void DeepSeekWidget::AnalysisSummary(){
-//     // 读取参数，json，根据分析结果提问
-//     //保存结果到对应数据库
-// }
-
-// void DeepSeekWidget::on_pushButton_clicked()
-
-// {
-//     //参考上面代码，参数界面读取和填写，
-//     //扫描和相关提问细节数据库，界面弹出填写
-//     //本地生成提问yaml文件
-//     //更新对应数据库
-//     // 左边列表对话项新增（rootPath项目分析）
-//     //按钮变成进度条初始化
-//     //读取路径下符合要求的文件，进行多线程循环fileAnalysis();
-//     // 等待线程完成，不断更新聊天记录区
-//     //进度条进度更新
-//     //对对话结果进行转换AnalysisTR()
-//     // 等待线程完成，不断更新聊天记录区
-//      //进度条进度更新
-//     //对文件分析结果总结AnalysisSummary
-//     // 弹出结果生成成功
-//     // 更新聊天记录区
-// }
-// 单文件分析
-// void DeepSeekWidget::fileAnalysis(const QString& filePath, const QString& outputDir) {
-    // // 1. 读取文件内容
-    // QFile file(filePath);
-    // if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-    //     _logger->error(QString("无法打开文件: %1").arg(filePath));
-    //     return;
-    // }
-    // QTextStream in(&file);
-    // QString fileContent = in.readAll();
-    // file.close();
-
-    // // 2. 生成分析问题（根据文件类型和预设模板）
-    // QString question;
-    // if (filePath.endsWith(".cpp") || filePath.endsWith(".h")) {
-    //     question = QString("请分析以下C++代码文件，描述其主要功能、关键类和方法，并指出可能的改进点:\n%1").arg(fileContent);
-    // } else if (filePath.endsWith(".py")) {
-    //     question = QString("请分析以下Python脚本，描述其主要功能、关键函数和算法流程:\n%1").arg(fileContent);
-    // } else {
-    //     question = QString("请分析以下文件内容:\n%1").arg(fileContent);
-    // }
-
-    // // 3. 调用DeepSeek进行分析
-    // ChatFrame *analysisFrame = new ChatFrame(Role::Assistant, this);
-    // analysisFrame->setChatText(QString("正在分析文件: %1").arg(QFileInfo(filePath).fileName()));
-    // _mainLayout->insertWidget(_mainLayout->count() - 1, analysisFrame);
-
-    // // 使用事件循环等待分析完成
-    // QEventLoop loop;
-    // connect(deepSeek, &DeepSeek::replyFinished, &loop, &QEventLoop::quit);
-
-    // deepSeek->seedMessage(oldMessage(), question);
-    // loop.exec();
-
-    // // 4. 获取并保存分析结果
-    // QString analysisResult = analysisFrame->chatText();
-    // QFile outFile(outputDir + "/" + QFileInfo(filePath).baseName() + "_analysis.txt");
-    // if (outFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-    //     QTextStream out(&outFile);
-    //     out << analysisResult;
-    //     outFile.close();
-    // }
-
-    // // 5. 保存到数据库
-    // auto sql = QString("INSERT INTO messages (programID, rootPath, fileName, content, analyzeJsonPath) "
-    //                    "VALUES ('%1', '%2', '%3', '%4', '%5')")
-    //                .arg(_identifier)
-    //                .arg(QFileInfo(filePath).path())
-    //                .arg(QFileInfo(filePath).fileName())
-    //                .arg(analysisResult)
-    //                .arg(outputDir + "/" + QFileInfo(filePath).baseName() + "_analysis.json");
-    // _sqlExecutor->executeNonQuery(sql);
-// }
 
 QStringList getFilesFromLevel2AndDeeper(const QString& rootPath,int FL) {
     QStringList result;
@@ -720,10 +734,6 @@ QString DeepSeekWidget::analyzeFileOnMainThread(const QString& question,const QS
     qDebug() << "analyzeFileOnMainThread" << _fileName;
 
     // iscontinue.wait(&_mutex);
-    // ChatFrame *analysisFrame = new ChatFrame(Role::Assistant, this);
-    // analysisFrame->setChatText(QString("正在分析文件: %1").arg(question.left(50) + "..."));///....目前可运行到的位置
-    // _mainLayout->insertWidget(_mainLayout->count() - 1, analysisFrame);
-
     // 使用事件循环等待分析完成
     // QMutexLocker locker(&_mutex);
     QEventLoop loop;
@@ -741,10 +751,7 @@ QString DeepSeekWidget::analyzeFileOnMainThread(const QString& question,const QS
     _mainLayout->insertWidget(_mainLayout->count() - 1, reasonerFrame);
     // _logger->info(QString("seed: %1").arg(question));
     //deepseek库更新消息
-
     deepSeek->seedMessage(oldMessage(true), question);
-
-
 
     //延迟执行了一个 lambda 函数,确保完成赋值_identifier，_name再执行finish中后续相关内容
     QTimer::singleShot(500, this, [=]
@@ -770,6 +777,8 @@ void DeepSeekWidget::AnalysisSummary() {
         auto sql = QString("SELECT content FROM messages WHERE programID = '%1'").arg(_identifier);
         QList<QVariantMap> rows = _sqlExecutor->executeQuery(sql);
         QString analysisContent;
+        //保存提问文件到日志中
+
         // 2. 构建总结提问内容
         // _identifier = row.value("identifier").toString();
         // _name = row.value("chat_name").toString();
@@ -777,22 +786,22 @@ void DeepSeekWidget::AnalysisSummary() {
             auto content_all = _.value("content").toString();
             auto doc = QJsonDocument::fromJson(content_all.toUtf8());
             auto array = doc.array();
-
-            int nums=1;
+            int num=1;
             for (auto arr : array)
             {
-                if(nums%1==0)continue;
-                nums++;
                 auto obj = arr.toObject();
+                if(obj.value("role").toString()!="assistant")continue;
                 // auto role = obj.value("role").toString();
                 auto content = obj.value("content").toString();
                 // auto reasoning_content = obj.value("reasoning_content").toString();
                 // auto datetime = obj.value("datetime").toString();
                 // auto total_tokens = obj.value("total_tokens").toInt();
-                analysisContent += content + "\n\n";
+                analysisContent +="文件" +QString::number(num)+"分析结果:\n\n{"+content + "}\n\n";
+                num++;
 
             }
         }
+        _logger->info(QString("生成总结提问材料: %1\n\n").arg(analysisContent));
         // 构建总结提示词
         // 如果没有模板路径，使用默认生成方式
         QString m_jsonTemplatePath;
@@ -829,7 +838,7 @@ void DeepSeekWidget::AnalysisSummary() {
 
         ChatFrame *reasonerFrame = new ChatFrame(Role::Assistant, this);
         _mainLayout->insertWidget(_mainLayout->count() - 1, reasonerFrame);
-        reasonerFrame->setChatText("正在生成项目总结报告...:\n");
+        reasonerFrame->setChatText("正在生成项目总结报告...:\n\n");
         reasonerFrame->startLoading();
 
         deepSeek->seedMessage(oldMessage(true), summaryQuestion);
@@ -845,50 +854,7 @@ void DeepSeekWidget::AnalysisSummary() {
 
 
 
-    // // 1. 读取转换后的JSON结果
-    // QFile jsonFile(_outputPath + "/analysis_summary.json");
-    // if (!jsonFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-    //     _logger->error("无法打开分析摘要文件");
-    //     return;
-    // }
-    // QTextStream in(&jsonFile);
-    // QString jsonContent = in.readAll();
-    // jsonFile.close();
 
-    // // 2. 生成总结提示
-    // QString summaryPrompt = "基于以下结构化分析数据，请生成一份全面的项目总结报告，"
-    //                         "包括整体架构评估、关键问题汇总和改进建议:\n\n" + jsonContent;
-
-    // // 3. 调用DeepSeek进行总结
-    // ChatFrame *summaryFrame = new ChatFrame(Role::Assistant, this);
-    // summaryFrame->setChatText("正在生成项目总结报告...");
-    // _mainLayout->insertWidget(_mainLayout->count() - 1, summaryFrame);
-
-    // QEventLoop loop;
-    // connect(deepSeek, &DeepSeek::replyFinished, &loop, &QEventLoop::quit);
-
-    // deepSeek->seedMessage(oldMessage(), summaryPrompt);
-    // loop.exec();
-
-    // // 4. 保存总结报告
-    // QString summaryReport = summaryFrame->chatText();
-    // QFile reportFile(_outputPath + "/project_summary_report.md");
-    // if (reportFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-    //     QTextStream out(&reportFile);
-    //     out << summaryReport;
-    //     reportFile.close();
-    // }
-
-    // // 5. 添加到对话历史
-    // ChatFrame *reportFrame = new ChatFrame(Role::Assistant, this);
-    // reportFrame->setChatText(QString("项目总结报告已生成:\n%1").arg(summaryReport));
-    // _mainLayout->insertWidget(_mainLayout->count() - 1, reportFrame);
-
-    // // 6. 更新数据库
-    // auto sql = QString("UPDATE AnalysisMessage SET content = '%1' WHERE identifier = '%2'")
-    //                .arg(oldMessage().last().content + "\n\n" + summaryReport)
-    //                .arg(_identifier);
-    // _sqlExecutor->executeNonQuery(sql);
 }
 
 
@@ -916,13 +882,7 @@ void DeepSeekWidget::on_pushButton_clicked()
     // 3.1新建file_analysis表格行
     _identifier = QUuid::createUuid().toString();
     _name = "项目分析: " + QFileInfo(_inputPath).fileName()+"-"+_identifier;
-   //  QString sql = R"(
-   //      INSERT INTO file_analysis
-   //      (programID, rootPath, filesName, datetime, params, paramPath, jsonResultPath)
-   //      VALUES (?, ?, ?, ?, ?, ?, ?)
-   //  )";
-   //  QList<QVariantList> data;
-   //  //3.2读取目录（FL级子目录以上文件)且滤除ignore_suffixes文件
+     //  //3.2读取目录（FL级子目录以上文件)且滤除ignore_suffixes文件
     QJsonArray suffixesArray = config["ignore_suffixes"].toArray();
     QStringList filesName = ignore_files(_inputPath,suffixesArray,config.value("min_file_level").toInt());
     int totalFiles = filesName.size();
@@ -945,12 +905,14 @@ void DeepSeekWidget::on_pushButton_clicked()
         params[":params"] = configcontent;
         params[":paramPath"] = "";  // 空字符串
         params[":jsonResultPath"] = _outputPath;
+        params[":chat_name"] = _name;
+
 
         // 执行参数化插入
         int affectedRows = _sqlExecutor->executeNonQuerywithparams(
             "INSERT INTO file_analysis "
-            "(programID, rootPath, filesName, datetime, params, paramPath, jsonResultPath) "
-            "VALUES (:programID, :rootPath, :filesName, :datetime, :params, :paramPath, :jsonResultPath)",
+            "(programID, rootPath, filesName,chat_name, datetime, params, paramPath, jsonResultPath) "
+            "VALUES (:programID, :rootPath, :filesName,:chat_name, :datetime, :params, :paramPath, :jsonResultPath)",
             params,
             true  // 启用事务
             );
@@ -971,15 +933,6 @@ void DeepSeekWidget::on_pushButton_clicked()
             delete chatFrame;
         }
     }
-    //
-    // QListWidgetItem *item = new QListWidgetItem();
-    // item->setText(_name);
-    // item->setData(Qt::UserRole, _identifier);
-    // ui->chatListWidget->insertItem(0, item);
-    // ui->chatListWidget->setCurrentItem(item);
-    // delete item;
-    // item=NULL;
-    // 5. 初始化进度系统
     QProgressDialog progress("分析项目文件...", "取消", 0, 100, this);
     progress.setWindowModality(Qt::WindowModal);
     progress.setMinimumDuration(0);
@@ -1007,7 +960,7 @@ void DeepSeekWidget::on_pushButton_clicked()
     iscontinue.wakeOne();
     FileAnalysisTask* task;
     QString answer;
-    progress.setValue((0 * 100) / totalFiles-15);
+    progress.setValue((0 * 75) / totalFiles);
     progress.setLabelText(QString("分析中: %1/%2 文件")
                               .arg(processed)
                               .arg(totalFiles));
@@ -1035,7 +988,7 @@ void DeepSeekWidget::on_pushButton_clicked()
         task->run();
         processed++;
         // / 更新进度
-        progress.setValue((processed * 100) / totalFiles-15);
+        progress.setValue((processed * 75) / totalFiles);
         progress.setLabelText(QString("分析中: %1/%2 文件")
                                   .arg(processed)
                                   .arg(totalFiles));
@@ -1049,30 +1002,7 @@ void DeepSeekWidget::on_pushButton_clicked()
             break;
         }
 
-        // // 等待新结果
-        // mutex.lock();
-        // condition.wait(&mutex);///****Widgets must be created in the GUI thread.
-
-        // // 获取新完成的任务数量
-        // int newProcessed = analysisResults.size();
-        // mutex.unlock();
-
-        // // 更新进度
-        // progress.setValue((processed * 100) / totalFiles);
-        // progress.setLabelText(QString("分析中: %1/%2 文件")
-        //                           .arg(processed)
-        //                           .arg(totalFiles));
-        // QCoreApplication::processEvents();
     }
-
-    // 7.3 确保所有任务完成
-    // threadPool.waitForDone();
-
-    // // 8. 结果转换
-    // progress.setLabelText("转换分析结果...");
-    // progress.setValue(50);
-    // AnalysisTR();
-
     // 9. 结果总结
     progress.setLabelText("生成总结报告...");
     progress.setValue(85);
@@ -1084,10 +1014,7 @@ void DeepSeekWidget::on_pushButton_clicked()
     // _mutex.unlock();
     // 10. 完成
     progress.setValue(100);
-    QMessageBox::information(this, "分析完成", "项目分析已完成，总结报告已生成！");
-
-    // // 11. 加载分析结果到界面
-    // loadChatMessage(item);
+    QMessageBox::information(this, "分析完成", "项目分析已完成，总结报告正在生成！");
 }
 
 
