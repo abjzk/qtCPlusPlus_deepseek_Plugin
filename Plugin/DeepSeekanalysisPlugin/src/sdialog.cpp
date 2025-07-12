@@ -59,63 +59,63 @@ PathConfigDialog::PathConfigDialog(QWidget *parent)
     singleFileLayout->addRow("频率惩罚 (0-2):", singleFreqPenaltySpin);
     singleFileLayout->addRow("存在惩罚 (0-2):", singlePresPenaltySpin);
 
-    // ========== 信息转化参数设置 ==========
-    QGroupBox *transformGroup = new QGroupBox("信息转化生成提示词模型参数设置", contentWidget);
-    transformGroup->setStyleSheet("QGroupBox { font-weight: bold; }");
+    // // ========== 信息转化参数设置 ==========
+    // QGroupBox *transformGroup = new QGroupBox("信息转化生成提示词模型参数设置", contentWidget);
+    // transformGroup->setStyleSheet("QGroupBox { font-weight: bold; }");
 
-    transformEnableCheck = new QCheckBox("启用信息转化", transformGroup);
-    transformEnableCheck->setChecked(false);
+    // transformEnableCheck = new QCheckBox("启用信息转化", transformGroup);
+    // transformEnableCheck->setChecked(false);
 
-    transformApiCombo = new QComboBox(transformGroup);
-    transformApiCombo->addItems({"deepseek", "Localdeepseek"});
-    transformApiCombo->setEnabled(false);
+    // transformApiCombo = new QComboBox(transformGroup);
+    // transformApiCombo->addItems({"deepseek", "Localdeepseek"});
+    // transformApiCombo->setEnabled(false);
 
-    transformModelCombo = new QComboBox(transformGroup);
-    transformModelCombo->addItems({"deepseek-chat", "deepseek-reasoner"});
-    transformModelCombo->setEnabled(false);
+    // transformModelCombo = new QComboBox(transformGroup);
+    // transformModelCombo->addItems({"deepseek-chat", "deepseek-reasoner"});
+    // transformModelCombo->setEnabled(false);
 
-    transformTempSpin = new QDoubleSpinBox(transformGroup);
-    transformTempSpin->setRange(0.0, 2.0);
-    transformTempSpin->setSingleStep(0.1);
-    transformTempSpin->setValue(0.5);
-    transformTempSpin->setEnabled(false);
+    // transformTempSpin = new QDoubleSpinBox(transformGroup);
+    // transformTempSpin->setRange(0.0, 2.0);
+    // transformTempSpin->setSingleStep(0.1);
+    // transformTempSpin->setValue(0.5);
+    // transformTempSpin->setEnabled(false);
 
-    transformTopPSpin = new QDoubleSpinBox(transformGroup);
-    transformTopPSpin->setRange(0.0, 1.0);
-    transformTopPSpin->setSingleStep(0.1);
-    transformTopPSpin->setValue(1.0);
-    transformTopPSpin->setEnabled(false);
+    // transformTopPSpin = new QDoubleSpinBox(transformGroup);
+    // transformTopPSpin->setRange(0.0, 1.0);
+    // transformTopPSpin->setSingleStep(0.1);
+    // transformTopPSpin->setValue(1.0);
+    // transformTopPSpin->setEnabled(false);
 
-    transformFreqPenaltySpin = new QDoubleSpinBox(transformGroup);
-    transformFreqPenaltySpin->setRange(0.0, 2.0);
-    transformFreqPenaltySpin->setSingleStep(0.1);
-    transformFreqPenaltySpin->setValue(0.0);
-    transformFreqPenaltySpin->setEnabled(false);
+    // transformFreqPenaltySpin = new QDoubleSpinBox(transformGroup);
+    // transformFreqPenaltySpin->setRange(0.0, 2.0);
+    // transformFreqPenaltySpin->setSingleStep(0.1);
+    // transformFreqPenaltySpin->setValue(0.0);
+    // transformFreqPenaltySpin->setEnabled(false);
 
-    transformPresPenaltySpin = new QDoubleSpinBox(transformGroup);
-    transformPresPenaltySpin->setRange(0.0, 2.0);
-    transformPresPenaltySpin->setSingleStep(0.1);
-    transformPresPenaltySpin->setValue(0.0);
-    transformPresPenaltySpin->setEnabled(false);
+    // transformPresPenaltySpin = new QDoubleSpinBox(transformGroup);
+    // transformPresPenaltySpin->setRange(0.0, 2.0);
+    // transformPresPenaltySpin->setSingleStep(0.1);
+    // transformPresPenaltySpin->setValue(0.0);
+    // transformPresPenaltySpin->setEnabled(false);
 
-    QFormLayout *transformLayout = new QFormLayout(transformGroup);
-    transformLayout->addRow(transformEnableCheck);
-    transformLayout->addRow("API 提供商:", transformApiCombo);
-    transformLayout->addRow("模型:", transformModelCombo);
-    transformLayout->addRow("温度 (0-2):", transformTempSpin);
-    transformLayout->addRow("Top P (0-1):", transformTopPSpin);
-    transformLayout->addRow("频率惩罚 (0-2):", transformFreqPenaltySpin);
-    transformLayout->addRow("存在惩罚 (0-2):", transformPresPenaltySpin);
+    // QFormLayout *transformLayout = new QFormLayout(transformGroup);
+    // transformLayout->addRow(transformEnableCheck);
+    // transformLayout->addRow("API 提供商:", transformApiCombo);
+    // transformLayout->addRow("模型:", transformModelCombo);
+    // transformLayout->addRow("温度 (0-2):", transformTempSpin);
+    // transformLayout->addRow("Top P (0-1):", transformTopPSpin);
+    // transformLayout->addRow("频率惩罚 (0-2):", transformFreqPenaltySpin);
+    // transformLayout->addRow("存在惩罚 (0-2):", transformPresPenaltySpin);
 
-    // 连接启用复选框的信号
-    connect(transformEnableCheck, &QCheckBox::toggled, this, [=](bool checked) {
-        transformApiCombo->setEnabled(checked);
-        transformModelCombo->setEnabled(checked);
-        transformTempSpin->setEnabled(checked);
-        transformTopPSpin->setEnabled(checked);
-        transformFreqPenaltySpin->setEnabled(checked);
-        transformPresPenaltySpin->setEnabled(checked);
-    });
+    // // 连接启用复选框的信号
+    // connect(transformEnableCheck, &QCheckBox::toggled, this, [=](bool checked) {
+    //     transformApiCombo->setEnabled(checked);
+    //     transformModelCombo->setEnabled(checked);
+    //     transformTempSpin->setEnabled(checked);
+    //     transformTopPSpin->setEnabled(checked);
+    //     transformFreqPenaltySpin->setEnabled(checked);
+    //     transformPresPenaltySpin->setEnabled(checked);
+    // });
 
     // ========== 总结文件参数设置 ==========
     QGroupBox *summaryGroup = new QGroupBox("总结文件主线程模型参数设置", contentWidget);
@@ -172,8 +172,8 @@ PathConfigDialog::PathConfigDialog(QWidget *parent)
     mainContentLayout->addLayout(pathLayout);
     mainContentLayout->addSpacing(10);
     mainContentLayout->addWidget(singleFileGroup);
-    mainContentLayout->addSpacing(10);
-    mainContentLayout->addWidget(transformGroup);
+    // mainContentLayout->addSpacing(10);
+    // mainContentLayout->addWidget(transformGroup);
     mainContentLayout->addSpacing(10);
     mainContentLayout->addWidget(summaryGroup);
     mainContentLayout->addStretch();
@@ -220,16 +220,16 @@ void PathConfigDialog::accept() {
     config["single_file_analysis"] = singleFileParams;
 
     // 保存信息转化参数（如果启用）
-    if (transformEnableCheck->isChecked()) {
-        QJsonObject transformParams;
-        transformParams["api"] = transformApiCombo->currentText();
-        transformParams["model"] = transformModelCombo->currentText();
-        transformParams["temperature"] = transformTempSpin->value();
-        transformParams["top_p"] = transformTopPSpin->value();
-        transformParams["frequency_penalty"] = transformFreqPenaltySpin->value();
-        transformParams["presence_penalty"] = transformPresPenaltySpin->value();
-        config["transform_prompt"] = transformParams;
-    }
+    // if (transformEnableCheck->isChecked()) {
+    //     QJsonObject transformParams;
+    //     transformParams["api"] = transformApiCombo->currentText();
+    //     transformParams["model"] = transformModelCombo->currentText();
+    //     transformParams["temperature"] = transformTempSpin->value();
+    //     transformParams["top_p"] = transformTopPSpin->value();
+    //     transformParams["frequency_penalty"] = transformFreqPenaltySpin->value();
+    //     transformParams["presence_penalty"] = transformPresPenaltySpin->value();
+    //     config["transform_prompt"] = transformParams;
+    // }
 
     // 保存总结文件参数
     QJsonObject summaryParams;

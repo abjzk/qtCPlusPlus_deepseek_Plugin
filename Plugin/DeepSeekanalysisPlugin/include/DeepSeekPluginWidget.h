@@ -45,6 +45,7 @@ public:
 
     void changeFish();
     QString analyzeFileOnMainThread(const QString &question, const QString &question_que);
+    void setconfig(DeepSeek *deepSeek);
 private:
     QMutex _mutex;
     QWaitCondition iscontinue;

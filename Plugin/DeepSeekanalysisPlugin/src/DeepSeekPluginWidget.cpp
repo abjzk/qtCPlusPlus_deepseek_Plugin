@@ -18,20 +18,22 @@ DeepSeekWidget::DeepSeekWidget(Logger *logger, TConfig *config, QWidget *parent)
         (id INTEGER PRIMARY KEY AUTOINCREMENT,programID TEXT, fileName TEXT, datetime TEXT,content TEXT,resultPath TEXT);)");
     ui->setupUi(this);
     deepSeek = new DeepSeek(_config->read("token").valueString(), this);
-    deepSeek->setSystemMessage(_config->read("system_messages").valueString());
-    deepSeek->setMaxTokens(_config->read("max_tokens").value.toInt());
-    deepSeek->setTemperature(_config->read("temperature").value.toDouble());
-    deepSeek->setTopP(_config->read("top_p").value.toDouble());
-    deepSeek->setPresencePenalty(_config->read("presence_penalty").value.toDouble());
-    deepSeek->setFrequencyPenalty(_config->read("frequency_penalty").value.toDouble());
-    deepSeek->setModel(_config->read("model").value.value<ComboxData>().currentText());
-    deepSeek->setStream(_config->read("isStream").value.toBool());
+    setconfig(deepSeek);
     _seed_key=_config->read("seed_key").value.value<ComboxData>().currentText();
     this->initUi();
     this->initConnect();
     this->loadChat();
 }
-
+void DeepSeekWidget::setconfig(DeepSeek* deepSeek1){
+    deepSeek1->setSystemMessage(_config->read("system_messages").valueString());
+    deepSeek1->setMaxTokens(_config->read("max_tokens").value.toInt());
+    deepSeek1->setTemperature(_config->read("temperature").value.toDouble());
+    deepSeek1->setTopP(_config->read("top_p").value.toDouble());
+    deepSeek1->setPresencePenalty(_config->read("presence_penalty").value.toDouble());
+    deepSeek1->setFrequencyPenalty(_config->read("frequency_penalty").value.toDouble());
+    deepSeek1->setModel(_config->read("model").value.value<ComboxData>().currentText());
+    deepSeek1->setStream(_config->read("isStream").value.toBool());
+}
 DeepSeekWidget::~DeepSeekWidget()
 {
     delete ui;
@@ -594,6 +596,7 @@ void DeepSeekWidget::loadChatMessage(QListWidgetItem *item)
             chatFrame->setTokenSize(total_tokens);
             chatFrame->setDateTime(datetime);
             _mainLayout->insertWidget(_mainLayout->count() - 1, chatFrame);
+
         }
 
     }
@@ -605,6 +608,7 @@ void DeepSeekWidget::loadChatMessage(QListWidgetItem *item)
     auto content = row.value("content").toString();
     auto doc = QJsonDocument::fromJson(content.toUtf8());
     auto array = doc.array();
+
     for (auto row : array)
     {
         auto obj = row.toObject();
@@ -625,7 +629,9 @@ void DeepSeekWidget::loadChatMessage(QListWidgetItem *item)
         chatFrame->setTokenSize(total_tokens);
         chatFrame->setDateTime(datetime);
         _mainLayout->insertWidget(_mainLayout->count() - 1, chatFrame);
+
     }
+
 
 }
 
@@ -922,6 +928,25 @@ void DeepSeekWidget::on_pushButton_clicked()
         qCritical() << "保存项目配置到数据库失败:" << e.what();
         return;
     }
+    //设置分析参数
+    // +++ 新增代码：根据配置更新参数 +++
+    // 获取single_file_analysis配置
+    QJsonObject singleFileConfig = config.value("single_file_analysis").toObject();
+
+    // 设置模型参数
+    if (singleFileConfig.contains("model")&&0) {
+
+        deepSeek->setModel(singleFileConfig["model"].toString());
+    }
+
+    // 设置其他数值参数
+    QStringList floatParams = {"temperature", "top_p", "presence_penalty", "frequency_penalty"};
+    for (const QString& param : floatParams) {
+        if (singleFileConfig.contains(param)) {
+            setParmas(param, singleFileConfig[param].toDouble());
+        }
+    }
+    // +++ 参数更新结束 +++
     // 4. 在列表中添加新项
     //清空对话区
     while (_mainLayout->count() > 1)
@@ -1004,6 +1029,24 @@ void DeepSeekWidget::on_pushButton_clicked()
 
     }
     // 9. 结果总结
+    //设置分析参数
+    // +++ 新增代码：根据配置更新参数 +++
+    // 获取single_file_analysis配置
+    QJsonObject singleFileConfig1 = config.value("summary").toObject();
+
+    // 设置模型参数
+    if (singleFileConfig.contains("model")&&0) {
+
+        deepSeek->setModel(singleFileConfig1["model"].toString());
+    }
+
+    // 设置其他数值参数
+    QStringList floatParams1 = {"temperature", "top_p", "presence_penalty", "frequency_penalty"};
+    for (const QString& param : floatParams1) {
+        if (singleFileConfig.contains(param)) {
+            setParmas(param, singleFileConfig[param].toDouble());
+        }
+    }
     progress.setLabelText("生成总结报告...");
     progress.setValue(85);
     // _mutex.lock();
@@ -1015,6 +1058,8 @@ void DeepSeekWidget::on_pushButton_clicked()
     // 10. 完成
     progress.setValue(100);
     QMessageBox::information(this, "分析完成", "项目分析已完成，总结报告正在生成！");
+    // 恢复设置的参数
+    setconfig(deepSeek);
 }
 
 

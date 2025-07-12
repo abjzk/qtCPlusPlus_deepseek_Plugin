@@ -42,14 +42,14 @@ private:
     QDoubleSpinBox *singleFreqPenaltySpin;
     QDoubleSpinBox *singlePresPenaltySpin;
 
-    // 信息转化参数控件
-    QCheckBox *transformEnableCheck;
-    QComboBox *transformApiCombo;
-    QComboBox *transformModelCombo;
-    QDoubleSpinBox *transformTempSpin;
-    QDoubleSpinBox *transformTopPSpin;
-    QDoubleSpinBox *transformFreqPenaltySpin;
-    QDoubleSpinBox *transformPresPenaltySpin;
+    // // 信息转化参数控件
+    // QCheckBox *transformEnableCheck;
+    // QComboBox *transformApiCombo;
+    // QComboBox *transformModelCombo;
+    // QDoubleSpinBox *transformTempSpin;
+    // QDoubleSpinBox *transformTopPSpin;
+    // QDoubleSpinBox *transformFreqPenaltySpin;
+    // QDoubleSpinBox *transformPresPenaltySpin;
 
     // 总结文件参数控件
     QComboBox *summaryApiCombo;
